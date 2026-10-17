@@ -15,7 +15,7 @@
 
 이 경로는 2026-10-18의 [공식 Skills 문서](https://www.antigravity.google/docs/skills/) 기준입니다. 구형 폴더를 자동으로 옮기지 않습니다. 기존 수정·다른 스킬도 보존합니다.
 
-저장소를 내려받은 폴더에서 실행하세요.
+저장소를 내려받은 뒤 `cd music-road-skills`로 들어간 저장소 루트에서 실행하세요. 설치본을 다른 작업 디렉터리에서 관리할 때는 현재 읽은 `SKILL.md`의 실제 절대 경로를 씁니다.
 
 ```bash
 node skills/road-music-skills-update/scripts/manage.cjs install \

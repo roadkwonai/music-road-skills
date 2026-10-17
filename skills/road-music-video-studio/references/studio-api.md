@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | `init --out ABS [--music ABS] [--mode MODE] [--host codex\|antigravity\|antigravity-cli]` | 새 프로젝트와 선택적 외부 음악 등록 | 초기화 JSON 한 줄 |
 | `serve --project ABS [--music ABS] [--host codex\|antigravity\|antigravity-cli] [--review] [--open] [--timeout SEC]` | 토큰 보호 루프백 제작실 | stderr 준비 JSONL, 선택 뒤 stdout 완료 JSON 한 줄 |
-| `publish --project ABS --manifest ABS` | 완성 미디어를 검수 화면에 등록 | 등록 JSON 한 줄 |
+| `publish --project ABS --manifest ABS` | 완성 미디어 전체 스냅샷으로 검수 화면 등록을 교체 | 등록 JSON 한 줄 |
 
 `serve`의 기본 제한 시간은 900초다. `--open`은 로컬 기본 브라우저를 여는 명시적 요청일 때만 쓴다. 서버는 `127.0.0.1`에만 바인딩하고, 토큰·정확한 Host·같은 Origin이 모두 맞는 요청만 저장한다.
 
@@ -32,6 +32,6 @@
 
 `title`, `sourceMusicSha256`, `video`, `audio`, `captions`, `storyboard`만 허용한다. `title`은 제어문자 없는 1~180자 문자열이며 검수 화면의 프로젝트 이름을 바꾼다. `sourceMusicSha256`은 렌더에 사용한 원음의 64자리 SHA-256이다. 각 미디어 값은 절대 파일 경로 하나 또는 최대 24개 경로 배열이다. 지원 형식은 MP4/MOV/WebM, WAV/MP3/FLAC/M4A 등 오디오, SRT/VTT/ASS/LRC, PNG/JPEG/WebP/AVIF/GIF다.
 
-등록 결과는 현재 음악의 SHA-256과 대조해 **현재 원음과 일치**, **다른 원음의 결과**, **원음 확인 필요**로 표시한다. `sourceMusicSha256`을 넣지 않은 이전 결과는 현재 곡의 완료 결과처럼 표시하지 않는다.
+`publish`는 이전 검수 등록을 누적하지 않고 manifest의 허용 미디어 전체로 교체한다. 따라서 후속 `publish`에서도 유지할 기존 스토리보드·음원·영상·자막을 모두 manifest에 다시 포함한다. 등록 결과는 현재 음악의 SHA-256과 대조해 **현재 원음과 일치**, **다른 원음의 결과**, **원음 확인 필요**로 표시한다. `sourceMusicSha256`을 넣지 않은 이전 결과는 현재 곡의 완료 결과처럼 표시하지 않는다.
 
 제작실은 등록된 id로만 미디어를 제공한다. URL 또는 브라우저 입력으로 임의 경로를 읽거나, 브라우저에서 명령을 실행하지 않는다. 브라우저 업로드는 프로젝트 안 `inputs/music/`에만 쓴다.

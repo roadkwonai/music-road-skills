@@ -35,6 +35,10 @@ segment 앞 반주/숨을 곧 가창 시작으로 쓰지 않는다. 누락/음�
 
 ## 그루브 다이얼 어절 강조
 
+어절 추적이 필수인 요청은 `plan --require-word-timing`으로 `wordTiming.required:true`를 저장한다. `create --plan`은 이를 상속하고, 계획 없이 호출하면 `create --require-word-timing`을 쓴다. 지원하지 않는 프리셋이나 화면에 보이는 가창 큐의 누락된 `words`는 출력 폴더를 만들기 전에 거부한다. 일반 줄 자막 요청은 이 옵션 없이 기존대로 제작한다.
+
+보컬 전 인트로처럼 표시 가창 큐가 0개인 구간은 허용한다. 이때 `wordTiming.visibleCueCount:0`은 그 구간의 검증 범위이며 가창 정렬 완료가 아니다. 곡별 계획만 필수인 혼합 플레이리스트는 해당 `playlist.json.tracks[].wordTiming`만 확인하고 다른 곡의 요구로 확대하지 않는다.
+
 가창 정렬 결과를 같은 원곡 시계의 `cues[].words`에 넣는다. 문장 표시 구간과 실제 어절 구간은 별개이며 쉼 구간을 어절에 강제로 늘려 붙이지 않는다.
 
 ```json

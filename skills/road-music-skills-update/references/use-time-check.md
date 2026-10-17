@@ -1,10 +1,12 @@
 # 스킬 사용 시 업데이트 확인
 
-스킬 제작·수정 요청을 시작할 때에만, 해당 설치본의 절대 부모 스킬 경로를 대상으로 **한 번** 읽기 전용 확인한다.
+스킬 제작·수정 요청을 시작할 때에만, 현재 읽은 호출 스킬의 실제 절대 부모와 그 형제 updater를 대상으로 **한 번** 읽기 전용 확인한다. 호출 스킬의 `PLAYLIST_SKILL`·`JIZURA_SKILL`·`VIDEO_STUDIO_SKILL` 중 해당 변수를 실제 `SKILL.md` 부모로 먼저 설정한다.
 
 ```bash
-node /absolute/skills/road-music-skills-update/scripts/manage.cjs check \
-  --target /absolute/skills
+CALLER_SKILL="$PLAYLIST_SKILL" # 호출한 스킬 변수로 바꾼다
+SKILLS_PARENT="$(dirname "$CALLER_SKILL")"
+UPDATE_SKILL="$SKILLS_PARENT/road-music-skills-update"
+node "$UPDATE_SKILL/scripts/manage.cjs" check --target "$SKILLS_PARENT"
 ```
 
 - Codex, Antigravity, 프로젝트 범위마다 실제 설치 부모가 다르므로 `--target`은 그 스킬 폴더들을 담는 절대 경로로 쓴다.

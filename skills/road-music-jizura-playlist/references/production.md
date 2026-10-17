@@ -7,9 +7,13 @@ Python 3.11 이상 표준 라이브러리, Node.js 24(내장 WebSocket), ffmpeg/
 확인한 런타임: `~/.local/share/roadmusic-video-tools/jizura`, **v0.10.1**, commit `fc16bfe43ea4a6c25a21f1caf04d17326de14f00`. 공개 `J.ui/J.uiApi`와 native 파일 입력/MP4 출력 경로를 사용한다. 실제 등록된 부품을 검사하고 새 버전으로 임의 업데이트하지 않는다.
 
 ```bash
-JIZURA_SKILL="${CODEX_HOME:-$HOME/.codex}/skills/road-music-jizura-playlist"
+JIZURA_SKILL="/absolute/skills/road-music-jizura-playlist" # 현재 읽은 이 SKILL.md의 실제 부모
+JIZURA_PY="${SHOWREEL_PYTHON:-python3}"
+SKILLS_PARENT="$(dirname "$JIZURA_SKILL")"
+UPDATE_SKILL="$SKILLS_PARENT/road-music-skills-update"
+node "$UPDATE_SKILL/scripts/manage.cjs" check --target "$SKILLS_PARENT"
 node "$JIZURA_SKILL/scripts/render-jizura.mjs" --self-check
-python3 "$JIZURA_SKILL/scripts/project.py" styles
+"$JIZURA_PY" "$JIZURA_SKILL/scripts/project.py" styles
 ```
 
 다른 설치 경로는 `--jizura-root`/`--chrome`으로 지정한다. 런타임이 없으면 누락을 보고하고, 설치까지 맡긴 경우 새 전용 경로에 공식 저장소의 위 commit을 내려받는다. 다른 앱/모델을 바꾸거나 Road Music 비공개 IPC로 우회하지 않는다. [공식 저장소](https://github.com/852wa/JIZURA)의 MIT LICENSE/THIRD_PARTY_NOTICES를 보존한다. 처음 쓰는 글꼴은 Google Fonts를 읽을 수 있다. fallback/네트워크 실패는 실제 프레임으로 확인한다.
@@ -60,10 +64,10 @@ node "$JIZURA_SKILL/scripts/render-jizura.mjs" \
 - 단어 시각이 있으면 `cuts:3,cutTime:{"1":0.6,"2":1.2}`처럼 행 시작 기준 상대 초를 쓴다. 균등 분할은 정렬 결과가 아니다. 엔진이 실제 나눈 문구는 `plan.json`으로 확인한다.
 - 겹침·음원 초과·0.35초 미만 행/분절은 거부한다. 0.35초보다 짧은 쉼에는 별도 간주 행을 끼우지 않고 앞 문장의 읽기 시간을 다음 onset까지 유지한다. 원래 가창 end는 cueMap에 보존하며 이를 연장된 가창으로 부르지 않는다. 과밀한 가사는 실제 구절 단위로 묶거나 별도 자막 레이어로 처리한다.
 - 엔진은 `/`, `*`, `|`, 행 끝 `!`, 시작 `[`/`#`를 구문으로 해석한다. builder는 원문 충돌을 거부한다. 원문 문자를 삭제하지 말고 해당 구절을 원문 레이어로 합성한다.
-- ASR만 있으면 기존 설치된 로컬 도구로 초안을 만들고 검수 전 상태를 기록한다. `~/.codex/skills/road-music-showreel-playlist/references/captions.md`가 있으면 해시/시계/정렬 근거 규칙을 참고할 수 있다. 필수 의존성은 아니며 없어도 가용 도구로 진행한다. 유료 전송/새 모델 다운로드는 임의 대안이 아니다.
+- ASR만 있으면 기존 설치된 로컬 도구로 초안을 만들고 검수 전 상태를 기록한다. 형제 스킬의 `"$SKILLS_PARENT/road-music-showreel-playlist/references/captions.md"`가 있으면 해시/시계/정렬 근거 규칙을 참고할 수 있다. 필수 의존성은 아니며 없어도 가용 도구로 진행한다. 유료 전송/새 모델 다운로드는 임의 대안이 아니다.
 
 ```bash
-python3 "$JIZURA_SKILL/scripts/project.py" build \
+"$JIZURA_PY" "$JIZURA_SKILL/scripts/project.py" build \
   --analysis "/절대/새-분석폴더/analysis.json" \
   --direction "/절대/direction.json" --cues "/절대/cues.json" \
   --out "/절대/새-곡-프로젝트"
@@ -92,7 +96,7 @@ node "$JIZURA_SKILL/scripts/render-jizura.mjs" \
 ```
 
 ```bash
-python3 "$JIZURA_SKILL/scripts/project.py" assemble \
+"$JIZURA_PY" "$JIZURA_SKILL/scripts/project.py" assemble \
   --manifest "/절대/tracks.json" --out "/절대/새-최종-플레이리스트.mp4"
 ```
 
@@ -101,7 +105,7 @@ python3 "$JIZURA_SKILL/scripts/project.py" assemble \
 ## 자체 확인
 
 ```bash
-python3 "$JIZURA_SKILL/scripts/test_project.py"
+"$JIZURA_PY" "$JIZURA_SKILL/scripts/test_project.py"
 node --check "$JIZURA_SKILL/scripts/render-jizura.mjs"
 node "$JIZURA_SKILL/scripts/directing.test.mjs"
 node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"
@@ -115,7 +119,6 @@ node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"
 자동 BPM은 후보값이다. 목표 프롬프트의 BPM도 실제 생성 음원의 BPM을 증명하지 않는다. 도입·중간·끝에서 드리프트가 보이면 기존 NumPy 런타임으로 음향 어택을 비교한다. 이 기기에서는 다음 Python에 NumPy가 이미 설치되어 있다. 없는 환경에서는 누락을 보고하며 임의로 패키지를 설치하지 않는다.
 
 ```bash
-JIZURA_PY="${SHOWREEL_PYTHON:-python3}"
 "$JIZURA_PY" "$JIZURA_SKILL/scripts/rhythm.py" \
   --audio "/절대/음악.mp3" --native-analysis "/절대/분석/analysis.json" \
   --out "/절대/새-리듬검증폴더"
@@ -168,7 +171,7 @@ Codex가 음원/가사를 해석해 단일 스타일 후보는 `direction.recomm
 ### 열기
 
 ```bash
-python3 "$JIZURA_SKILL/scripts/studio.py" \
+"$JIZURA_PY" "$JIZURA_SKILL/scripts/studio.py" \
   --out "/절대/새-Studio-세션" \
   --audio "/절대/음악.wav" \
   --project "/절대/project.jizura.json" \
@@ -207,8 +210,8 @@ python3 "$JIZURA_SKILL/scripts/studio.py" \
 ### 변경 후 검사
 
 ```bash
-python3 -B "$JIZURA_SKILL/scripts/test_project.py"
-python3 -B "$JIZURA_SKILL/scripts/test_studio.py"
+"$JIZURA_PY" -B "$JIZURA_SKILL/scripts/test_project.py"
+"$JIZURA_PY" -B "$JIZURA_SKILL/scripts/test_studio.py"
 node "$JIZURA_SKILL/assets/studio/studio.test.mjs"
 node "$JIZURA_SKILL/scripts/directing.test.mjs"
 node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"

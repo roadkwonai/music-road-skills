@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "name": "music-road-skills",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": "roadkwonai/music-road-skills",
-  "releaseNotes": "release/2026-10-18-first-release.md",
+  "releaseNotes": "release/2026-10-18-skill-review-fixes.md",
   "skills": [
     {
       "id": "road-music-showreel-cd",

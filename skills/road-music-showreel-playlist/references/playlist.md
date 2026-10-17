@@ -49,7 +49,7 @@ playlist-input.json은 순서 있는 실제 음원 목록이다. 파일 기준 �
 ]}
 ```
 
-지원 필드: path, title, startSeconds, durationSeconds, captions, captionOriginSeconds, instrumental, vocal, act, artist, assets, plan. 보컬 곡은 원곡에 맞는 JSON/SRT를 준비한다. 각 곡에 [가창 자막](captions.md)의 해시·시계 검증을 적용한다. 연주곡만 instrumental=true로 하고 가사를 생략한다. `vocal`/`act`/`artist`/`plan`은 기존 CD와 그루브 다이얼 requiresArtist 흐름의 이미지 캐스팅·계획이다. `assets`는 CD 또는 custom의 선택한 assetSchema manifest이며, custom에 CD 사진 키를 강제하지 않는다. 곡의 제목은 사용자 목록→오디오 title 태그→파일 stem 순으로 읽고 출처를 남긴다. 임의로 곡명을 지어내지 않는다. 제목 표시가 필요한데 정확한 제목이 없으면 파일명 사용 여부를 명확히 한다. 모든 표시를 SKIP했으면 표시를 위한 새 제목 입력을 요구하지 않는다.
+지원 필드: path, title, startSeconds, durationSeconds, captions, captionOriginSeconds, instrumental, vocal, act, artist, assets, plan. 보컬 곡은 원곡에 맞는 JSON/SRT를 준비한다. 각 곡에 [가창 자막](captions.md)의 해시·시계 검증을 적용한다. 연주곡만 instrumental=true로 하고 가사를 생략한다. `vocal`/`act`/`artist`/`plan`은 기존 CD와 그루브 다이얼 requiresArtist 흐름의 이미지 캐스팅·계획이다. `assets`는 CD 또는 custom의 선택한 assetSchema manifest이며, custom에 CD 사진 키를 강제하지 않는다. 곡의 제목은 사용자 목록→오디오 title 태그→파일 stem 순으로 읽고 출처를 남긴다. ID3이 없고 stem에 장르 접두사가 붙었더라도 사용자 또는 곡 메타데이터의 표시 제목이 있으면 단일 곡은 `--title`, 플레이리스트는 track `title`로 그대로 넘긴다. 이는 파일명을 바꾸거나 제목을 임의로 고치는 일이 아니다. 제목 표시가 필요한데 정확한 제목이 없으면 파일명 사용 여부를 명확히 한다. 모든 표시를 SKIP했으면 표시를 위한 새 제목 입력을 요구하지 않는다.
 
 최상위 `casting`은 사용자가 모든 곡에 같은 보컬/편성을 명시할 때만 둔다. 상위 main plan의 casting은 트랙마다 자동 복제하지 않는다. 캐스팅 근거가 없으면 곡별 `vocal:"unknown"`으로 남기며, 장르·음역으로 여성/남성을 결정하지 않는다.
 

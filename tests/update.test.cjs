@@ -102,7 +102,7 @@ test('oversized release response keeps its verification error instead of becomin
 })
 
 test('an unmanaged source checkout compares its manifest version before reporting an update', async () => temporary(async base => {
-  const nativeFetch = global.fetch; const target = path.join(base, 'unmanaged-skills'); const version = '0.1.0'; const asset = `MusicRoad-Skills-${version}.zip`
+  const nativeFetch = global.fetch; const target = path.join(base, 'unmanaged-skills'); const version = require('../manifest.json').version; const asset = `MusicRoad-Skills-${version}.zip`
   global.fetch = async () => new Response(JSON.stringify([{ tag_name: `v${version}`, draft: false, prerelease: false, html_url: `https://github.com/roadkwonai/music-road-skills/releases/tag/v${version}`, assets: [{ name: asset, size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/${asset}` }, { name: 'SHA256SUMS.txt', size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/SHA256SUMS.txt` }] }]), { status: 200 })
   try { const result = await execute('check', { target }); assert.equal(result.installed, false); assert.equal(result.currentVersion, version); assert.equal(result.available, false) } finally { global.fetch = nativeFetch }
 }))

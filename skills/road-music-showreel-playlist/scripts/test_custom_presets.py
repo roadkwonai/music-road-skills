@@ -171,6 +171,75 @@ class CustomPresetChecks(unittest.TestCase):
         config = cd.json.loads((output / 'reel/config.js').read_text().removeprefix('window.PLAYLIST_CONFIG=').strip().removesuffix(';'))
         self.assertEqual([track['motionMode'] for track in config['playlist']['tracks']], ['soft', 'drive'])
 
+    def test_required_word_timing_is_inherited_and_checked_before_output(self):
+        plan = cd.genre_plan('발라드', style='groove-dial', require_word_timing=True)
+        self.assertEqual(plan['wordTiming'], {
+            'required': True,
+            'presetId': 'groove-dial',
+            'source': 'cues[].words',
+            'verificationScope': 'presentation-visible-vocal-cues',
+            'allowEmptyVisibleCues': True,
+        })
+        with self.assertRaisesRegex(ValueError, 'groove-dial'):
+            cd.genre_plan('발라드', style='neon-afterhours', require_word_timing=True)
+
+        audio = self.root / 'word-timing.wav'
+        subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i', 'sine=frequency=440:sample_rate=48000:duration=12.5', '-ac', '2', '-c:a', 'pcm_s16le', str(audio)], check=True)
+        plan_path = self.root / 'word-timing-plan.json'; cd.write(plan_path, plan)
+
+        def create_args(captions, output, duration=None):
+            return argparse.Namespace(plan=str(plan_path), style=None, playlist=None, music=str(audio), captions=str(captions), instrumental=False,
+                display=None, selection=None, title=None, assets=None, demo_assets=True, start=0, duration=duration, caption_origin=None,
+                out=str(output), require_word_timing=False)
+
+        missing = self.root / 'missing-words.json'
+        cd.write(missing, {'schemaVersion': 1, 'source': {'sha256': cd.digest(audio)}, 'cues': [{'id': 1, 'startSeconds': 1, 'endSeconds': 2, 'text': '가사'}]})
+        missing_output = self.root / 'missing-words-project'
+        with self.assertRaisesRegex(ValueError, '현재 화면.*words'):
+            cd.create(create_args(missing, missing_output))
+        self.assertFalse(missing_output.exists())
+
+        incomplete = self.root / 'incomplete-words.json'
+        cd.write(incomplete, {'schemaVersion': 1, 'source': {'sha256': cd.digest(audio)}, 'cues': [
+            {'id': 1, 'startSeconds': 1, 'endSeconds': 2, 'text': '첫 가사', 'words': [{'text': '첫', 'startSeconds': 1, 'endSeconds': 1.4}, {'text': '가사', 'startSeconds': 1.4, 'endSeconds': 2}]},
+            {'id': 2, 'startSeconds': 2, 'endSeconds': 3, 'text': '둘째 가사'},
+        ]})
+        incomplete_output = self.root / 'incomplete-words-project'
+        with self.assertRaisesRegex(ValueError, '현재 화면.*words'):
+            cd.create(create_args(incomplete, incomplete_output))
+        self.assertFalse(incomplete_output.exists())
+
+        valid = self.root / 'valid-words.json'
+        cd.write(valid, {'schemaVersion': 1, 'source': {'sha256': cd.digest(audio)}, 'cues': [{'id': 1, 'startSeconds': 1, 'endSeconds': 2, 'text': '가사', 'words': [{'text': '가사', 'startSeconds': 1, 'endSeconds': 2}]}]})
+        valid_output = self.root / 'valid-words-project'
+        result = cd.create(create_args(valid, valid_output))
+        self.assertEqual(result['wordTiming']['visibleCueCount'], 1)
+        self.assertTrue(result['wordTiming']['required'])
+        self.assertEqual(cd.read(valid_output / 'production.json')['wordTiming'], result['wordTiming'])
+
+        intro = self.root / 'intro-only.json'
+        cd.write(intro, {'schemaVersion': 1, 'source': {'sha256': cd.digest(audio)}, 'cues': [{'id': 1, 'startSeconds': 12.1, 'endSeconds': 12.4, 'text': '가사', 'words': [{'text': '가사', 'startSeconds': 12.1, 'endSeconds': 12.4}]}]})
+        intro_output = self.root / 'intro-only-project'
+        intro_result = cd.create(create_args(intro, intro_output, duration=12))
+        self.assertEqual(intro_result['wordTiming']['visibleCueCount'], 0)
+        self.assertTrue(intro_result['wordTiming']['allowEmptyVisibleCues'])
+
+        optional_plan_path = self.root / 'optional-word-timing-plan.json'; cd.write(optional_plan_path, cd.genre_plan('발라드', style='groove-dial'))
+        mixed_playlist = self.root / 'mixed-word-timing-playlist.json'
+        cd.write(mixed_playlist, {'schemaVersion': 1, 'tracks': [
+            {'path': audio.name, 'captions': valid.name, 'plan': plan_path.name},
+            {'path': audio.name, 'captions': missing.name},
+        ]})
+        mixed_output = self.root / 'mixed-word-timing-project'
+        mixed_result = cd.create(argparse.Namespace(plan=str(optional_plan_path), style=None, playlist=str(mixed_playlist), music=None, captions=None, instrumental=False,
+            display=None, selection=None, title=None, assets=None, demo_assets=True, start=0, duration=None, caption_origin=None,
+            out=str(mixed_output), require_word_timing=False))
+        self.assertNotIn('required', mixed_result['wordTiming'])
+        mixed_tracks = cd.read(mixed_output / 'playlist.json')['tracks']
+        self.assertEqual(mixed_tracks[0]['wordTiming']['verificationScope'], 'presentation-visible-vocal-cues')
+        self.assertEqual(mixed_tracks[0]['wordTiming']['visibleCueCount'], 1)
+        self.assertNotIn('wordTiming', mixed_tracks[1])
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
