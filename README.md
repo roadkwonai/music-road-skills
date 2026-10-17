@@ -7,7 +7,7 @@
 <p align="center"><strong>Road Music에서 만든 음악을 보고, 듣고, 고른 뒤 모션그래픽 영상으로 완성하는 공개 Codex 스킬 묶음입니다.</strong></p>
 
 <p align="center">
-  <a href="https://github.com/roadkwonai/music-road-skills/releases/tag/v0.1.0"><img src="https://img.shields.io/badge/release-v0.1.0-172942?style=flat-square" alt="Release v0.1.0"></a>
+  <a href="https://github.com/roadkwonai/music-road-skills/releases/tag/v0.1.1"><img src="https://img.shields.io/badge/release-v0.1.1-172942?style=flat-square" alt="Release v0.1.1"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-172942?style=flat-square" alt="MIT License"></a>
   <a href="docs/install.md"><img src="https://img.shields.io/badge/runtime-Node.js%2024-172942?style=flat-square" alt="Node.js 24"></a>
   <a href="docs/html-studio.md"><img src="https://img.shields.io/badge/studio-local%20HTML-172942?style=flat-square" alt="local HTML Studio"></a>
@@ -71,6 +71,8 @@ git clone https://github.com/roadkwonai/music-road-skills.git
 cd music-road-skills
 node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 ```
+
+위 상대 경로와 `$PWD`는 바로 앞의 `cd music-road-skills`로 들어간 저장소 루트 기준이다. 설치본을 다른 작업 디렉터리에서 관리할 때는 현재 읽은 `SKILL.md`의 실제 절대 경로를 사용한다.
 
 설치 도구는 기본적으로 `CODEX_HOME/skills`(없으면 `~/.codex/skills`)를 대상으로 하며, 기존 대상은 먼저 보존용 백업을 만듭니다. 영상 엔진, AI 모델, 음원은 설치하지 않습니다. [설치 상세](docs/install.md)
 

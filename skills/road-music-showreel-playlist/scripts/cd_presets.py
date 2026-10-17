@@ -29,6 +29,7 @@ NAMES = dict(zip(ASSETS, ('photo-a.png', 'photo-b.png', 'photo-c.png', 'case.png
 STOPS = (0, 3.692, 5.712, 8.963, 10.17)
 GENRES = ROOT / 'assets/genre-profiles.json'
 MOTION_MODES = ('balanced', 'drive', 'soft')
+WORD_TIMING_PRESET_ID = 'groove-dial'
 
 
 def read(path):
@@ -104,6 +105,29 @@ def default_assets(spec):
 
 def is_cd_asset_planner(spec):
     return category(spec) == 'rhythm-cd' and spec.get('genrePlanner') == 'cd-assets'
+
+
+def required_word_timing_metadata(spec, required):
+    if not isinstance(required, bool):
+        raise ValueError('require_word_timing은 bool 필요')
+    if not required:
+        return None
+    if spec['id'] != WORD_TIMING_PRESET_ID:
+        raise ValueError('--require-word-timing은 words 검증이 된 groove-dial 프리셋에서만 지원')
+    return {
+        'required': True,
+        'presetId': WORD_TIMING_PRESET_ID,
+        'source': 'cues[].words',
+        'verificationScope': 'presentation-visible-vocal-cues',
+        'allowEmptyVisibleCues': True,
+    }
+
+
+def word_timing_summary(cues, requirement=None):
+    summary = {'cueCount': len(cues), 'timedCueCount': sum(bool(c.get('words')) for c in cues), 'timedUnitCount': sum(len(c.get('words', [])) for c in cues)}
+    if requirement:
+        summary.update(requirement, visibleCueCount=len(cues))
+    return summary
 
 
 def validate_cd_visual(spec):
@@ -256,7 +280,7 @@ def resolve_genres(text, profiles):
     return matched, unmatched
 
 
-def genre_plan(genre, brief='', artist='', instrumental=False, style=None, look=None, vocal=None, act='auto', host='codex'):
+def genre_plan(genre, brief='', artist='', instrumental=False, style=None, look=None, vocal=None, act='auto', host='codex', require_word_timing=False):
     if host not in ('codex', 'antigravity', 'antigravity-cli'):
         raise ValueError('host: codex/antigravity/antigravity-cli 필요')
     image_tool, image_mode = ('image_gen', 'built-in') if host == 'codex' else ('antigravity-native', 'host-native')
@@ -297,6 +321,7 @@ def genre_plan(genre, brief='', artist='', instrumental=False, style=None, look=
             if name in look:
                 effective[name] = look[name]
     validate_preset(effective)
+    word_timing = required_word_timing_metadata(effective, require_word_timing)
     directions = [p['photoDirection'] if i == 0 and style is None else p['sceneDirection'] for i, p in enumerate(profiles)]
     direction = look.get('photoDirection') or ' '.join(directions) or f'음악 스타일 {genre}를 곡 브리프에 맞는 촬영 매체와 공간으로 해석한다.'
     artist_brief = artist.strip() or (casting['subject'] if casting['vocal'] != 'unknown' or act != 'auto' else ' '.join(p['artistDirection'] for p in profiles) or '음악에 맞는 가상의 성인 아티스트')
@@ -326,6 +351,8 @@ def genre_plan(genre, brief='', artist='', instrumental=False, style=None, look=
     plan = {'schemaVersion': 1, 'type': 'showreel-cd-genre-plan', 'genre': {'input': genre, 'mode': mode, 'matched': [{'id': p['id'], 'name': p['name']} for p in profiles], 'unlisted': unlisted}, 'brief': brief, 'artistBrief': artist_brief, 'instrumental': bool(instrumental), 'basePresetId': base['id'], 'selection': {'explicitStyle': style is not None, 'customDirectionNeedsAdaptation': bool(unlisted), 'defaultRule': '사용자 지정 스타일 우선. 미지정은 먼저 적은 장르를 기본값으로 삼고 혼합 장르와 브리프로 보완. 미등록 장르는 Codex가 곡을 해석해 화면과 촬영 방향을 구체화.'}, 'effectivePreset': effective, 'motionGuidance': [p['motionDirection'] for p in profiles], 'imageGeneration': {'host': host, 'requiredTool': image_tool, 'mode': image_mode, 'status': 'prompts-ready-not-generated', 'assets': assets}, 'captions': {'required': not instrumental, 'timing': 'actual-vocal-onset; preserve original clock; full line visible at cue onset'}, 'renderEngine': 'native-showreel', 'previewNote': '저장된 미리보기는 화면 스타일 참고이며 새 곡의 신규 이미지/영상 생성 완료를 뜻하지 않음.'}
     plan['lookOverrides'] = copy.deepcopy(look)
     plan['casting'] = casting
+    if word_timing:
+        plan['wordTiming'] = word_timing
     return plan
 
 
@@ -336,7 +363,7 @@ def plan_command(a):
         selection = load_selection(a.selection)
         if a.style and select(a.style)[0]['id'] != selection['value']['styleId']:
             raise ValueError('--style과 --selection의 styleId가 다릅니다')
-    plan = genre_plan(a.genre, a.brief, a.artist, a.instrumental, selection['value']['styleId'] if selection else a.style, read(a.look) if a.look else None, getattr(a, 'vocal', None), getattr(a, 'act', 'auto'), getattr(a, 'host', 'codex'))
+    plan = genre_plan(a.genre, a.brief, a.artist, a.instrumental, selection['value']['styleId'] if selection else a.style, read(a.look) if a.look else None, getattr(a, 'vocal', None), getattr(a, 'act', 'auto'), getattr(a, 'host', 'codex'), getattr(a, 'require_word_timing', False))
     if getattr(a, 'display', None):
         plan['display'] = normalize_display(read(a.display))
     elif selection:
@@ -348,7 +375,7 @@ def plan_command(a):
         target.parent.mkdir(parents=True, exist_ok=True)
         with target.open('x', encoding='utf-8') as stream:
             stream.write(json.dumps(plan, ensure_ascii=False, indent=2, allow_nan=False) + '\n')
-        return {'plan': str(target), 'genre': plan['genre'], 'preset': plan['basePresetId'], 'imageTool': plan['imageGeneration']['requiredTool'], 'host': plan['imageGeneration']['host'], 'imagesGenerated': False}
+        return {'plan': str(target), 'genre': plan['genre'], 'preset': plan['basePresetId'], 'imageTool': plan['imageGeneration']['requiredTool'], 'host': plan['imageGeneration']['host'], 'imagesGenerated': False, **({'wordTiming': plan['wordTiming']} if 'wordTiming' in plan else {})}
     return plan
 
 
@@ -364,6 +391,10 @@ def load_plan(path):
     if 'casting' in plan and not isinstance(plan['casting'], dict):
         raise ValueError('계획 casting은 객체 필요')
     validate_preset(plan['effectivePreset'])
+    word_timing = plan.get('wordTiming')
+    if word_timing is not None:
+        if not isinstance(word_timing, dict) or word_timing.get('required') is not True or word_timing != required_word_timing_metadata(plan['effectivePreset'], True):
+            raise ValueError('계획 wordTiming은 지원되는 필수 words 검증 설정 필요')
     return plan
 
 
@@ -451,7 +482,7 @@ def map_caption_words(words, text, cue_start, cue_end, origin, start, duration):
     return result
 
 
-def map_captions(doc, start, duration, origin=None):
+def map_captions(doc, start, duration, origin=None, require_word_timing=False):
     origin = number(doc.get('source', {}).get('cutStartSeconds', 0) if origin is None else origin, 'caption origin')
     result, previous = [], 0
     for index, cue in enumerate(doc['cues']):
@@ -476,8 +507,10 @@ def map_captions(doc, start, duration, origin=None):
         if a < 0 or b > duration:
             item['clippedByPresentation'] = True
         result.append(item)
-    if not result:
+    if not result and not require_word_timing:
         raise ValueError('선택한 음악 구간과 겹치는 자막이 없음')
+    if require_word_timing and any(not cue.get('words') for cue in result):
+        raise ValueError('현재 화면의 모든 가창 자막 cue에 검증된 words 필요')
     return result, origin
 
 
@@ -493,7 +526,7 @@ def srt(cues):
     return '\n\n'.join(f'{i}\n{stamp(c["startSeconds"])} --> {stamp(c["endSeconds"])}\n{c["text"]}' for i, c in enumerate(cues, 1)) + ('\n' if cues else '')
 
 
-def song_inputs(items, base, default_instrumental=False, default_casting=None, asset_schema_value=None):
+def song_inputs(items, base, default_instrumental=False, default_casting=None, asset_schema_value=None, require_word_timing=False):
     """음원/가사 입력을 모두 검증한 뒤에만 출력 프로젝트를 만든다."""
     if not isinstance(items, list) or not items:
         raise ValueError('playlist.tracks에 한 곡 이상 필요')
@@ -504,6 +537,8 @@ def song_inputs(items, base, default_instrumental=False, default_casting=None, a
             raise ValueError('곡 입력은 path/title/컷/자막/instrumental/vocal/act/artist/assets/plan 지원')
         artist_plan_path = (base / item['plan']).resolve(strict=True) if isinstance(item.get('plan'), str) else None
         artist_plan = load_plan(artist_plan_path) if artist_plan_path else None
+        track_word_timing_requirement = (artist_plan or {}).get('wordTiming') if not require_word_timing else None
+        track_requires_word_timing = require_word_timing or bool(track_word_timing_requirement and track_word_timing_requirement.get('required'))
         music = (base / item['path']).resolve(strict=True)
         if music not in cache:
             media = probe(music)
@@ -531,7 +566,7 @@ def song_inputs(items, base, default_instrumental=False, default_casting=None, a
         if expected and expected != music_hash:
             raise ValueError('자막 원곡 SHA256과 입력 음악 불일치. 해당 원곡을 쓰거나 자막 출처를 다시 검증')
         if captions:
-            map_captions(doc, start, duration, item.get('captionOriginSeconds'))
+            map_captions(doc, start, duration, item.get('captionOriginSeconds'), track_requires_word_timing)
         tags = media['format'].get('tags', {})
         metadata_title = tags.get('title') or tags.get('TITLE')
         title = item.get('title', metadata_title or music.stem)
@@ -542,11 +577,11 @@ def song_inputs(items, base, default_instrumental=False, default_casting=None, a
             raise ValueError('곡별 assets/plan은 파일 경로 문자열 필요')
         asset_manifest = read(asset_manifest_path) if asset_manifest_path else None
         track_assets = asset_paths(asset_manifest, asset_manifest_path.parent, asset_schema_value) if asset_manifest_path else None
-        tracks.append({'id': f'track-{index + 1:03d}', 'title': title.strip(), 'titleSource': 'provided' if 'title' in item else 'metadata' if metadata_title else 'filename', 'path': music, 'sha256': music_hash, 'start': start, 'duration': duration, 'instrumental': instrumental, 'captions': captions, 'captionDoc': doc, 'captionOrigin': item.get('captionOriginSeconds'), 'casting': casting, 'trackAssets': track_assets, 'assetManifest': asset_manifest, 'assetManifestPath': asset_manifest_path, 'artistPlan': artist_plan, 'artistPlanPath': artist_plan_path})
+        tracks.append({'id': f'track-{index + 1:03d}', 'title': title.strip(), 'titleSource': 'provided' if 'title' in item else 'metadata' if metadata_title else 'filename', 'path': music, 'sha256': music_hash, 'start': start, 'duration': duration, 'instrumental': instrumental, 'captions': captions, 'captionDoc': doc, 'captionOrigin': item.get('captionOriginSeconds'), 'requireWordTiming': track_requires_word_timing, 'wordTimingRequirement': track_word_timing_requirement, 'casting': casting, 'trackAssets': track_assets, 'assetManifest': asset_manifest, 'assetManifestPath': asset_manifest_path, 'artistPlan': artist_plan, 'artistPlanPath': artist_plan_path})
     return tracks
 
 
-def prepare_playlist(tracks, output, multiple):
+def prepare_playlist(tracks, output, multiple, require_word_timing=False):
     paths, records, cues, offset_samples = [], [], [], 0
     for track in tracks:
         target = output / ('audio/tracks/' + track['id'] + '.wav') if multiple else output / 'audio/music/music.wav'
@@ -559,7 +594,7 @@ def prepare_playlist(tracks, output, multiple):
         duration = samples / 48000
         start, end = offset_samples / 48000, (offset_samples + samples) / 48000
         doc = track['captionDoc']
-        local_cues, origin = map_captions(doc, track['start'], duration, track['captionOrigin']) if track['captions'] else ([], 0)
+        local_cues, origin = map_captions(doc, track['start'], duration, track['captionOrigin'], require_word_timing or track['requireWordTiming']) if track['captions'] else ([], 0)
         for cue in local_cues:
             item = copy.deepcopy(cue)
             item.update(startSeconds=max(start, start + cue['startSeconds']), endSeconds=min(end, start + cue['endSeconds']))
@@ -569,6 +604,8 @@ def prepare_playlist(tracks, output, multiple):
                 item.update(id=f'{track["id"]}:{cue["id"]}', sourceCueId=cue['id'], trackId=track['id'])
             cues.append(item)
         record = {'id': track['id'], 'title': track['title'], 'titleSource': track['titleSource'], 'startSeconds': start, 'endSeconds': end, 'durationSeconds': duration, 'startSample': offset_samples, 'endSample': offset_samples + samples, 'instrumental': track['instrumental'], 'captionStatus': doc.get('status', 'provided-timing-review-unconfirmed'), 'source': {'path': str(track['path']), 'sha256': track['sha256'], 'cutStartSeconds': track['start'], 'cutEndSeconds': track['start'] + duration, 'requestedDurationSeconds': track['duration']}, 'audio': {'path': str(target.relative_to(output)), 'sha256': digest(target), 'samples': samples}, 'inputTiming': {'path': str(track['captions']), 'sha256': digest(track['captions']), 'originSeconds': origin} if track['captions'] else None}
+        if track['wordTimingRequirement']:
+            record['wordTiming'] = word_timing_summary(local_cues, track['wordTimingRequirement'])
         record['casting'] = track['casting']
         paths.append(target); records.append(record); offset_samples += samples
     if multiple:
@@ -603,6 +640,11 @@ def create(a):
         raise ValueError('비CD 프리셋은 plan --genre를 지원하지 않습니다. --style과 --assets, 곡별 casting으로 create하세요')
     if plan and (spec['id'] != base['id'] or plan['basePresetId'] != base['id']):
         raise ValueError('장르 계획과 지정 스타일 불일치. plan을 다시 만들 것')
+    requested_word_timing = getattr(a, 'require_word_timing', False)
+    if not isinstance(requested_word_timing, bool):
+        raise ValueError('require_word_timing은 bool 필요')
+    require_word_timing = requested_word_timing or bool((plan or {}).get('wordTiming', {}).get('required'))
+    word_timing_requirement = required_word_timing_metadata(spec, require_word_timing)
     playlist_path = Path(a.playlist).resolve(strict=True) if getattr(a, 'playlist', None) else None
     instrumental = a.instrumental or bool(plan and plan.get('instrumental'))
     if not playlist_path and ((instrumental and a.captions) or (not instrumental and not a.captions)):
@@ -629,13 +671,13 @@ def create(a):
         album_cast = playlist_input.get('casting')
         if album_cast is not None and not isinstance(album_cast, dict):
             raise ValueError('playlist.casting은 보컬/편성 설정 객체 필요')
-        tracks = song_inputs(playlist_input.get('tracks'), playlist_path.parent, instrumental, album_cast, schema)
+        tracks = song_inputs(playlist_input.get('tracks'), playlist_path.parent, instrumental, album_cast, schema, require_word_timing)
     else:
         item = {'path': a.music, 'startSeconds': a.start, 'instrumental': instrumental}
         for field, value in [('durationSeconds', a.duration), ('captions', a.captions), ('captionOriginSeconds', a.caption_origin), ('title', getattr(a, 'title', None))]:
             if value is not None:
                 item[field] = value
-        tracks = song_inputs([item], Path.cwd(), instrumental, (plan or {}).get('casting'), schema)
+        tracks = song_inputs([item], Path.cwd(), instrumental, (plan or {}).get('casting'), schema, require_word_timing)
     for track in tracks:
         if track['artistPlan']:
             planned = track['artistPlan']['effectivePreset']
@@ -663,7 +705,7 @@ def create(a):
     if plan:
         write(output / 'genre-plan.json', plan)
     actual_audio = output / 'audio/music/music.wav'
-    playlist, cues = prepare_playlist(tracks, output, bool(playlist_path))
+    playlist, cues = prepare_playlist(tracks, output, bool(playlist_path), require_word_timing)
     duration = number(playlist['durationSeconds'], '실제 전체 길이', 12)
     for track, record in zip(tracks, playlist['tracks']):
         record['castingReview'] = track['castingReview']
@@ -728,7 +770,7 @@ def create(a):
     warnings = [{'id': c['id'], 'durationSeconds': round(c['endSeconds'] - c['startSeconds'], 6), 'reason': 'clip-cut-short-caption'} for c in cues if c.get('clippedByPresentation') and c['endSeconds'] - c['startSeconds'] < .5]
     manifest = {'schemaVersion': 1, 'presetId': spec['id'], 'presetSha256': digest(output / 'preset.json'), 'source': caption_doc['source'], 'audio': {'path': 'audio/music/music.wav', 'sha256': digest(actual_audio), 'sampleRate': 48000}, 'durationSeconds': duration, 'renderDurationSeconds': render_duration, 'fps': 30, 'expectedFrames': frame_count, 'framePaddingSeconds': render_duration - duration, 'captionStatus': caption_doc['status'], 'captionWarnings': warnings, 'demoAssets': a.demo_assets, 'assets': {role: {'source': str(path), 'sha256': digest(path)} for role, path in assets.items()}}
     manifest.update(instrumental=all(t['instrumental'] for t in playlist['tracks']), genre=plan['genre'] if plan else None, genrePlanSha256=digest(plan_path) if plan_path else None, display=display, displaySource='argument' if display_path else 'selection' if selection else 'plan' if plan and 'display' in plan else 'legacy-default', selectionSource={'path': str(selection['path']), 'sha256': selection['sha256']} if selection else None, playlistSha256=digest(output / 'playlist.json'), playlistInput=playlist_input_record, trackCount=len(tracks), spectrumAudioSha256=digest(output / 'audio/mix.wav') if spectrum else None)
-    word_timing = {'cueCount': len(cues), 'timedCueCount': sum(bool(c.get('words')) for c in cues), 'timedUnitCount': sum(len(c.get('words', [])) for c in cues)}
+    word_timing = word_timing_summary(cues, word_timing_requirement)
     manifest['wordTiming'] = word_timing
     write(output / 'production.json', manifest)
     return {'project': str(output), 'preset': spec['id'], 'trackCount': len(tracks), 'display': display, 'captions': len(cues), 'wordTiming': word_timing, 'captionStatus': caption_doc['status'], 'captionWarnings': warnings, 'demoAssets': a.demo_assets, 'next': 'render --project ' + str(output)}
@@ -861,6 +903,7 @@ def main():
     p.add_argument('--display', help='스펙트럼/목록/현재곡/채널명 표시 옵션 JSON (선택값 변경 시 우선 적용)')
     p.add_argument('--selection', help='choose가 만든 request.json; style/display 자동 적용')
     p.add_argument('--instrumental', action='store_true'); p.add_argument('--out')
+    p.add_argument('--require-word-timing', action='store_true')
     p = subs.add_parser('show'); p.add_argument('style')
     p = subs.add_parser('catalog'); p.add_argument('--out')
     p = subs.add_parser('choose'); p.add_argument('--out', required=True)
@@ -877,6 +920,7 @@ def main():
     p.add_argument('--assets'); p.add_argument('--demo-assets', action='store_true')
     p.add_argument('--start', type=float, default=0); p.add_argument('--duration', type=float)
     p.add_argument('--caption-origin', type=float)
+    p.add_argument('--require-word-timing', action='store_true')
     p = subs.add_parser('render'); p.add_argument('--project', required=True); p.add_argument('--preview', action='store_true')
     a = parser.parse_args()
     try:

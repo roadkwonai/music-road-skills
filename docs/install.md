@@ -17,6 +17,8 @@ cd music-road-skills
 node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 ```
 
+위 상대 경로와 `$PWD`는 `cd music-road-skills` 뒤의 저장소 루트 기준입니다. 설치본을 다른 작업 디렉터리에서 관리할 때는 현재 읽은 `SKILL.md`의 실제 절대 경로를 씁니다.
+
 기본 대상은 `CODEX_HOME/skills`이며 `CODEX_HOME`이 없으면 `~/.codex/skills`입니다. 이미 같은 이름의 스킬이 있으면 설치 도구가 원본을 먼저 보존합니다. 설치 뒤 새 Codex 세션에서 스킬 이름을 호출합니다.
 
 ## Antigravity에서 사용

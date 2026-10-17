@@ -369,7 +369,7 @@ class Session:
                 'modeLabel': MODES.get(self.selection.get('mode'), MODES['showreel-motion'])[0],
                 'modes': [{'id': key, 'name': name, 'description': desc} for key, (name, desc) in MODES.items()],
                 'samples': samples, 'styles': cards, 'selection': self.selection, 'feedback': self.feedback,
-                'media': {'music': ({'name': music['name'], 'url': f'/media/music?token={quote(self.token, safe="")}'} if music else None), 'review': review},
+                'media': {'music': ({'name': music['name'], 'sha256': music['sha256'], 'url': f'/media/music?token={quote(self.token, safe="")}'} if music else None), 'review': review},
                 'jizura': {'available': (DEFAULT_JIZURA_ROOT / 'ko' / 'index.html').is_file(), 'script': str(JIZURA_SCRIPT)}}
 
     def save_selection(self, value):

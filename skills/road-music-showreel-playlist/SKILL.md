@@ -7,7 +7,7 @@ description: 음악·장르·가사를 해석해 분위기와 실제 비트·강
 
 음악의 정서와 가사 의미를 색·형태·모티프로 해석하고, 실제 타격음과 강약에 반응하는 모션그래픽을 원곡 전체 길이로 만든다. 음악 해석은 Codex, 신호 분석·시간 기반 합성·렌더는 Showreel이 맡는다. 가사 원문과 가창 시각을 보존하고, 큰 움직임과 읽기 정지의 대비로 리듬을 표현한다.
 
-시작 시에는 [사용 시 업데이트 확인](../road-music-skills-update/references/use-time-check.md)을 한 번만 적용한다.
+시작 시에는 현재 읽은 이 `SKILL.md`의 실제 절대 부모 경로를 `PLAYLIST_SKILL`에 넣어 [사용 시 업데이트 확인](../road-music-skills-update/references/use-time-check.md)을 한 번만 적용한다.
 
 스타일 선택을 맡긴 일반 모션그래픽 요청은 **리듬 캔버스**의 비 CD 구간 연출로 시작한다. 사용자가 고른 형식·색·이미지·기존 프리셋은 우선한다. 음악만 받았다고 CD·가수 사진을 강제하지 않는다. CD 5종(가을 아카이브·누아르 필름·네온 애프터아워·로파이 노트북·크롬 프리즘)과 리듬 CD 그루브 다이얼도 계속 선택할 수 있다. 실제 명칭/지원값은 `assets/presets/*/preset.json`, 미리보기 검수 상태는 `preview.status`가 기준이다.
 
@@ -23,7 +23,7 @@ ChatGPT/Codex에서는 내장 `image_gen`, Antigravity에서는 현재 세션의
 
 ## HTML 제작·검수 화면
 
-실제 영상 제작은 [공통 HTML 영상 제작실](../road-music-video-studio/SKILL.md)을 함께 사용한다. 스타일과 음악을 보고·들으며 고르고, 기획/이미지·부분 영상·최종 결과·수정 의견을 같은 프로젝트 화면에 게시한다. 이미 받은 선택은 유지하고 저장된 selection.json/feedback.json을 실제로 읽어 이 스킬의 입력에 반영한다. 표시용 페이지 생성이나 버튼 저장을 렌더 완료로 보고하지 않는다. HTML은 제작·검수 인터페이스이며, 엔진별 실제 생성·편집·렌더와 원곡/가사 시계는 아래 절차가 맡는다.
+실제 영상 제작은 [공통 HTML 영상 제작실](../road-music-video-studio/SKILL.md)을 함께 사용한다. 스타일과 음악을 보고·들으며 고르고, 기획/이미지·부분 영상·최종 결과·수정 의견을 같은 프로젝트 화면에 게시한다. `publish`는 검수 등록 전체를 manifest로 교체하므로, 후속 게시에서도 유지할 기존 스토리보드·음원·영상·자막을 모두 manifest에 다시 넣는다. 이미 받은 선택은 유지하고 저장된 selection.json/feedback.json을 실제로 읽어 이 스킬의 입력에 반영한다. 표시용 페이지 생성이나 버튼 저장을 렌더 완료로 보고하지 않는다. HTML은 제작·검수 인터페이스이며, 엔진별 실제 생성·편집·렌더와 원곡/가사 시계는 아래 절차가 맡는다.
 
 ## 음악 중심 제작
 
@@ -59,8 +59,11 @@ CLI에서 HTML을 보고 고르려는 요청은 먼저 [스타일 선택 화면]
 ## 목록·선택
 
 ```bash
-PLAYLIST_SKILL="${CODEX_HOME:-$HOME/.codex}/skills/road-music-showreel-playlist"
+PLAYLIST_SKILL="/absolute/skills/road-music-showreel-playlist" # 현재 읽은 이 SKILL.md의 실제 부모
 PLAYLIST_PY="${SHOWREEL_PYTHON:-python3}"
+SKILLS_PARENT="$(dirname "$PLAYLIST_SKILL")"
+UPDATE_SKILL="$SKILLS_PARENT/road-music-skills-update"
+node "$UPDATE_SKILL/scripts/manage.cjs" check --target "$SKILLS_PARENT"
 "$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" list
 "$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" show '네온'
 "$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" catalog
@@ -70,7 +73,7 @@ PLAYLIST_PY="${SHOWREEL_PYTHON:-python3}"
 
 미리보기 요청이면 반환된 `assets/catalog.html`을 링크/패널로 보여준다. 실제 영상 카드에서 인트로/CD 구간 탐색과 장르 검색을 할 수 있다. 추천 장르는 연출 적합도이며 기존 4개 CD 미리보기는 같은 록 발라드, 크롬 프리즘 미리보기는 18초 무음 모션 검수본이다. 미렌더 프리셋을 재생 가능하다고 하지 않는다.
 
-이름이 지정되면 해당 프리셋을 선택한다. 보고 고르려는 요청은 HTML 선택을 먼저 받는다. 제작 선택을 위임했다면 곡의 장르·명시된 보컬 구성·무드로 고르고 이유를 기록한다. 보컬 성별·인원은 장르나 음역으로 추정하지 않는다. 제작을 위임한 요청을 목록 안내만으로 끝내지 않는다.
+이름이 지정되면 해당 프리셋을 선택한다. 보고 고르려는 요청은 HTML 선택을 먼저 받는다. 제작 선택을 위임했다면 곡의 장르·명시된 보컬 구성·무드로 고르고 이유를 기록한다. **주황색 단어/어절 진행 추적**이 명시된 필수 요구면 검증된 `cues[].words`가 있는 그루브 다이얼을 추천하고, 계획에 그 필수 추적 요구를 기록한다. 사용자가 다른 프리셋을 명시 선택했다면 임의로 바꾸거나 줄 밑줄을 동등한 대체로 취급하지 말고 차이와 선택지를 알린다. 보컬 성별·인원은 장르나 음역으로 추정하지 않는다. 제작을 위임한 요청을 목록 안내만으로 끝내지 않는다.
 
 ## CD 계열 장르 계획
 
@@ -83,6 +86,8 @@ PLAYLIST_PY="${SHOWREEL_PYTHON:-python3}"
 구체적인 색·재질 요청은 `--brief`만으로 끝내지 말고 [look 설정](references/genres.md)의 팔레트·재질 JSON을 만들어 `plan --look`으로 적용한다. 프롬프트와 실제 영상의 색/자막/회전 설정이 같은 사용자 의도를 따르게 한다.
 
 ## 그루브 다이얼
+
+어절 추적이 필수이면 `plan --require-word-timing`으로 요구를 기록한다. 이 계획을 넘긴 `create`는 요구를 상속하며, 계획 없이 제작할 때는 `create --require-word-timing`을 명시한다. 화면에 보이는 가창 큐의 `words`가 없으면 출력 전에 중단한다. 가창 큐가 없는 인트로 미리보기는 허용하고 실제 가창 싱크 검수 완료로 보고하지 않는다. 입력·검증 범위는 [가창 자막](references/captions.md)을 따른다.
 
 분절 사진 CD → 사진 셔터 → 케이스 조립 인트로와 회전 CD, 후반 카드 뒤집기·재배치를 제공한다. 선택한 음악의 실제 타격음에 반응하며 `soft / balanced / drive` 세 강도를 쓴다. 36개 장르의 기본 미술·모션을 지원하고 혼합·목록 밖 장르는 브리프로 보완한다. K-POP·현대 팝의 깨끗한 크롬부터 빈티지·레트로 질감까지 [전용 제작 지침](references/groove-dial.md)의 `plan --style '그루브 다이얼' --look ...`으로 계획한다. “최신 트렌드”라는 주장에는 해당 요청 시점의 실제 조사 근거가 필요하다.
 
@@ -99,7 +104,7 @@ CD가 아닌 프리셋은 `--style <이름> --assets <manifest> --playlist <목�
 1. 원곡 파일과 가사/타이밍 출처를 확인한다. 여러 곡이면 [플레이리스트](references/playlist.md)에 따라 순서·제목·각 원곡 시계를 보존한 tracks 입력을 만든다. MP3만 있으면 [가창 자막](references/captions.md)의 기존 로컬 도구로 초안을 만든다. 원곡과 제공 가사를 보존한다.
 2. CD 계열과 그루브 다이얼은 장르 `plan`의 프롬프트를 곡의 실제 편성/무드와 캐스팅에 맞춘다. [이미지 제작](references/images.md)에 따라 내장 `image_gen`으로 성인 가상 가수/밴드를 설계한다. 같은 곡의 photoA/B/C·케이스·CD 인쇄면에는 같은 인물을 유지하고, 다음 곡은 새 아티스트 자산을 만든다. 커스텀 계열은 선택한 assetSchema와 requiresArtist만 따른다. 유료 API로 임의 전환하지 않는다.
 3. [제작 절차](references/production.md)의 `create --style <프리셋>`으로 새 출력 폴더를 만든다. 기존 CD와 그루브 다이얼은 `--plan <계획.json>`을 지원한다. 표시 답변은 `--display`, 여러 곡은 `--playlist`로 전달한다. 기존 CD와 그루브 다이얼의 곡별 `plan`/`assets`/`vocal`/`act`/`artist`는 경계에서 해당 곡의 커버와 인물로 전환한다. 커스텀은 선택한 템플릿 자산을 그대로 쓰고, 리듬 캔버스는 렌더 전 `motion_direction.py apply`로 구간별 방향을 적용한다. `--demo-assets`는 카탈로그 재현/검증의 명시적 선택이며 캐스팅 일치 증거가 아니다.
-4. 스타일 프레임과 짧은 미리보기로 음악/가사 의미의 반영, 강약 대비·리듬, 자막 대비·시각과 전환 경계를 확인한다. 사진/CD는 피부·종이·유리 질감과 얼굴 잘림/광학 이중상도 고친다. 요청하지 않은 제목·장르명·기술 라벨을 영상에 넣지 않는다.
+4. 스타일 프레임과 짧은 미리보기로 음악/가사 의미의 반영, 강약 대비·리듬, 자막 대비·시각과 전환 경계를 확인한다. 주황 어절 추적을 요구했다면 렌더 전 `create` 응답과 `production.json`의 `wordTiming`으로 현재 가창 큐에 실제 words가 있는지 확인하고, 없으면 흰 문장·밑줄로 대체하지 않는다. 가창 큐가 0개인 인트로 검수는 그 범위를 구분한다. 사진/CD는 피부·종이·유리 질감과 얼굴 잘림/광학 이중상도 고친다. 요청하지 않은 제목·장르명·기술 라벨을 영상에 넣지 않는다.
 5. 본편은 네이티브 `render.mjs`/`finish.py`를 호출하는 `render`로 1920×1080/30fps 제작한다. 여러 곡은 각 원곡 전체를 실제 샘플 수로 이어 긴 본편을 만들며, 구간 미리보기는 최종 본편을 대체하지 않는다. 영상·SRT·타이밍 JSON·설정·편집 프로젝트·이미지 생성 근거를 납품한다. 초안/최종 및 실제 규격을 구분해 보고한다.
 
 렌더러는 한 번에 하나만 실행한다. 스킬 선택과 이미지 생성/렌더는 제작 범위에 포함되지만 외부 게시/전송이나 음악·모델 교체 권한으로 확대하지 않는다.

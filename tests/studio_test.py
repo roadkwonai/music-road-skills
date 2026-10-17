@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import http.client
+from html.parser import HTMLParser
 import io
 import importlib.util
 import json
@@ -97,6 +98,65 @@ class StudioServerTest(unittest.TestCase):
             checked = subprocess.run(['node', '--check', '-'], input=script, text=True, capture_output=True)
             self.assertEqual(checked.returncode, 0, checked.stderr)
 
+    def test_explicit_skip_survives_draft_mode_change(self):
+        template = (SCRIPT.parent.parent / 'assets' / 'studio.html').read_text()
+        source = re.findall(r'<script>(.*?)</script>', template, re.DOTALL)[-1]
+        script = 'const source=' + json.dumps(source) + ';\n' + r'''
+const vm = require('node:vm');
+const elements = new Map(), selected = new Map();
+const get = selector => {
+  if (!selector.startsWith('#')) return selected.get(selector) || null;
+  if (!elements.has(selector)) elements.set(selector, {value:'', checked:false, dataset:{}, classList:{toggle(){},add(){},remove(){}}});
+  return elements.get(selector);
+};
+const context = vm.createContext({window:{__STUDIO_BOOTSTRAP__:{token:'test'}}, document:{querySelector:get,querySelectorAll:()=>[],addEventListener(){}}, fetch:()=>new Promise(()=>{}),structuredClone});
+let musicHTML='', musicWrites=0;
+Object.defineProperty(get('#music'),'innerHTML',{get:()=>musicHTML,set:value=>{musicHTML=value;musicWrites++}});
+vm.runInContext(source, context);
+vm.runInContext("state={host:'codex',mode:'showreel-cd',hasSavedSelection:false,selection:{styleId:null,display:{showSpectrum:null,showQueue:null,showNowPlaying:null,channelName:null}},feedback:{},modes:[],styles:[],samples:{},media:{music:{name:'song.mp3',url:'/media/music',sha256:'first'},review:{}}};draft=startDraft(state);render()",context);
+const initial = get('#display').innerHTML;
+for (const key of ['showSpectrum','showQueue','showNowPlaying']) selected.set(`input[name=${key}]:checked`, {value:'skip'});
+get('#channelSkip').checked=true;
+vm.runInContext("capture();draft.mode='showreel-mv';render()",context);
+const changed=get('#display').innerHTML, musicWritesAfterMode=musicWrites;
+vm.runInContext("state.media.music.sha256='replacement';render()",context);
+console.log(JSON.stringify({initial,changed,musicWritesAfterMode,musicWritesAfterSourceChange:musicWrites}));
+'''
+        checked = subprocess.run(['node', '-e', script], text=True, capture_output=True)
+        self.assertEqual(checked.returncode, 0, checked.stderr)
+        rendered = json.loads(checked.stdout)
+
+        class Inputs(HTMLParser):
+            def __init__(self, markup):
+                super().__init__()
+                self.checked = []
+                self.feed(markup)
+
+            def handle_starttag(self, tag, attrs):
+                values = dict(attrs)
+                if tag == 'input' and 'checked' in values:
+                    self.checked.append(values)
+
+        self.assertEqual(Inputs(rendered['initial']).checked, [])
+        controls = Inputs(rendered['changed']).checked
+        self.assertEqual({item.get('name') for item in controls if item.get('type') == 'radio'},
+                         {'showSpectrum', 'showQueue', 'showNowPlaying'})
+        self.assertTrue(all(item.get('value') == 'skip' for item in controls if item.get('type') == 'radio'))
+        self.assertTrue(any(item.get('id') == 'channelSkip' for item in controls))
+        self.assertEqual(rendered['musicWritesAfterMode'], 1)
+        self.assertEqual(rendered['musicWritesAfterSourceChange'], 2)
+
+    def test_music_identity_changes_even_when_replacement_filename_is_identical(self):
+        initial = self.session.state()['media']['music']
+        self.assertEqual(initial['sha256'], studio.sha256(self.song))
+        replacement = Path(self.temp.name) / 'replacement.mp3'
+        replacement.write_bytes(b'new-song-with-the-same-display-name')
+        self.session.set_music(replacement, external=True, name=self.song.name)
+        changed = self.session.state()['media']['music']
+        self.assertEqual(changed['name'], initial['name'])
+        self.assertEqual(changed['url'], initial['url'])
+        self.assertNotEqual(changed['sha256'], initial['sha256'])
+
     def test_template_escapes_special_filename_characters_in_attributes(self):
         template = (SCRIPT.parent.parent / 'assets' / 'studio.html').read_text()
         function = re.search(r'function esc\(s\)\{[^\n]+\}', template)
@@ -129,6 +189,18 @@ class StudioServerTest(unittest.TestCase):
         for host in ('codex', 'antigravity', 'antigravity-cli'):
             self.assertEqual(studio.Session(str(self.project), host=host).state()['host'], host)
             self.assertEqual(json.loads((self.project / 'selection.json').read_text())['host'], host)
+
+    def test_skip_retains_saved_display_values_when_switching_modes(self):
+        previous = self.selection()
+        previous['display'] = {'showSpectrum': True, 'showQueue': False, 'showNowPlaying': True, 'channelName': '내 채널'}
+        self.session.save_selection(previous)
+        changed = {'host': 'antigravity-cli', 'mode': 'showreel-mv', 'styleId': None,
+                   'display': {key: None for key in previous['display']}}
+        self.session.save_selection(changed)
+        reopened = studio.Session(str(self.project)).state()
+        self.assertEqual(reopened['mode'], 'showreel-mv')
+        self.assertEqual(reopened['selection']['display'], previous['display'])
+        self.assertEqual(reopened['imagePolicy'], {'provider': 'antigravity-native', 'allowPaidModels': False})
 
     def test_mv_and_jizura_cannot_be_coerced_to_cd_preset(self):
         value = self.selection()

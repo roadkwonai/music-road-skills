@@ -2,6 +2,8 @@
 
 업데이트 스킬은 스킬 사용·유지관리 요청에서 한 번만 GitHub Release를 읽기 전용으로 확인하고, 설치된 스킬의 로컬 변경을 보존하면서 명시된 설치만 수행합니다. 정기 자동 확인·자동 설치는 기본값이 아닙니다.
 
+아래 상대 경로와 `$PWD`는 저장소 루트에서 실행할 때만 쓴다. 설치본을 다른 작업 디렉터리에서 관리할 때는 현재 읽은 `SKILL.md`의 실제 절대 경로와 그 부모 target을 쓴다.
+
 ```bash
 # 현재 설치와 원격 Release 비교: 읽기 전용
 node skills/road-music-skills-update/scripts/manage.cjs check
@@ -24,7 +26,7 @@ node skills/road-music-skills-update/scripts/manage.cjs watch
 node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 ```
 
-기본 설치 대상은 `CODEX_HOME/skills` 또는 `~/.codex/skills`입니다. 프로그래밍 연동은 `require('./scripts/manage.cjs').execute(action, params)`를 쓰며, CLI는 stdout에 결과 JSON 한 줄, stderr에 진행 JSONL을 기록합니다. 지원 action과 매개변수는 스킬의 `SKILL.md`와 `manage.cjs`의 `execute(action, params)`가 기준입니다.
+기본 설치 대상은 `CODEX_HOME/skills` 또는 `~/.codex/skills`입니다. 프로그래밍 연동은 실제 절대 경로를 넣은 `require('/absolute/skills/road-music-skills-update/scripts/manage.cjs').execute(action, params)`를 쓰며, CLI는 stdout에 결과 JSON 한 줄, stderr에 진행 JSONL을 기록합니다. 지원 action과 매개변수는 스킬의 `SKILL.md`와 `manage.cjs`의 `execute(action, params)`가 기준입니다.
 
 이 업데이터의 기본 대상은 Codex 스킬 경로입니다. Antigravity App/IDE는 `--host antigravity`와 `~/.gemini/config/skills`, Antigravity CLI는 `--host antigravity-cli`와 `~/.gemini/antigravity-cli/skills`, 프로젝트 설치는 `--target /absolute/project/.agents/skills`를 사용합니다. 명시한 `--target`이 우선합니다. 어느 호스트에서도 `check`는 알림용이며 자동 설치·모델 설치를 하지 않습니다. [Antigravity 안내](antigravity.md)
 

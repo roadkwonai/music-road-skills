@@ -3,7 +3,7 @@
 ## 기존 설치
 
 - Showreel: `~/.local/share/roadmusic-video-tools/showreel`; 원본 commit `64521220a2f8e91cb9894400c48c15b7f45205d6`.
-- Python(NumPy/Pillow): `SHOWREEL_PYTHON 또는 현재 Python 3.11+ 환경`.
+- Python(NumPy/Pillow): `SHOWREEL_PYTHON 또는 현재 Python 3.11+ 환경`. 실제 제작 전 선택한 Python에서 `import numpy, PIL`을 확인하고, 기본 Python에 Pillow가 없으면 이미 준비된 `SHOWREEL_PYTHON` 환경을 사용하며 임의 설치하지 않는다.
 - Node.js 24, ffmpeg/ffprobe, Chrome, Showreel의 기존 playwright-core.
 
 `SHOWREEL_HOME`, `SHOWREEL_PYTHON`으로 다른 기존 설치를 지정할 수 있다. 누락되면 의존성을 보고한다. 자동 모델 다운로드나 유료 API를 대안으로 쓰지 않는다.
@@ -18,7 +18,7 @@ HTML에서 스타일·표시를 고르고 CLI 제작으로 넘기는 경우 [선
 
 새 제작의 표시 질문/선택형 선형 스펙트럼/현재 곡명/대기곡/채널명/여러 곡 연결은 [플레이리스트](playlist.md)를 따른다. --display는 plan/create 모두 지원하고 --playlist는 create에서 --music 대신 쓴다. 선택을 SKIP하면 표시하지 않는다.
 
-기존 CD와 그루브 다이얼은 [장르 계획](genres.md)을 먼저 만들고 `create --plan <genre-plan.json>`으로 적용한다. `plan --vocal`/`--act`의 캐스팅은 장르가 아니라 사용자 설명, 음악 생성 메타데이터, 확인 가능한 음원 정보에 근거한다. 일반 custom은 `--style`과 그 assetSchema로 만들며 `--plan`을 받지 않는다. 그루브 다이얼은 `genrePlanner:"cd-assets"` 계약으로 장르 계획을 받아 자체 템플릿을 사용한다. 가사 없는 곡은 --instrumental 또는 연주곡 CD 계획을 사용하고 --captions를 생략한다. 보컬 곡은 실제 자막 입력이 필요하다.
+기존 CD와 그루브 다이얼은 [장르 계획](genres.md)을 먼저 만들고 `create --plan <genre-plan.json>`으로 적용한다. `plan --vocal`/`--act`의 캐스팅은 장르가 아니라 사용자 설명, 음악 생성 메타데이터, 확인 가능한 음원 정보에 근거한다. 일반 custom은 `--style`과 그 assetSchema로 만들며 `--plan`을 받지 않는다. 그루브 다이얼은 `genrePlanner:"cd-assets"` 계약으로 장르 계획을 받아 자체 템플릿을 사용한다. 주황 어절 추적이 필수면 계획의 자막 요구로 기록하고 검증된 `cues[].words`와 `wordTiming`을 확인한 뒤에만 제작한다. 가사 없는 곡은 --instrumental 또는 연주곡 CD 계획을 사용하고 --captions를 생략한다. 보컬 곡은 실제 자막 입력이 필요하다.
 
 K-POP·댄스 팝·일렉트로닉·EDM의 현대적 새 제품 연출은 `--style '크롬 프리즘'`을 쓴다. 이 선택은 image_gen 프롬프트뿐 아니라 prism 합성의 투명 케이스·진주 아크릴 바탕·clean light-sweep/glass reveal에도 적용된다. 스타일의 `preview.status`가 pending이면 미리보기가 완성됐다고 보고하지 않고, 새 스틸과 렌더 검수 뒤에만 ready로 올린다.
 
