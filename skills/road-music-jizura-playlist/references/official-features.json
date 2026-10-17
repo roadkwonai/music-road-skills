@@ -1,0 +1,337 @@
+{
+  "retrieved": "2026-10-17 Asia/Seoul",
+  "upstream": "852wa/JIZURA",
+  "revision": "fc16bfe43ea4a6c25a21f1caf04d17326de14f00",
+  "version": "0.10.1",
+  "upstreamHeadEqualsLocal": true,
+  "upstreamHeadCheckedWith": "git ls-remote https://github.com/852wa/JIZURA HEAD",
+  "officialSkillFound": false,
+  "officialSkillScope": "Pinned Git tree contains no SKILL.md/skills/Codex/Claude agent distribution. This does not assert absence anywhere on the internet.",
+  "features": [
+    {
+      "feature": "프로젝트와 저장",
+      "fields": [
+        "version=1",
+        "timingOrder=2",
+        "appVersion",
+        "title",
+        "artist",
+        "lyrics",
+        "audioName"
+      ],
+      "constraint": "native .jizura.json은 설정 JSON. 음원과 업로드폰트 bytes는 별도 브라우저 IndexedDB. imported project는 mergeProject의 sanitization과 old LRC 순서 migration을 통과시킬 것.",
+      "source": "src/12_ui.js:L102-151",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/12_ui.js#L102-L151"
+    },
+    {
+      "feature": "전체 출력규격",
+      "fields": [
+        "aspect",
+        "res",
+        "fps",
+        "quality",
+        "includeAudio"
+      ],
+      "constraint": "aspect 16:9/9:16/4:3/3:4/1:1/4:5/21:9. UI res720/1080/1440/2160은 짧은변 기준, fps24/30/60, quality standard/high/max. 21:9 res2160은5040×2160.",
+      "source": "src/08_planner.js:L1033-1047",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L1033-L1047"
+    },
+    {
+      "feature": "27 스타일",
+      "fields": [
+        "style",
+        "J.STYLE_ORDER",
+        "J.STYLES"
+      ],
+      "constraint": "기존10direction은 해석프리셋. 엔진스타일전체27개와 구분. 스타일직접지정은 extra/wa/horror random gate를 우회가능.",
+      "source": "src/04_styles.js:L1-164",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/04_styles.js#L1-L164"
+    },
+    {
+      "feature": "6 추천테마",
+      "fields": [
+        "themeId",
+        "J.THEMES"
+      ],
+      "constraint": "lyricpv/kinetic/wa/horror/pop/ballad. themeId만 저장하면 현재구성은 안바뀌며 다음omakase에서 사용. 음악의 장르분석 결과가 아니라 랜덤선택범위.",
+      "source": "src/08b_omakase.js:L53-74",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08b_omakase.js#L53-L74"
+    },
+    {
+      "feature": "8 분위기",
+      "fields": [
+        "mood",
+        "J.MOODS"
+      ],
+      "constraint": "glitch/calm/pop/graphic/editorial/emotional/horror/chaos. mood별fx범위/부품태그선호. 명시selected style을보존하려면 omakase결과style을그대로 덮어쓰지말것.",
+      "source": "src/08b_omakase.js:L10-31",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08b_omakase.js#L10-L31"
+    },
+    {
+      "feature": "표현 세트",
+      "fields": [
+        "extra",
+        "wa",
+        "typo",
+        "kinetic",
+        "horror"
+      ],
+      "constraint": "default false/true/true/true/false. typo50 kinetic51 horror52는extra와독립. horror on은평소randomize에서도약55%horror분위기를선택하므로음악적근거가필요.",
+      "source": "src/11q_sets.js:L1-105",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/11q_sets.js#L1-L105"
+    },
+    {
+      "feature": "860 부품 10종류",
+      "fields": [
+        "enabled[group][id]",
+        "J.registry(group)",
+        "J.order(group)"
+      ],
+      "constraint": "layout184 enter125 hold52 exit109 decor130 treat62 bg66 cam36 fx69 trans27. 없는enabled키는enabled로간주. 전체선택해제는지원fallback이있어출력0개보장아님.",
+      "source": "src/05b_registry.js:L1-76",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/05b_registry.js#L1-L76"
+    },
+    {
+      "feature": "연출강도",
+      "fields": [
+        "fx.motion",
+        "fx.glitch",
+        "fx.chroma",
+        "fx.decor",
+        "fx.density",
+        "fx.texture",
+        "fx.bgSwitch"
+      ],
+      "constraint": "UI범위0..1 step.01. density는자막컷개수에영향하나단어시각자동정렬기능아님. slider변경시mood=null(custom).",
+      "source": "src/12_ui.js:L1211-1230",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/12_ui.js#L1211-L1230"
+    },
+    {
+      "feature": "작화 프레임",
+      "fields": [
+        "fx.koma",
+        "fx.onTwos"
+      ],
+      "constraint": "koma0=출력fps마다,12=초당12회,8=초당8회. outputfps와별개이며fps60설정만으로매끄럽게되지않음.",
+      "source": "src/08_planner.js:L43-45",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L43-L45"
+    },
+    {
+      "feature": "플래시와 장식 문자",
+      "fields": [
+        "fx.flash",
+        "fx.hud",
+        "fx.hideNo",
+        "fx.hideTime"
+      ],
+      "constraint": "hud auto/on/off. hideNo/Time은가사원문숫자를삭제하지않음. flash false와 fx부품풀을같이검토할것.",
+      "source": "app/body.html:L211-229",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/app/body.html#L211-L229"
+    },
+    {
+      "feature": "색상",
+      "fields": [
+        "colors.enabled",
+        "colors.bg",
+        "colors.fg",
+        "colors.sub",
+        "colors.accentOn",
+        "colors.accent",
+        "colors.ghostA",
+        "colors.ghostB"
+      ],
+      "constraint": "basecolors와accentcolors는별도enableflag. 렌더가배경명도에따라대비보정하므로입력hex와모든프레임색상동일은아님.",
+      "source": "src/12_ui.js:L960-998",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/12_ui.js#L960-L998"
+    },
+    {
+      "feature": "폰트역할",
+      "fields": [
+        "fonts.display",
+        "fonts.serif",
+        "fonts.body",
+        "userFonts"
+      ],
+      "constraint": "실제23키(여러weight포함)≠README18family. language face mapping적용. localFont이름/ttf otf woff woff2지원. project에는fontmetadata만저장되고실bytes는IndexedDB.",
+      "source": "src/02_fonts.js:L10-74",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/02_fonts.js#L10-L74"
+    },
+    {
+      "feature": "가사언어",
+      "fields": [
+        "lang"
+      ],
+      "constraint": "auto/ja/zh-Hant/zh-Hans/ko. 한글은NotoSansKR/BlackHanSans/Jua/GowunBatang등face로매핑. GoogleFonts실패시fallback;customfont누락은native export중지.",
+      "source": "src/02b_lang.js:L1-166",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/02b_lang.js#L1-L166"
+    },
+    {
+      "feature": "기본 가사 문법",
+      "fields": [
+        "lyrics"
+      ],
+      "constraint": "줄=phrase, /=cut분할, *word*=emphasis, 끝!=impact, |=annotation, #=comment,LRC[mm:ss.xx],[간주8]. 문법은원문일부문자를소비하므로원문cue보존필요.",
+      "source": "src/08_planner.js:L48-105",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L48-L105"
+    },
+    {
+      "feature": "자동오디오분석",
+      "fields": [
+        "J.analyzeAudio(file)",
+        "audio.bpm",
+        "audio.beats",
+        "audio.energy",
+        "audio.energyRate",
+        "audio.peaks"
+      ],
+      "constraint": "50Hzenergy/onset;tempo search70..180BPM+125BPMprior;일정간격beatgrid. 의미/장르/가창/킥스네어분리/가변tempo추적아님. 0.5x/2x오인검수필수.",
+      "source": "src/10_audio.js:L7-72",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/10_audio.js#L7-L72"
+    },
+    {
+      "feature": "행 타이밍",
+      "fields": [
+        "timing.lineTimes",
+        "timing.bpm",
+        "timing.offset",
+        "timing.snap",
+        "timing.lineScale",
+        "timing.tail",
+        "timing.useAudioLength"
+      ],
+      "constraint": "우선순위manual lineTimes >LRC>문자수추정. lineTimes원음초,최소0.05초순서제약. 자동추정은가창alignment아님. audioLength사용시음원보다가사끝길면영상길이더길어질수있음.",
+      "source": "src/08_planner.js:L206-258",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L206-L258"
+    },
+    {
+      "feature": "컷 타이밍",
+      "fields": [
+        "overrides[line].cutTime[cut]"
+      ],
+      "constraint": "행내상대초;두번째cut부터사용. 행시작/끝에0.22초간격제약clamp. UI입력은절대시간표시와변환이있으므로raw schema기준보존.",
+      "source": "src/08_planner.js:L374-391",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L374-L391"
+    },
+    {
+      "feature": "수동탭/타임라인",
+      "fields": [
+        "timing.lineTimes",
+        "overrides[line].cutTime"
+      ],
+      "constraint": "Space행시작 Tab컷시작,Backspace취소,0.75/0.5배재생도원음시계저장,3초countdown,dragbeat스냅 Shift자유. 단어별자동가창검출아님.",
+      "source": "README.md:L119-127",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/README.md#L119-L127"
+    },
+    {
+      "feature": "행별 강제기법",
+      "fields": [
+        "overrides[line].cuts",
+        "layout",
+        "enter",
+        "hold",
+        "exit",
+        "decor",
+        "treat",
+        "bg",
+        "cam",
+        "trans"
+      ],
+      "constraint": "UI컷1..6;plannerfixedcuts최대12. 선택적명시override는randompooloff와무관. supportedregistrykey만사용.",
+      "source": "src/08_planner.js:L331-443",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L331-L443"
+    },
+    {
+      "feature": "컷별 기법",
+      "fields": [
+        "overrides[line].cutTech[cut]",
+        "cutLayouts",
+        "cutQuiet"
+      ],
+      "constraint": "특정cut만override;다른cut추첨을보존하도록엔진설계. arbitrary timeline keyframe UI는없음.",
+      "source": "src/08_planner.js:L262-266",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L262-L266"
+    },
+    {
+      "feature": "행 구성 고정",
+      "fields": [
+        "overrides[line].lock",
+        "lockedSeed",
+        "lockedCuts",
+        "J.lineSnapshot(plan,line)"
+      ],
+      "constraint": "lockedCuts에layout/동작/색scheme/seed/events등snapshot. 원문utext불일치시snapshot적용해제될수있음. 단순seed만저장보다강한고정.",
+      "source": "src/08_planner.js:L750-769",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L750-L769"
+    },
+    {
+      "feature": "랜덤 편집 잠금",
+      "fields": [
+        "locks.tech[group]",
+        "locks.params[key]"
+      ],
+      "constraint": "tech=후보ON/OFF풀고정,특정부품고정아님. params=fx슬라이더/koma/flash값고정. UIrandomize가restore;J.plan/J.omakase자체에잠금보호없음.",
+      "source": "src/12_ui.js:L1034-1125",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/12_ui.js#L1034-L1125"
+    },
+    {
+      "feature": "통일감",
+      "fields": [
+        "unify"
+      ],
+      "constraint": "빈줄파트별부품palette,반복가사motif복귀,방향교대,impact행크게,같은행문자morph/weightgrow. 음악의후렴인식을한것으로해석하지말것.",
+      "source": "README.md:L157-163",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/README.md#L157-L163"
+    },
+    {
+      "feature": "문자정렬",
+      "fields": [
+        "typeset"
+      ],
+      "constraint": "일본어조사/자간수정,큰첫문자,라틴크기,효과제한,가창앵커보다0.2초선행. 한국어시각검수필수.",
+      "source": "src/08_planner.js:L274-280",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L274-L280"
+    },
+    {
+      "feature": "합성·중앙여백",
+      "fields": [
+        "keyBg",
+        "centerFree",
+        "centerDir"
+      ],
+      "constraint": "keyBg off/green/black. composite시white/grayscale효과,배경texture없음. centerFree wide좌우,tall tb또는lr;16:9band36%,21:9 30%,tall33%.",
+      "source": "src/08_planner.js:L771-780",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/08_planner.js#L771-L780"
+    },
+    {
+      "feature": "MP4/PNG출력",
+      "fields": [
+        "J.exportMP4",
+        "J.exportPNGZip",
+        "exportRange:{from,to}"
+      ],
+      "constraint": "MP4 WebCodecs/H264환경확인,HW실패SWfallback. 오디오AAC불가시Opus또는WAV별도. PNGZIP 65535files/4GB제한;layers는front/back두폴더.",
+      "source": "src/11_export.js:L142-295",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/11_export.js#L142-L295"
+    },
+    {
+      "feature": "LRC/AE 내보내기",
+      "fields": [
+        "J.lrcText",
+        "J.planForAE"
+      ],
+      "constraint": "projectJSON과AEplanJSON(v2)은다름. rangeexport시원음offset반영. AE에서morph는inkBlob근사,beat도균등cut분할근사,실AE실행검증없는문구존재.",
+      "source": "src/11_export.js:L311-341",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/11_export.js#L311-L341"
+    },
+    {
+      "feature": "임베딩 호스트 훅",
+      "fields": [
+        "J.ui",
+        "J.uiApi"
+      ],
+      "constraint": "uiApi toast,replan,syncUI,pause,seek,flushSave,loadAudioFile,restartPreview,exportRange,exportRangeLines. CEP호스트용명시노출,stable publicSDK약속아님. crossOriginpostMessage protocol은없음.",
+      "source": "src/12_ui.js:L1941-1944",
+      "url": "https://github.com/852wa/JIZURA/blob/fc16bfe43ea4a6c25a21f1caf04d17326de14f00/src/12_ui.js#L1941-L1944"
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "tool": "image_gen",
+  "mode": "built-in",
+  "status": "generated",
+  "newImagesGenerated": true,
+  "artist": {
+    "vocal": "female",
+    "act": "solo",
+    "fictional": true,
+    "description": "성인 여성 솔로 가상 아티스트. 어깨 길이 검은 머리, 실버 화이트 재킷, 차콜 상의. 사진·케이스 동일 인물.",
+    "reviewed": true
+  },
+  "assets": [
+    {
+      "role": "photoA",
+      "source": "local-source:exec-993e457e-4649-4feb-b962-d74d8cd469b5.png",
+      "prompt": "Use case: photorealistic-natural. Asset: 16:9 lead music photo for a new, pristine CD-player visual preset named Chrome Prism. Create a high-end contemporary K-pop-inspired fashion editorial of one wholly fictional adult female singer, age around late twenties, with sleek shoulder-length dark hair and a silver-white tailored stage jacket over a modest charcoal top. She is poised and confident, a natural candid three-quarter posture. Her face and shoulders sit near the central 50 percent so a circular CD crop preserves the face. Scene: clean pearl-white and icy-blue studio with translucent optical acrylic panels and subtle polished-chrome reflections, delicate rainbow refraction near the edges only. Bright controlled beauty lighting, sharp commercial photography, realistic skin pores and fabric texture, tasteful minimal modern styling. The requested feeling is absolutely factory-new, luminous, crisp and glossy materials, sparkling optical reflections, contemporary pop. No vintage/retro look, no film grain, distressed paper, tape, scratches, dirt, yellow tint, artificial waxy skin, celebrity likeness, lettering, logo or watermark. No CD or case inside the photo. Landscape 16:9.",
+      "transparent_background": false,
+      "file": "photo-a.png",
+      "sha256": "44d9fbe3fbd85cc2a9edea1c994b7af1b65f933eb98530f2b31e29001dad1ef6"
+    },
+    {
+      "role": "photoB",
+      "source": "local-source:exec-c2b2597b-c48e-44e0-add5-18dd569d6cab.png",
+      "prompt": "Use case: identity-preserve. Create a distinct 16:9 side-angle music editorial photo of the exact same wholly fictional adult woman in reference photoA: same face, dark shoulder-length hair, silver-white tailored jacket, charcoal top, earrings and pearl-white/icy-blue acrylic studio. Move the camera to a candid three-quarter profile, slight turn toward the lens; frame waist-up with face in the central 55% for circular CD cropping. Keep authentic skin and fabric texture, pristine contemporary commercial photography with controlled iridescent acrylic reflections near edges. New photo angle, not a crop of the same image. No aging, film grain, tape, scratches, vintage props, text, CD or case.",
+      "transparent_background": false,
+      "referenced_image_paths": [
+        "local-source:photo-a.png"
+      ],
+      "file": "photo-b.png",
+      "sha256": "8f8dc4601c564bd00897611cbf29c9ceab82d1b6c02c55b99e52921c3d0bea09"
+    },
+    {
+      "role": "photoC",
+      "source": "local-source:exec-397088fe-45d9-478b-908f-3e293670e710.png",
+      "prompt": "Use case: identity-preserve. Create a new wider 16:9 music fashion editorial photograph of the exact same wholly fictional adult woman in reference photoA: preserve her identity, dark shoulder-length hair, silver-white tailored stage jacket, charcoal top and earrings. Same clean pearl-white and icy-blue acrylic studio. Camera is a little further back, natural relaxed seated or standing waist-up pose with hands comfortably posed, direct confident gaze. Keep her face and main body within the central 55% for a circular CD crop. More visible architectural clear glass panels and polished chrome but no clutter. Photoreal natural skin texture, luminous modern commercial studio lighting. Factory-new and contemporary, no vintage or retro texture, grain, distressed paper, tape, scratches, CD, case, text or logo.",
+      "transparent_background": false,
+      "referenced_image_paths": [
+        "local-source:photo-a.png"
+      ],
+      "file": "photo-c.png",
+      "sha256": "15a49849310e5bb0b7b40148f36a739b231cab2841e1115a927103aa72e7eafb"
+    },
+    {
+      "role": "case",
+      "source": "local-source:exec-be01b102-8227-46c3-8b0a-27e0ee6f77de.png",
+      "prompt": "Use case: product-mockup. Create a straight-on square high-end product photograph of a completely factory-new crystal-clear compact-disc jewel case with precisely polished transparent acrylic edges and slim mirror chrome spine, containing the supplied reference photoA as its exact full printed album cover. Preserve the same fictional adult female face, hair, silver jacket and clean icy studio cover, square crop centered carefully on her face and shoulders. Immaculate optical plastic, crisp tiny controlled rainbow/diamond highlights on corners, realistic thickness and hinges, subtle protective new-product sheen. All four case corners fully inside frame with about 6% empty transparent margin. No scene or desk outside: genuine alpha transparency outside the case. No separate disc, no duplicated face, no text, logo, sticker, tape, scuffs, scratches, dust, cracks, distressed print or aging. Clean e-commerce product cutout, face fully unobstructed.",
+      "transparent_background": true,
+      "referenced_image_paths": [
+        "local-source:photo-a.png"
+      ],
+      "file": "case.png",
+      "sha256": "1a5ba669d86fe8e699443afc99d680c10302f7f3617c731c3b5e1affd639fd22",
+      "finalSource": "local-source:exec-1d843651-8f9c-46d1-9e20-4934026d6a99.png"
+    },
+    {
+      "role": "paper",
+      "source": "local-source:exec-170217b3-e85b-49ff-bf1f-8b6422cbfd8c.png",
+      "prompt": "Use case: product-mockup. Asset: empty 16:9 photographic studio stage background for compositing a pristine contemporary Chrome Prism CD player. Luminous pearl-white to icy-blue acrylic surface, clean broad architectural studio gradients, a subtle glass caustic and pale cyan/lilac iridescent reflection along the far left and top edges. Real premium optical acrylic and smooth pearlescent material, restrained polished chrome lighting mood, extremely clean factory-new product advertising. Leave centre and right empty for product compositing and bottom 15% quiet pale area for dark readable lyrics. No paper, no grain, creases, scratches, aging, tape, stickers, dust, clutter, people, discs, cases, text, logo or watermark. Landscape 16:9.",
+      "transparent_background": false,
+      "file": "paper.png",
+      "sha256": "08a1e05ca3b3d010acf13be0d7cf2aa2b2081627ed9088d7e9a866662c9bdc62"
+    }
+  ],
+  "caseRevision": {
+    "prompt": "Use case: precise-object-edit. Edit ONLY the outside cutout and physical perimeter of the supplied pristine CD jewel-case product image. Preserve the female cover portrait, framing, colors, polished chrome spine, rainbow highlights and the exact case dimensions. Remove all disconnected white specks, floating fragments and the rough ragged white halo outside the case, especially above the top edge. The transparent acrylic perimeter must have smooth straight continuous factory-new edges and crisp regular corners, as clean as a newly manufactured high-end electronics product. Preserve real thin specular highlights ON the case edges, but nothing detached outside. Maintain genuine alpha transparency outside the case and at least 5% transparent margin around all four sides. Do not add grain, scratches, aging, tape, text or a background. Do not alter the woman's face or outfit.",
+    "referenced_image_paths": [
+      "local-source:case.png"
+    ],
+    "transparent_background": true,
+    "source": "local-source:exec-1d843651-8f9c-46d1-9e20-4934026d6a99.png"
+  },
+  "note": "실제 생성한 3개 구도. 새 제품 스타일 데모 자산이며 다른 곡의 아티스트로 자동 재사용하지 않는다.",
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "lofi-notebook",
+  "name": "로파이 노트북",
+  "aliases": [
+    "로파이",
+    "노트북",
+    "파스텔 스크랩북"
+  ],
+  "genres": [
+    "로파이",
+    "인디팝",
+    "어쿠스틱",
+    "포크"
+  ],
+  "description": "블루 그리드와 연한 라일락 종이, 메모 조각, 느긋한 사진 스택과 CD.",
+  "variant": "notebook",
+  "discPeriodSeconds": 10,
+  "caption": {
+    "font": "sans",
+    "size": 57,
+    "effect": "marker"
+  },
+  "palette": {
+    "paper": "#e9e5df",
+    "ink": "#313c4b",
+    "light": "#fff9f1",
+    "dark": "#242b38",
+    "accent": "#6e82aa"
+  },
+  "artDirection": "존재하지 않는 성인 어쿠스틱 듀오. 작은 침실 녹음 공간의 오전 자연광. 인스턴트 필름, 니트와 낡은 셔츠, 약간 어긋난 일상 사진, 섬세한 종이 질감.",
+  "prompts": {
+    "artist": "존재하지 않는 성인 어쿠스틱 듀오. 작은 침실 녹음 공간의 오전 자연광. 인스턴트 필름, 니트와 낡은 셔츠, 약간 어긋난 일상 사진, 섬세한 종이 질감. 음악의 장르·보컬 구성에 맞는 가상 아티스트를 설계. 실존 인물·로고·글자 없음.",
+    "case": "같은 아티스트 사진을 인쇄한 살짝 닳고 어긋난 주얼케이스. 정면에 가까운 정사각, 바깥은 실제 투명 alpha. 광고 렌더처럼 매끈하지 않게.",
+    "paper": "16:9 평면 촬영. 블루 그리드와 연한 라일락 종이, 메모 조각, 느긋한 사진 스택과 CD. 케이스·CD·인물 없이 배경만. 아래 15%는 자막이 읽히게 조용하게."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "unreviewed-asr-draft-not-canonical-lyrics",
+    "musicNote": "모든 스타일은 같은 록 발라드 구간으로 비교. 추천 장르 전용 음원 아님.",
+    "durationSeconds": 18,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 540,
+    "subframes": 1,
+    "sourceClipStartSeconds": 79.76,
+    "sourceMusicSha256": "1f54b234936e97020ef1bbeb79dccfb585b1f8d211b2d1e56c3516b18dac359a"
+  }
+}

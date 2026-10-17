@@ -1,0 +1,14 @@
+{
+  "photoA": "photo-a.png",
+  "photoB": "photo-b.png",
+  "photoC": "photo-c.png",
+  "case": "case.png",
+  "paper": "paper.png",
+  "casting": {
+    "vocal": "female",
+    "act": "solo",
+    "reviewed": true,
+    "artistId": "chrome-prism-fictional-demo",
+    "evidence": "PhotoA/B/C and case visually checked for matching fictional adult female identity and modern studio wardrobe."
+  }
+}

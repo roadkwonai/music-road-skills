@@ -1,0 +1,27 @@
+{
+  "tool": "built-in image_gen",
+  "artistIsFictional": true,
+  "previewPhotoNote": "카탈로그는 단일 가상 아티스트 사진을 세 장면에 재사용. 실제 곡 제작에서는 같은 인물의 별도 구도 3장 권장.",
+  "images": [
+    {
+      "role": "artist",
+      "saved": "photo-a.png",
+      "generatedPath": "local-source:exec-e338d624-ba6b-4900-8fb9-57a1ac72dd7b.png",
+      "prompt": "Use case: photorealistic-natural. Asset: landscape 16:9 analog snapshot for a fictional acoustic/indie CD album. Entirely fictional two adult Korean musicians in their late twenties, a young woman with loose dark hair and cream cardigan singing at a modest desk microphone and a young man in a washed blue shirt with acoustic guitar, close together at a window in a tiny home recording room. Both faces in middle 55% of image, candid unposed natural smiles, a casually draped cable, a little lived-in clutter; cool morning daylight, blue-grey and soft lavender undertones with creamy highlights. Lovely slightly faded instant-film print character, tactile grain, modest imperfect framing, natural textured skin and fabric. Cleanly photographed yet not tidy glossy AI polish. No text, no logos, no borders, no CD/case, no real people."
+    },
+    {
+      "role": "case",
+      "saved": "case.png",
+      "generatedPath": "local-source:exec-9a29073a-1f3e-4b2c-a765-43ca441b37c1.png",
+      "prompt": "Use case: product-mockup; reference Image 1 is the exact artist/photo to print on the insert, keep the same fictional faces and clothing. Create a single square full CD jewel case asset for compositing in a motion graphic. Almost straight-on flat-lay, all four corners fully inside the image with 6% transparent margin. A closed jewel case with the reference photograph clearly printed on the slightly skewed inner paper cover, handmade analog indie album physical object. Genuinely transparent very pale icy-blue polycarbonate with the same duo photo on an off-white slightly crooked paper insert, a little lavender masking tape and faint handwritten abstract pencil strokes with no readable letters, scratched corners. A clean isolated cutout on true transparent background; preserve alpha including the translucent plastic outline. Soft subtle object shadow only, no desk/background, no disc outside, no extra objects, no text or logos. This is a lived-in worn photo case, beautifully photographed, never a perfect glossy sterile rectangle."
+    },
+    {
+      "id": "lofi-notebook",
+      "role": "paper",
+      "saved": "paper.png",
+      "generatedPath": "local-source:exec-0ad3b152-434c-46e4-a230-56651b42fb7e.png",
+      "prompt": "Use case: photorealistic-natural. Asset: wide 16:9 flat-lay physical scrapbook desk background. Pale cool ivory paper desktop with slightly crooked faded blue small square graph-paper sheet entering from left edge and one torn pale lavender paper corner at far upper right, tiny muted mauve washi tape near upper outer edge, paper fibres, subtle wrinkles and grain, soft morning light. Central and right areas mostly empty for a jewel case and CD to be added later. Bottom 15% quiet pale ivory, no print there, for dark lyric text. Unpolished lovely handmade indie scrapbook, no text, no people, no actual case or CD, no logos or symbols."
+    }
+  ],
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

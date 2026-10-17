@@ -1,0 +1,147 @@
+{
+  "status": "verified-with-documented-scope",
+  "date": "2026-10-17",
+  "engine": "Showreel 64521220a2f8e91cb9894400c48c15b7f45205d6",
+  "templateSha256": "331c60fc07dc90699c50f506a5338e64ae3c6976b7cc341e591afd0e5b2199e7",
+  "preview": {
+    "durationSeconds": 24,
+    "sourceStartSeconds": 65.2,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "fps": 30,
+    "frames": 720,
+    "sourceSha256": "2f281f28fb972b35ab50519f61973d73d74bd392a1dbff996d142f7550065ce7",
+    "captionStatus": "source-lyrics-linked-asr-timing-unreviewed",
+    "modes": [
+      "orbit",
+      "ribbons",
+      "grid",
+      "tiles"
+    ],
+    "selectedNativeHits": 12,
+    "fullDecode": "pass",
+    "motion": {
+      "duration": 24.0,
+      "still_ratio": 0.025,
+      "median": 1.18,
+      "p90": 4.46,
+      "still_runs": [],
+      "per_second": [
+        0.79,
+        0.63,
+        1.02,
+        1.65,
+        1.49,
+        4.47,
+        1.82,
+        1.37,
+        1.64,
+        1.86,
+        1.88,
+        4.63,
+        2.65,
+        0.97,
+        0.89,
+        1.47,
+        1.55,
+        3.05,
+        0.78,
+        4.8,
+        1.5,
+        1.55,
+        0.54,
+        0.53
+      ],
+      "issues": [
+        "큰 움직임 p90 4.5 (기준 7 이상) — 화면 전체가 크게 바뀌는 순간(구도 전환·큰 이동·매체 전환)이 부족하다. 무엇으로 채울지는 구간의 아트 디렉션으로 정한다"
+      ]
+    },
+    "review": "의도적으로 절제한 발라드의 4방식 비교본. 큰 움직임은 일반 홍보 쇼릴 기준보다 작으며 고강도 동적 범위는 별도 12초에서 확인."
+  },
+  "drivePreview": {
+    "video": "drive-preview.mp4",
+    "durationSeconds": 12,
+    "scope": "고강도 기능 검수이며 발라드 최종 연출 아님",
+    "motion": {
+      "commandOptions": {
+        "skipEndSeconds": 0
+      },
+      "median": 11.49,
+      "p90": 21.89,
+      "requiredP90": 15.0,
+      "stillRatio": 0.0,
+      "maximumStillRatio": 0.08,
+      "stillRuns": [],
+      "flashes": 5,
+      "excessiveFlashWindows": 0,
+      "issues": []
+    },
+    "fullDecode": "pass"
+  },
+  "checks": {
+    "skillValidation": "pass",
+    "skillTests": 66,
+    "appTests": 201,
+    "browser": [
+      {
+        "check": "section style, motif, intensity, track and reverse seek",
+        "styles": [
+          "orbit",
+          "ribbons",
+          "grid",
+          "tiles"
+        ]
+      },
+      {
+        "check": "exact lyric onset/end, caption bounds, font, selected accent",
+        "cues": 7,
+        "accents": 12
+      },
+      {
+        "check": "all eight display combinations change pixels",
+        "distinctFrames": 8
+      },
+      {
+        "check": "long Korean caption fits, no fake lyric or acoustic pulse in silent fixture",
+        "ok": true
+      },
+      {
+        "check": "missing direction fails before native render ready",
+        "ok": true
+      }
+    ],
+    "independentForwardTest": "source-clock 149..161 seconds; semantic direction apply passed",
+    "visualReview": "sampled frames: readable Korean, no required layout fixes"
+  },
+  "gaps": [
+    "청취 기반 가창 싱크·음질 검수 미수행; 가사 시각은 자동 정렬 초안.",
+    "이번 검증은 24초/12초 구간이며 모든 장르의 전곡·대규모 플레이리스트 렌더를 전수검증하지 않음.",
+    "고강도 영상은 밝은 기하 이동으로 검출된 섬광 5회, 1초 3회 초과 구간 0; 저강도 영상은 섬광 0회."
+  ],
+  "imageWorkflow": {
+    "reviewedDate": "2026-10-18",
+    "sourceSha256": "08e989e265946afd0b2894a6854b62e197d760369fd173c4f26db91e85eabf5c",
+    "generatedImages": 3,
+    "thumbnailFrames": 15,
+    "fps": 30,
+    "durationSeconds": 184.76666666666668,
+    "allMediaCopiedAndHashed": true,
+    "audioShiftSeconds": 0,
+    "skillTests": 71,
+    "appTests": 201,
+    "fullDecode": "passed",
+    "browser": "passed",
+    "fullMotionP90": 6.89,
+    "stillRatio": 0.014,
+    "expectedQuietEnding": [
+      182.8,
+      184.7
+    ],
+    "excessiveFlashWindows": 0,
+    "alignmentStatus": "partial-auto-asr-unreviewed",
+    "evidence": "local-source:검토-개선-결과.json"
+  },
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

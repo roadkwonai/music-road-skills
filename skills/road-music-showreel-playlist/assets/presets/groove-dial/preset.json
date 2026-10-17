@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "id": "groove-dial",
+  "name": "그루브 다이얼",
+  "aliases": [
+    "그루브",
+    "리듬 CD",
+    "그루브다이얼",
+    "Groove Dial"
+  ],
+  "genres": [
+    "정통 트로트",
+    "세미 트로트",
+    "댄스 트로트",
+    "발라드",
+    "록 발라드",
+    "R&B",
+    "재즈",
+    "팝",
+    "K-POP",
+    "인디 팝",
+    "시티 팝",
+    "신스 팝",
+    "댄스 팝",
+    "힙합·랩",
+    "소울",
+    "펑크",
+    "디스코",
+    "록",
+    "하드 록",
+    "메탈",
+    "펑크 록",
+    "블루스",
+    "포크·어쿠스틱",
+    "컨트리",
+    "로파이",
+    "앰비언트",
+    "일렉트로닉·EDM",
+    "라틴",
+    "보사노바",
+    "레게",
+    "클래식",
+    "시네마틱·OST",
+    "국악·국악퓨전",
+    "월드·지역 음악",
+    "가스펠·CCM·워십",
+    "뉴에이지"
+  ],
+  "description": "분절 사진 CD와 셔터 인트로, 사진 카드 재배치, 회전 CD. 음악 타격음·장르에 맞는 3단계 모션과 Paperlogy 가창 강조 자막.",
+  "variant": "archive",
+  "discPeriodSeconds": 8,
+  "caption": {
+    "font": "sans",
+    "size": 66,
+    "effect": "underline"
+  },
+  "palette": {
+    "paper": "#E9E0CF",
+    "ink": "#344846",
+    "light": "#F5F5EF",
+    "dark": "#131A1C",
+    "accent": "#C76A4B"
+  },
+  "artDirection": "음악에 맞춘 사진 CD 콜라주. 선택한 장르의 촬영·소재·색을 쓰고, archive/noir/neon/notebook/prism의 재질을 실제 합성에도 적용한다. 자연스러운 피부와 인쇄 결; 정돈되지 않은 구도에도 얼굴·악기·자막은 선명하게 유지한다.",
+  "prompts": {
+    "artist": "따뜻한 역광의 작은 야외 무대. 실제 피부와 필름 입자, 자연스러운 주름, 어긋난 사진 가장자리. 음악의 장르·보컬 구성에 맞는 가상 아티스트를 설계. 실존 인물·로고·글자 없음.",
+    "case": "같은 아티스트 사진을 인쇄한 살짝 닳고 어긋난 주얼케이스. 정면에 가까운 정사각, 바깥은 실제 투명 alpha. 광고 렌더처럼 매끈하지 않게.",
+    "paper": "16:9 평면 촬영. 빛바랜 공연 사진, 구겨진 종이, 투명 주얼케이스와 회전 CD. 케이스·CD·인물 없이 배경만. 아래 15%는 자막이 읽히게 조용하게."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "dtw-and-acoustic-crosschecked-not-human-listened",
+    "audioNote": "기존 록발라드 30초를 15초씩 두 구간으로 나눈 기능 검수. 서로 다른 두 원곡을 제작한 결과는 아님. DEMO CHANNEL은 표시 테스트용 가상 채널명.",
+    "verification": "verification.json",
+    "durationSeconds": 30.0,
+    "width": 1920,
+    "height": 1080
+  },
+  "category": "rhythm-cd",
+  "template": "template",
+  "requiresArtist": true,
+  "genrePlanner": "cd-assets",
+  "motionMode": "balanced",
+  "assetSchema": {
+    "photoA": {
+      "file": "photo-a.png",
+      "minSide": 700,
+      "alpha": false
+    },
+    "photoB": {
+      "file": "photo-b.png",
+      "minSide": 700,
+      "alpha": false
+    },
+    "photoC": {
+      "file": "photo-c.png",
+      "minSide": 700,
+      "alpha": false
+    },
+    "case": {
+      "file": "case.png",
+      "minSide": 1024,
+      "alpha": true
+    },
+    "paper": {
+      "file": "paper.png",
+      "minSide": 700,
+      "alpha": false
+    }
+  }
+}

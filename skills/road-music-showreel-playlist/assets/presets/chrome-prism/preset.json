@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "chrome-prism",
+  "name": "크롬 프리즘",
+  "aliases": [
+    "크롬",
+    "프리즘",
+    "새것",
+    "샤이니",
+    "글로시",
+    "신상 CD",
+    "Chrome Prism",
+    "모던",
+    "반짝반짝",
+    "새 제품"
+  ],
+  "genres": [
+    "K-POP",
+    "댄스 팝",
+    "일렉트로닉",
+    "현대 팝"
+  ],
+  "description": "새 투명 케이스와 크롬·홀로그램 반사가 빛나는 현대적인 CD 플레이어. 깨끗한 사진과 유리 패널 인트로.",
+  "variant": "prism",
+  "discPeriodSeconds": 6,
+  "caption": {
+    "font": "sans",
+    "size": 57,
+    "effect": "underline"
+  },
+  "palette": {
+    "paper": "#EDF3FF",
+    "ink": "#17243E",
+    "light": "#FFFFFF",
+    "dark": "#101D39",
+    "accent": "#43BDEE"
+  },
+  "artDirection": "Pristine contemporary pop studio. Factory-new crystal-clear acrylic jewel case, polished cold chrome, pearlescent stage, controlled iridescent highlights. Clean glass-panel intro. No distressed paper, aged tint, tape, scratches, dust or film grain. Natural textured adult artist skin.",
+  "prompts": {
+    "artist": "Contemporary music fashion editorial with fictional adult performers matching the declared vocalist and arrangement; natural skin, clean optical studio light.",
+    "case": "Factory-new crystal-clear jewel case, flawless polished acrylic, sharp chrome reflections, subtle holographic glints. Preserve the exact reference portrait cover, no scratches, tape, stickers, aging or extra text.",
+    "paper": "Pristine pearlescent acrylic studio stage, soft white-to-ice-blue reflection, restrained refracted light; no paper grain, folds, tape or dirt."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "durationSeconds": 18,
+    "width": 1920,
+    "height": 1080,
+    "captionStatus": "silent-style-demo-no-lyrics",
+    "audioNote": "무음 스타일 미리보기. 실제 가창 음원·가사 자막은 포함하지 않음.",
+    "verification": "540 actual frames decoded; body + intro encoded frames visually checked; controlled static photo holds; no >3 flashes/second."
+  }
+}

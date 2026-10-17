@@ -1,0 +1,31 @@
+{
+  "repository": "https://github.com/Freesentation/paperlogy",
+  "commit": "8ef35f53b318c7ca914c52b1b382b9a8bad07a61",
+  "files": [
+    {
+      "file": "Paperlogy-4Regular.woff2",
+      "url": "https://raw.githubusercontent.com/Freesentation/paperlogy/8ef35f53b318c7ca914c52b1b382b9a8bad07a61/woff2/Paperlogy-4Regular.woff2",
+      "sha256": "4b2e0fda1132919826d68682f13868f217cc26fafc073c390cfc06ab9073b7ed"
+    },
+    {
+      "file": "Paperlogy-7Bold.woff2",
+      "url": "https://raw.githubusercontent.com/Freesentation/paperlogy/8ef35f53b318c7ca914c52b1b382b9a8bad07a61/woff2/Paperlogy-7Bold.woff2",
+      "sha256": "39daa190bc0ccaa7dfe8bb55716953fc56acdad812da6701a6e31a4a051173af"
+    },
+    {
+      "file": "Paperlogy-8ExtraBold.woff2",
+      "url": "https://raw.githubusercontent.com/Freesentation/paperlogy/8ef35f53b318c7ca914c52b1b382b9a8bad07a61/woff2/Paperlogy-8ExtraBold.woff2",
+      "sha256": "5047db061c39ec5ed5c9d0b71c7aaad4b9547ed15ce48d1cd74090169f132bc0"
+    },
+    {
+      "file": "Paperlogy-9Black.woff2",
+      "url": "https://raw.githubusercontent.com/Freesentation/paperlogy/8ef35f53b318c7ca914c52b1b382b9a8bad07a61/woff2/Paperlogy-9Black.woff2",
+      "sha256": "864a3a6eca7261014910a75451144680d0668129cc3040d8f480c1a83cbf3abd"
+    },
+    {
+      "file": "OFL license.txt",
+      "url": "https://raw.githubusercontent.com/Freesentation/paperlogy/8ef35f53b318c7ca914c52b1b382b9a8bad07a61/OFL%20license.txt",
+      "sha256": "603b2e7ef9effb9037b0b67f0530cacdc05e71a4e569032d7e4d98c2e6763135"
+    }
+  ]
+}

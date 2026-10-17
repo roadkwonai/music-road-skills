@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JIZURA 음악 스튜디오</title>
+  <link rel="stylesheet" href="/studio.css?token=__TOKEN__">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#quick" aria-label="JIZURA 음악 스튜디오 처음으로">JIZURA <span>음악 스튜디오</span></a>
+    <div class="project-status" id="projectStatus">프로젝트 준비 중…</div>
+    <div class="top-actions">
+      <button class="quiet" id="saveButton" type="button">설정 저장</button>
+      <button class="primary" id="exportButton" type="button">MP4 만들기</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="pageTitle">
+      <div>
+        <p class="eyebrow">MUSIC → MOTION</p>
+        <h1 id="pageTitle">곡의 흐름을 <em>움직임</em>으로</h1>
+        <p id="analysisText" class="analysis">음원과 JIZURA 엔진을 연결하고 있습니다.</p>
+      </div>
+      <label class="audio-picker" for="audioInput">
+        <span>새 음원 연결</span><input id="audioInput" type="file" accept="audio/*,.mp3,.wav,.m4a,.aac,.ogg,.flac">
+      </label>
+    </section>
+
+    <nav class="tabs" aria-label="제작 단계">
+      <button type="button" class="tab" data-tab="quick" aria-pressed="true">추천 · 빠른 설정</button>
+      <button type="button" class="tab" data-tab="editor" aria-pressed="false">JIZURA 전체 편집기</button>
+      <button type="button" class="tab" data-tab="help" aria-pressed="false">기능 안내</button>
+    </nav>
+
+    <section id="quick" class="panel" data-panel="quick">
+      <div class="quick-grid">
+        <div class="left-column">
+          <section class="block recommendation-block" aria-labelledby="recommendationTitle">
+            <div class="section-head"><div><p class="eyebrow">DIRECTION</p><h2 id="recommendationTitle">추천 방향</h2></div><span id="recommendationSource" class="source-label">곡 해석 기반</span></div>
+            <p class="hint" id="recommendationHint">가사·장르·감정 변화 분석을 먼저 반영합니다. 장르 검색은 보조 제안입니다.</p>
+            <div id="profileCards" class="profile-cards" aria-live="polite"></div>
+            <div class="field search"><label for="genreSearch">장르로 추가 찾기 <small>보조 추천</small></label><input id="genreSearch" type="search" placeholder="예: 발라드, 힙합, EDM"></div>
+          </section>
+
+          <section class="block settings-block" aria-labelledby="settingsTitle">
+            <div class="section-head"><div><p class="eyebrow">QUICK CONTROL</p><h2 id="settingsTitle">직접 설정</h2></div><span class="native-label">실제 JIZURA 값</span></div>
+            <div class="form-grid">
+              <div class="field"><label for="styleSelect">스타일</label><select id="styleSelect"></select></div>
+              <div class="field"><label for="themeSelect">자동 구성 테마</label><select id="themeSelect"></select></div>
+              <div class="field"><label for="moodSelect">분위기</label><select id="moodSelect"></select></div>
+              <div class="field"><label for="aspectSelect">화면비</label><select id="aspectSelect"><option>16:9</option><option>9:16</option><option>4:3</option><option>3:4</option><option>1:1</option><option>4:5</option><option>21:9</option></select></div>
+              <div class="field"><label for="resSelect">해상도</label><select id="resSelect"><option value="720">720p</option><option value="1080">1080p</option><option value="1440">1440p</option><option value="2160">2160p</option></select></div>
+              <div class="field"><label for="fpsSelect">프레임레이트</label><select id="fpsSelect"><option value="24">24 fps</option><option value="30">30 fps</option><option value="60">60 fps</option></select></div>
+            </div>
+            <div class="fx-grid" id="fxControls"></div>
+            <div class="switches">
+              <label><input id="audioToggle" type="checkbox"> 음원 포함</label>
+              <label><input id="centerToggle" type="checkbox"> 중앙 비우기</label>
+              <label><span>합성 배경</span><select id="keyBgSelect"><option value="off">없음</option><option value="green">그린</option><option value="black">블랙</option></select></label>
+            </div>
+            <div class="rebuild-row"><button id="rebuildButton" class="primary" type="button">선택한 방향으로 재구성</button><p>테마를 고르는 것만으로는 구성이 바뀌지 않습니다.</p></div>
+          </section>
+        </div>
+
+        <section class="preview-shell" aria-labelledby="previewTitle">
+          <div class="preview-head"><div><p class="eyebrow">LIVE FRAME</p><h2 id="previewTitle">실제 엔진 미리보기</h2></div><output id="timeOutput" class="time">00:00 / 00:00</output></div>
+          <canvas id="preview" width="1280" height="720" aria-label="JIZURA 실제 엔진 미리보기"></canvas>
+          <div class="transport">
+            <button id="playButton" class="play" type="button" aria-label="재생 또는 일시정지">▶</button>
+            <input id="seekInput" type="range" min="0" max="1000" value="0" aria-label="재생 위치">
+            <button id="rewindButton" class="quiet icon" type="button" title="처음으로">↺</button>
+          </div>
+          <p id="previewDetail" class="preview-detail">공식 렌더러가 현재 프로젝트를 그립니다.</p>
+        </section>
+      </div>
+    </section>
+
+    <section id="editor" class="panel editor-panel" data-panel="editor" hidden>
+      <div class="editor-intro"><div><p class="eyebrow">OFFICIAL EDITOR</p><h2>전체 JIZURA 편집기</h2><p>스타일 27종과 기법, 글꼴, 팔레트, 컷, 가사 싱크, PNG·LRC·AE 내보내기를 공식 화면에서 그대로 다룹니다.</p></div><span class="native-label">공식 v0.10.1</span></div>
+      <iframe id="engineFrame" title="JIZURA 공식 한국어 편집기" loading="eager"></iframe>
+    </section>
+
+    <section id="help" class="panel help-panel" data-panel="help" hidden>
+      <article class="block">
+        <p class="eyebrow">USE THE FULL EDITOR</p><h2>어떤 기능을 어디서 쓰나요?</h2>
+        <dl>
+          <dt>빠른 설정</dt><dd>추천 방향, 스타일·강도·출력값을 빠르게 정하고 실제 프레임을 확인합니다.</dd>
+          <dt>전체 편집기</dt><dd>가사 줄·LRC·탭 싱크, 컷별 기법 잠금, 글꼴과 팔레트, PNG·투명 레이어·AE 데이터를 공식 JIZURA 화면에서 편집합니다.</dd>
+          <dt>가사 싱크</dt><dd>가창 시각은 별도 정렬·검수가 필요합니다. 가사가 없으면 글자 없는 배경과 비트 반응 그래픽으로 제작합니다.</dd>
+          <dt>저장</dt><dd>프로젝트 설정과 업로드 글꼴 자산을 함께 보관합니다. 원음은 별도 자산이므로 현재 원음도 함께 보관하세요. 누락된 글꼴만 다시 올리면 됩니다.</dd>
+        </dl>
+        <p class="links"><a href="https://jizura.net/ko/" target="_blank" rel="noreferrer">JIZURA 공식 안내</a><a href="https://github.com/852wa/JIZURA" target="_blank" rel="noreferrer">JIZURA GitHub</a></p>
+      </article>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="/studio.mjs?token=__TOKEN__"></script>
+</body>
+</html>

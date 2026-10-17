@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-18",
+  "selection": "User explicitly named the four recent projects. Earlier generic samples were replaced.",
+  "samples": [
+    {
+      "mode": "showreel-cd",
+      "title": "락발라드 — 아직 나의 봄",
+      "engine": "Showreel 그루브 다이얼 v6",
+      "sourceLabel": "local-source:아직나의봄_그루브다이얼_주황추적_전곡초안_공유용.mp4",
+      "sourceSha256": "46f85cb4f81d4ac7b3126ce6debb7a36294e4baa350325288dcf03f3be3545d3",
+      "sourceContainerRangesSeconds": [
+        [
+          0,
+          12
+        ],
+        [
+          27,
+          39
+        ]
+      ],
+      "durationSeconds": 24.0,
+      "fps": "30/1",
+      "frames": 720,
+      "width": 1280,
+      "height": 720,
+      "sha256": "4a562c46dbd8a3280bba3ce5201f30b7ee4f0d3420a6b766d866dafe5a9d2e1e",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "showreel-mv",
+      "title": "벨루나 — 프리즘 (VELUNE·벨루네 MV v5)",
+      "engine": "Showreel MV v5",
+      "sourceLabel": "local-source:VELUNE_프리즘_Showreel_MV_v5_공유용.mp4",
+      "sourceSha256": "cd3f495ef358c280d449679ccd7244a906e6fe27e5f57f69842655e34dbeab50",
+      "sourceContainerRangesSeconds": [
+        [
+          0,
+          18
+        ]
+      ],
+      "durationSeconds": 18.0,
+      "fps": "30/1",
+      "frames": 540,
+      "width": 1280,
+      "height": 720,
+      "sha256": "5ac3388a016b1e467bca7cfcb9b82ffb27f4193303c3be2ddabb0d84bcfa0d30",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "jizura",
+      "title": "벨루나 — 나를 믿어",
+      "engine": "JIZURA 0.10.1 · 3스타일 조합",
+      "sourceLabel": "local-source:나를 믿어 - 3스타일 조합 미리보기.mp4",
+      "sourceSha256": "2d7bdde42a9565cc90806f9261e9ca618e143820eae9f655acf600875abb70c2",
+      "sourceContainerRangesSeconds": null,
+      "durationSeconds": 15.083333,
+      "fps": "24/1",
+      "frames": 362,
+      "width": 1280,
+      "height": 720,
+      "sha256": "2d7bdde42a9565cc90806f9261e9ca618e143820eae9f655acf600875abb70c2",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "showreel-motion",
+      "title": "벨루나 — 너도 깨어 있니",
+      "engine": "Showreel 리듬 캔버스",
+      "sourceLabel": "local-source:벨루나-너도-깨어-있니-Showreel-1080p.mp4",
+      "sourceSha256": "25181d6595cf2e453afb43aa41b04c16c4069bf5a030344c45b71d4884d38147",
+      "sourceContainerRangesSeconds": [
+        [
+          0,
+          8
+        ],
+        [
+          65.2,
+          81.2
+        ]
+      ],
+      "durationSeconds": 24.0,
+      "fps": "30/1",
+      "frames": 720,
+      "width": 1280,
+      "height": 720,
+      "sha256": "8bd5fad9746eb5555e6326a2773700302e19aff011a7df5679b60c50e5a94f6b",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    }
+  ]
+}

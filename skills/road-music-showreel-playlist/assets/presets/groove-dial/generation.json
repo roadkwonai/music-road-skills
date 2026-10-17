@@ -1,0 +1,49 @@
+{
+  "mode": "saved-existing-style",
+  "newImagesGenerated": false,
+  "tool": "built-in image_gen (original production)",
+  "originalGeneration": {
+    "tool": "built-in image_gen",
+    "date": "2026-10-16",
+    "assets": [
+      {
+        "file": "img/archive-paper.png",
+        "source": "local-source:exec-f828d9dc-d15e-4970-a734-c7da73279fad.png",
+        "transparentBackground": false,
+        "prompt": "Use case: photorealistic-natural. Asset type: 16:9 full-bleed background plate for an autumn indie-rock CD playlist motion graphic. Generate a high-resolution overhead flat-lay editorial photograph, landscape 16:9. A lived-in warm ivory paper desk: large softly worn cream paper across the frame, a crooked faded blue graph-paper sheet with punched holes occupying left/center, partly visible second thin yellowed off-white sheet underneath, one tiny piece of pale pink translucent washi tape near upper right edge, small natural creases, paper fibers, faint softened scuffs. Natural late-afternoon sunlight from upper left, delicate real shadows from sheet edges, restrained film photograph character, tactile and slightly disordered, pleasant authentic used stationery rather than a dirty antique. Leave the broad center and right area available for compositing a large CD case and spinning disc; no objects in center, no discs, no cases, no photographs of people, no equipment, no written words, no typography, no letters, no brands, no watermark. Paper textures must feel photographic rather than vector dots/grunge overlay. Keep the composition richly textured yet quiet with readable negative space."
+      },
+      {
+        "file": "img/archive-case.png",
+        "source": "local-source:exec-6d4ac6a0-0403-41ab-a218-0a0c05ba44c4.png",
+        "reference": "../../craft-playlist-poc-20261015/assets/vintage-case.png",
+        "transparentBackground": true,
+        "prompt": "Use case: precise-object-edit. Asset type: transparent PNG of a vintage jewel-case front for a premium CD playlist composition. Revise the supplied fictional-band CD jewel case, preserving the identity, pose, composition and photograph of the fictional band inside. Keep the same square front-on orthographic camera, fully visible case perimeter, hinges and narrow left spine; isolated actual transparent background around the case. Make the case feel like a beautifully art-directed real 2000s personal CD archive, not a distressed poster: translucent slightly milky polycarbonate with realistic restrained reflections, fine hairline scratches concentrated near edges, actual clear plastic depth. Reduce the giant theatrical white scratches and heavy brown decay; retain tactile cream paper insert whose photograph is slightly crooked, two small imperfect pieces of pale translucent washi tape and one tiny faded pink/offwhite sticker near upper-right corner with abstract handwritten pen strokes only. The print has subtle sun-faded warm film color and believable paper fibers. The result must be photographic, lived-in, imperfect but cared-for, sophisticated editorial music-artwork quality. No new readable words or fake characters, no title, no logos, no brand names, no external shadows/background panel. Do not redesign the pictured people. Preserve original overall framing and real transparency. No disc included, only the square jewel-case cover."
+      }
+    ],
+    "notes": "Source photos depict the fictional AI band generated in the earlier approved prototype. Reference-video frames are not included in the composition. Disc photo is composited from rock-a.png in Canvas, rather than using the earlier disc.png."
+  },
+  "assets": {
+    "photoA": {
+      "file": "photo-a.png",
+      "sha256": "cbe92b0d11c3272c2b44f8d58319b2fcb5485938a19c339488f36fb5e86375e0"
+    },
+    "photoB": {
+      "file": "photo-b.png",
+      "sha256": "5258cc2b92020a8b8a94783be471780e88586e1a08da7072971f6af31cd45d32"
+    },
+    "photoC": {
+      "file": "photo-c.png",
+      "sha256": "2a25de5be07d117502515d7353ca1d908f726b60f6347134182ef1b4e79bfa01"
+    },
+    "case": {
+      "file": "case.png",
+      "sha256": "9624667bd78d9c6dd426f319450e6a1341ad0881c50612455855b47ed1f67521"
+    },
+    "paper": {
+      "file": "paper.png",
+      "sha256": "68812cdf97d60c33a07fcc64a86a257ee0ee7efef4062b1e51f27124d14cab5a"
+    }
+  },
+  "note": "사용자가 저장을 요청한 그루브 다이얼의 기존 AI 생성 사진을 참고 자산으로 보존. 새 곡 제작은 곡별 image_gen 프롬프트와 새 자산·캐스팅 검수 필요.",
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

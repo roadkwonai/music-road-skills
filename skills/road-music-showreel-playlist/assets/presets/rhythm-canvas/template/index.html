@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ko" data-fonts="Paperlogy">
+<head>
+  <meta charset="utf-8">
+  <title>Rhythm Canvas · 방향 기반 플레이리스트 모션그래픽</title>
+  <link rel="stylesheet" href="fonts/fonts.css">
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d}
+    #wrap{transform-origin:0 0}#stage{position:relative;overflow:hidden;background:#08090d;font-family:Paperlogy,sans-serif}
+    .cam,.top,.scene{position:absolute;inset:0}.scene{overflow:hidden}.player{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;gap:12px;align-items:center;padding:0 12px;background:#111;color:#bbb;font:12px/1 Menlo,monospace}.player .scrub{flex:1}
+    #direction-error{box-sizing:border-box;width:1920px;height:1080px;padding:150px 180px;background:#160b10;color:#fff4f5;font:700 42px/1.35 Paperlogy,sans-serif}
+    #direction-error small{display:block;margin-top:28px;color:#f5bec8;font:400 26px/1.55 Paperlogy,sans-serif}
+  </style>
+</head>
+<body>
+  <div id="wrap"><div id="stage"></div></div>
+  <script src="timeline.js"></script>
+  <script src="config.js"></script>
+  <script src="lyrics.js"></script>
+  <script src="spectrum.js"></script>
+  <script src="direction.js"></script>
+  <script src="engine.js"></script>
+  <script src="motion.js"></script>
+</body>
+</html>

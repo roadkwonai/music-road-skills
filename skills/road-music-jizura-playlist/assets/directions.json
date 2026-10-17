@@ -1,0 +1,333 @@
+{
+  "schemaVersion": 1,
+  "basis": "JIZURA v0.10.1 실제 스타일에 대응하는 연출 출발점. 장르 적합도는 편집 제안이며 인기 순위나 자동 인식 결과가 아니다.",
+  "profiles": [
+    {
+      "id": "neon-city",
+      "name": "네온 시티",
+      "style": "synth80",
+      "mood": "pop",
+      "genres": [
+        "시티팝",
+        "신스팝",
+        "디스코",
+        "펑크"
+      ],
+      "idea": "야간의 이동감, 네온 대비, 베이스와 스네어를 따로 표현",
+      "fx": {
+        "motion": 0.72,
+        "glitch": 0.12,
+        "chroma": 0.4,
+        "decor": 0.45,
+        "density": 0.55,
+        "texture": 0.35,
+        "bgSwitch": 0.3
+      },
+      "interlude": {
+        "backgrounds": [
+          "retroGrid",
+          "gradientSweep"
+        ],
+        "decor": [
+          "beatRing",
+          "spectrumRing",
+          "triangleSpin"
+        ]
+      }
+    },
+    {
+      "id": "acid-pulse",
+      "name": "애시드 펄스",
+      "style": "acid",
+      "mood": "glitch",
+      "genres": [
+        "EDM",
+        "하이퍼팝",
+        "드럼앤베이스",
+        "테크노"
+      ],
+      "idea": "검정과 산성색, 드롭의 크기 대비, 브레이크의 정지와 재진입",
+      "fx": {
+        "motion": 0.9,
+        "glitch": 0.48,
+        "chroma": 0.45,
+        "decor": 0.45,
+        "density": 0.75,
+        "texture": 0.4,
+        "bgSwitch": 0.4
+      },
+      "interlude": {
+        "backgrounds": [
+          "squareTunnel",
+          "spiralArms"
+        ],
+        "decor": [
+          "beatRing",
+          "glitchRects",
+          "spectrumRing"
+        ]
+      }
+    },
+    {
+      "id": "red-impact",
+      "name": "레드 임팩트",
+      "style": "crimson",
+      "mood": "graphic",
+      "genres": [
+        "힙합",
+        "트랩",
+        "록",
+        "얼터너티브"
+      ],
+      "idea": "큰 타이포와 긴 여백, 스네어의 하드컷, 핵심 구절의 한 번 강한 확대",
+      "fx": {
+        "motion": 0.8,
+        "glitch": 0.3,
+        "chroma": 0.25,
+        "decor": 0.35,
+        "density": 0.65,
+        "texture": 0.45,
+        "bgSwitch": 0.3
+      },
+      "interlude": {
+        "backgrounds": [
+          "concentric",
+          "speedLines"
+        ],
+        "decor": [
+          "beatRing",
+          "lineBurst",
+          "shapes"
+        ]
+      }
+    },
+    {
+      "id": "candy-pop",
+      "name": "캔디 팝",
+      "style": "candy",
+      "mood": "pop",
+      "genres": [
+        "댄스팝",
+        "밝은 케이팝",
+        "버블검팝"
+      ],
+      "idea": "둥근 타이포와 색면, 오버슈트와 가벼운 바운스, 후렴의 반복 모티프",
+      "fx": {
+        "motion": 0.78,
+        "glitch": 0.03,
+        "chroma": 0.12,
+        "decor": 0.5,
+        "density": 0.6,
+        "texture": 0.15,
+        "bgSwitch": 0.32
+      },
+      "interlude": {
+        "backgrounds": [
+          "polka",
+          "sunburst"
+        ],
+        "decor": [
+          "beatRing",
+          "confetti",
+          "heartsStars"
+        ]
+      }
+    },
+    {
+      "id": "editorial-cut",
+      "name": "에디토리얼 컷",
+      "style": "newsprint",
+      "mood": "editorial",
+      "genres": [
+        "인디록",
+        "펑크록",
+        "포스트펑크",
+        "스포큰워드"
+      ],
+      "idea": "헤드라인, 인쇄 질감, 비대칭 정렬과 마디 끝 패널 전환",
+      "fx": {
+        "motion": 0.62,
+        "glitch": 0.12,
+        "chroma": 0.2,
+        "decor": 0.4,
+        "density": 0.5,
+        "texture": 0.75,
+        "bgSwitch": 0.23
+      },
+      "interlude": {
+        "backgrounds": [
+          "tornPaper",
+          "halftoneFade"
+        ],
+        "decor": [
+          "beatRing",
+          "cropMarks",
+          "halftonePatch"
+        ]
+      }
+    },
+    {
+      "id": "noir-groove",
+      "name": "누아르 그루브",
+      "style": "noir",
+      "mood": "calm",
+      "genres": [
+        "R&B",
+        "네오소울",
+        "로파이 힙합",
+        "재즈"
+      ],
+      "idea": "어두운 여백, 앰버와 청록의 절제된 강조, 스윙을 살리는 지연과 복귀",
+      "fx": {
+        "motion": 0.48,
+        "glitch": 0.08,
+        "chroma": 0.22,
+        "decor": 0.3,
+        "density": 0.35,
+        "texture": 0.55,
+        "bgSwitch": 0.15
+      },
+      "interlude": {
+        "backgrounds": [
+          "concentric",
+          "vignettePulse"
+        ],
+        "decor": [
+          "beatRing",
+          "spectrumRing",
+          "orbitDots"
+        ]
+      }
+    },
+    {
+      "id": "paper-ballad",
+      "name": "페이퍼 발라드",
+      "style": "paper",
+      "mood": "emotional",
+      "genres": [
+        "발라드",
+        "포크",
+        "어쿠스틱",
+        "싱어송라이터"
+      ],
+      "idea": "종이와 잉크, 구절을 읽을 시간, 후렴에서만 넓어지는 타이포와 카메라",
+      "fx": {
+        "motion": 0.4,
+        "glitch": 0.02,
+        "chroma": 0.12,
+        "decor": 0.25,
+        "density": 0.25,
+        "texture": 0.65,
+        "bgSwitch": 0.1
+      },
+      "interlude": {
+        "backgrounds": [
+          "paperCut",
+          "gradientSweep"
+        ],
+        "decor": [
+          "beatRing",
+          "blobs",
+          "lightLeak"
+        ]
+      }
+    },
+    {
+      "id": "deep-space",
+      "name": "딥 오션",
+      "style": "ocean",
+      "mood": "calm",
+      "genres": [
+        "앰비언트",
+        "드림팝",
+        "다운템포",
+        "칠아웃"
+      ],
+      "idea": "넓은 공간과 잔광, 호흡 단위의 이동, 드럼이 없으면 프레이즈로 전환",
+      "fx": {
+        "motion": 0.32,
+        "glitch": 0.01,
+        "chroma": 0.18,
+        "decor": 0.32,
+        "density": 0.22,
+        "texture": 0.3,
+        "bgSwitch": 0.08
+      },
+      "interlude": {
+        "backgrounds": [
+          "oceanWaves",
+          "auroraRibbons"
+        ],
+        "decor": [
+          "beatRing",
+          "bokeh",
+          "rainRipples"
+        ]
+      }
+    },
+    {
+      "id": "kraft-notes",
+      "name": "크래프트 노트",
+      "style": "kraft",
+      "mood": "editorial",
+      "genres": [
+        "인디팝",
+        "보사노바",
+        "어쿠스틱 팝"
+      ],
+      "idea": "스탬프와 종이 조각, 작은 리듬 반응과 코러스의 색면 확장",
+      "fx": {
+        "motion": 0.52,
+        "glitch": 0.02,
+        "chroma": 0.1,
+        "decor": 0.4,
+        "density": 0.4,
+        "texture": 0.65,
+        "bgSwitch": 0.2
+      },
+      "interlude": {
+        "backgrounds": [
+          "paperCut",
+          "tornPaper"
+        ],
+        "decor": [
+          "beatRing",
+          "tapePieces",
+          "scribbleCircle"
+        ]
+      }
+    },
+    {
+      "id": "gold-night",
+      "name": "골드 나이트",
+      "style": "gold",
+      "mood": "emotional",
+      "genres": [
+        "소울 발라드",
+        "시네마틱",
+        "오케스트럴 팝"
+      ],
+      "idea": "먹색과 금빛, 가는 글자의 여백에서 클라이맥스의 큰 활자까지 확대",
+      "fx": {
+        "motion": 0.45,
+        "glitch": 0.02,
+        "chroma": 0.1,
+        "decor": 0.32,
+        "density": 0.3,
+        "texture": 0.35,
+        "bgSwitch": 0.12
+      },
+      "interlude": {
+        "backgrounds": [
+          "godRays",
+          "starfield"
+        ],
+        "decor": [
+          "beatRing",
+          "twinkle",
+          "lightLeak"
+        ]
+      }
+    }
+  ]
+}
