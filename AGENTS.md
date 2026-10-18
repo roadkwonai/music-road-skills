@@ -2,6 +2,14 @@
 
 한국어로 안내한다. 스킬의 사용자 선택·가사 원문·원곡 시계·기존 프로젝트를 보존한다.
 
+## 로컬 Git·GitHub 인증
+
+- 로컬 Git·GitHub 작업 전에 저장소 또는 가장 가까운 신뢰할 수 있는 상위 경로의 `.envrc`를 현재 셸에 로드한다. `GH_TOKEN`과 Git 작성자·커미터 등 정의된 환경값을 사용하며 기존의 다른 계정 인증이나 SSH를 먼저 사용하지 않는다. GitHub Actions의 워크플로 인증은 유지한다.
+- 셸 추적을 끄고 `set -a; source /absolute/path/.envrc >/dev/null 2>&1; set +a`로 적용한다. 원문·토큰·인증 헤더는 출력하거나 Git·로그·산출물에 넣지 않는다. 파일 또는 `GH_TOKEN`이 없으면 인증 누락을 보고한다.
+- `gh api user`와 `gh repo view OWNER/REPO --json viewerPermission`으로 계정·권한을 확인한다. PR·Release는 GitHub CLI(`gh`), HTTPS Git 작업은 `git -c credential.helper= -c 'credential.helper=!gh auth git-credential' ...`를 사용한다. 전역 Git 인증이나 remote URL에 토큰을 저장하지 않는다.
+
+## 유지보수 범위
+
 - 이 저장소는 Showreel/JIZURA 스킬과 HTML·문서·업데이트 도구를 관리한다. LTX 기반 `road-music-mv`, 모델, 개인 음원·실제 제작 프로젝트·토큰은 배포하지 않는다.
 - `manifest.json`이 묶음 버전·스킬 경로의 기준이다. 스킬별 핵심 계약을 유지하고 외부 엔진을 복제하지 않는다.
 - 공통 HTML은 `skills/road-music-video-studio/`가 관리한다. 선택/피드백 저장과 실제 렌더 실행을 구분한다. 브라우저 입력으로 임의 명령을 실행하지 않는다.

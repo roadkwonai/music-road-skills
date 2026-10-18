@@ -36,3 +36,5 @@ node "$UPDATE_SKILL/scripts/manage.cjs" install \
 설치 프로세스가 강제 종료된 뒤 `TARGET_BUSY`가 남으면, 표시된 PID가 실행 중인지 먼저 확인한다. 실행 중인 작업이 없을 때에만 오류 메시지에 표시된 대상의 `.music-road-skills/.lock` 파일 하나를 지운 뒤 다시 실행한다. 백업이나 스킬 폴더를 삭제하지 않는다.
 
 프로그래밍 연동에는 현재 읽은 updater의 실제 절대 경로를 넣은 `require('/absolute/skills/road-music-skills-update/scripts/manage.cjs').execute(action, params)`를 사용한다. CLI 출력은 stdout JSON 한 줄이며, 진행 이벤트는 stderr JSONL이다.
+
+스킬 묶음의 커밋·푸시·Release 게시까지 요청받은 유지보수 작업에서는 [로컬 GitHub 인증과 배포](references/github-release.md)를 따른다. 일반 `status`·`check`·설치 작업에 게시 절차를 추가하지 않는다.
