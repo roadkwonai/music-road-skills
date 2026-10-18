@@ -37,8 +37,8 @@ node cli/road-music.js motion:handoff --json '{"music":"/absolute/path/from/song
 
 AI는 HTML에서 실제 선택을 받고 그 값을 제작에 반영할 수 있습니다. 반면 `image_gen`은 호스트 도구이고 CLI 내장 모델이 아닙니다. 모델 설치, 음원 생성 재시도, 외부 업로드, 기존 프로젝트 덮어쓰기는 별도 요청 범위입니다.
 
-`motion:studio`와 `motion:handoff`의 host 입력은 Codex, Antigravity App/IDE, Antigravity CLI 중 현재 실행 환경을 기록합니다. 스킬 설치 대상은 각각 `CODEX_HOME/skills`, `~/.gemini/config/skills`, `~/.gemini/antigravity-cli/skills`이고, 프로젝트에는 `.agents/skills`를 쓸 수 있습니다. 최종 입력명은 CLI `schema`가 기준입니다.
+`motion:studio`와 `motion:handoff`의 host 입력은 Codex, Claude Code, Antigravity App/IDE, Antigravity CLI 중 현재 실행 환경을 기록합니다. 스킬 설치 대상은 각각 `CODEX_HOME/skills`, `~/.claude/skills`, `~/.gemini/config/skills`, `~/.gemini/antigravity-cli/skills`이고, 프로젝트에는 해당 호스트의 프로젝트 스킬 경로를 쓸 수 있습니다. 최종 입력명은 CLI `schema`가 기준입니다.
 
 완성본을 검수할 때는 `motion:studio`가 여는 제작실을 검수 모드로 유지합니다. 제작자는 새 MP4·자막·스토리보드를 `publish`로 등록하고, 검수자는 HTML의 **새 결과 확인**으로 같은 프로젝트의 목록을 갱신한 뒤 **검수 마치기**로 끝냅니다. 이 과정은 외부 게시를 수행하지 않습니다.
 
-Codex 작업은 내장 `image_gen`을 사용할 수 있고, Antigravity 작업은 해당 환경에서 이용 가능한 네이티브 이미지 도구만 사용합니다. 어떤 호스트이든 CLI·스킬 경계에서는 이미지 경로, SHA-256, 실제 프롬프트, 생성 도구 기록을 같은 manifest로 넘깁니다. 특정 모델명·API 키·유료 권한은 입력으로 명시되지 않으면 가정하지 않습니다. [Antigravity 호스트 안내](antigravity.md)
+Codex 작업은 내장 `image_gen`, Claude Code 작업은 로드된 `gpt-image` 스킬의 ChatGPT 로그인 Codex CLI 브리지, Antigravity 작업은 해당 환경에서 이용 가능한 네이티브 이미지 도구만 사용합니다. 어떤 호스트이든 CLI·스킬 경계에서는 이미지 경로, SHA-256, 실제 프롬프트, 생성 도구 기록을 같은 manifest로 넘깁니다. 특정 모델명·API 키·유료 권한은 입력으로 명시되지 않으면 가정하지 않습니다. [Claude Code 호스트 안내](claude.md) · [Antigravity 호스트 안내](antigravity.md)

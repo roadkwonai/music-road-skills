@@ -42,9 +42,12 @@ try {
   await assert.rejects(() => run('--inspect', '--project', partialProject, '--audio', audio, '--out', unassigned, '--timeout-seconds', '90'), /active lyric cut/);
   const unassignedReport = JSON.parse(await readFile(join(unassigned, 'directing-report.json')));
   assert.deepEqual({ ok: unassignedReport.ok, matched: unassignedReport.matched, unassigned: unassignedReport.unassigned.length }, { ok: false, matched: 1, unassigned: 1 });
-  await writeFile(directedProject, JSON.stringify({ version: 1, title: '', source: { sha256: hash, duration: 4 }, targetDuration: 4, lyrics: '[00:00.00]안녕\n[00:02.00]안녕\n[00:04.00][간주 0.01]', style: 'noir', mood: 'calm', aspect: '16:9', res: 360, fps: 24, includeAudio: true, timing: { bpm: 120, snap: false, tail: 0, useAudioLength: false }, overrides: { '0': { cuts: 1 }, '1': { cuts: 1 } }, directing: { schemaVersion: 1, sourceSha256: hash, accents: [{ time: 0, type: 'chroma', amp: .2, dur: 1 / 24 }, { time: 0, type: 'chroma', amp: .7, dur: .1 }, { time: .25, type: 'shake', amp: 1, dur: 1 / 24 }, { time: 2.25, type: 'flash', amp: .8, dur: 1 / 24 }], schemes: [{ start: 0, end: 4, index: 0 }], motifs: [{ lines: [0, 1] }] } }));
+  await writeFile(directedProject, JSON.stringify({ version: 1, title: '', source: { sha256: hash, duration: 4, path: audio }, targetDuration: 4, lyrics: '[00:00.00]안녕\n[00:02.00]안녕\n[00:04.00][간주 0.01]', cueMap: [{ line: 0, sourceLine: 1, text: '안녕', start: 0, end: 2, timingStatus: 'forced-dtw-unreviewed' }, { line: 1, sourceLine: 2, text: '안녕', start: 2, end: 4, timingStatus: 'user-approved-estimated-placement' }], style: 'noir', mood: 'calm', aspect: '16:9', res: 360, fps: 24, includeAudio: true, timing: { bpm: 120, snap: false, tail: 0, useAudioLength: false }, overrides: { '0': { cuts: 1 }, '1': { cuts: 1 } }, directing: { schemaVersion: 1, sourceSha256: hash, accents: [{ time: 0, type: 'chroma', amp: .2, dur: 1 / 24 }, { time: 0, type: 'chroma', amp: .7, dur: .1 }, { time: .25, type: 'shake', amp: 1, dur: 1 / 24 }, { time: 2.25, type: 'flash', amp: .8, dur: 1 / 24 }], schemes: [{ start: 0, end: 4, index: 0 }], motifs: [{ lines: [0, 1] }] } }));
   const directedResult = await run('--inspect', '--project', directedProject, '--audio', audio, '--out', directed, '--timeout-seconds', '90');
   assert.equal(directedResult.ok, true);
+  const readability = JSON.parse(await readFile(join(directed, 'readability.json')));
+  assert.equal(readability.status, 'needs-visual-review');
+  assert.deepEqual(readability.rows.map(row => row.timing.status), ['aligned-draft', 'estimated']);
   const directingReport = JSON.parse(await readFile(join(directed, 'directing-report.json')));
   assert.equal(directingReport.matched, 4); assert.equal(directingReport.unassigned.length, 0);
   assert.deepEqual(directingReport.actualAppliedEvents.find(event => event.type === 'chroma'), { time: 0, type: 'chroma', amp: .7, dur: .1, line: 0, dt: 0 });
@@ -59,6 +62,13 @@ try {
   const done = await run('--render', '--project', project, '--audio', audio, '--out', rendered, '--timeout-seconds', '300');
   assert.equal(done.ok, true); assert.ok(done.frames > 0);
   assert.deepEqual(JSON.parse(await readFile(join(rendered, 'result.json'))).actualExportSpan, { t0: 0, dur: 4 });
+  const lyricRender = await run('--render', '--project', join(directed, 'directed.jizura.json'), '--audio', audio, '--out', join(root, 'lyric-render'), '--timeout-seconds', '300');
+  assert.equal(lyricRender.ok, true);
+  const lyricReview = JSON.parse(await readFile(join(root, 'lyric-render/readability-final/review.json')));
+  assert.equal(lyricReview.visualReview, 'pending');
+  assert.equal(lyricReview.listeningReviewed, false);
+  assert.ok(lyricReview.frames.length >= 6);
+  assert.ok(lyricReview.frames.every(frame => /^[0-9a-f]{64}$/.test(frame.sha256)));
   const silentProject = join(root, 'silent.jizura.json');
   await writeFile(silentProject, JSON.stringify({ version: 1, lyrics: '[00:00.00][간주 2]\n[00:02.00][간주 2]',
     style: 'noir', aspect: '9:16', res: 360, fps: 30, includeAudio: false,

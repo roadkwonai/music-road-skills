@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { choiceDetails, canBakeDirecting, needsTimingReview, rankProfiles, preserveRecommendationState, restoreRecommendationState } from './studio.mjs';
+import { choiceDetails, canBakeDirecting, needsTimingReview, rankProfiles, preserveRecommendationState, restoreRecommendationState, restoreStudioDraft, studioDraft, tabForKey, validateAudioFile } from './studio.mjs';
 
 const nativeChoices = { STYLES: { noir: { desc: '엔진에서 제공한 설명' } } };
 assert.equal(choiceDetails('styleSelect', 'noir', '누아르', nativeChoices)[1], nativeChoices.STYLES.noir.desc);
@@ -34,4 +34,34 @@ assert.equal(canBakeDirecting({ schemaVersion: 1 }, { sha256: 'abc' }, { sha256:
 assert.equal(canBakeDirecting({ schemaVersion: 1 }, { sha256: 'abc' }, { sha256: 'def' }), false);
 assert.equal(needsTimingReview({ sha256: 'same' }, { sha256: 'other' }), true);
 assert.equal(needsTimingReview({ sha256: 'same' }, { sha256: 'same' }), false);
+const audio = { sha256: 'a'.repeat(64) };
+const draft = studioDraft({ lyrics: '원문', fx: { motion: .4 } }, { source: { sha256: audio.sha256 } }, { profile: 'paper-ballad' }, 'paper-ballad', true, audio);
+assert.deepEqual(restoreStudioDraft(draft, audio), {
+  project: { lyrics: '원문', fx: { motion: .4 } }, sourceExtra: { source: { sha256: audio.sha256 } },
+  direction: { profile: 'paper-ballad' }, selectedProfile: 'paper-ballad', timingReviewNeeded: true,
+});
+assert.equal(restoreStudioDraft(draft, { sha256: 'b'.repeat(64) }), null);
+assert.equal(studioDraft({ lyrics: 'x'.repeat(1024 * 1024) }, {}, null, null, false, null), null);
+let decoderClosed = false;
+const audioBytes = new ArrayBuffer(8);
+assert.equal(await validateAudioFile({ arrayBuffer: async () => audioBytes }, () => ({
+  decodeAudioData: async bytes => { assert.equal(bytes, audioBytes); return { duration: 2.4 }; },
+  close: async () => { decoderClosed = true; },
+})), 2.4);
+assert.equal(decoderClosed, true);
+await assert.rejects(validateAudioFile({ arrayBuffer: async () => new ArrayBuffer(4) }, () => ({
+  decodeAudioData: async () => { throw new Error('damaged'); },
+  close: () => {},
+})), /디코드할 수 없습니다/);
+assert.equal(tabForKey('quick', 'ArrowRight'), 'editor');
+assert.equal(tabForKey('quick', 'ArrowLeft'), 'help');
+assert.equal(tabForKey('editor', 'Home'), 'quick');
+assert.equal(tabForKey('editor', 'End'), 'help');
+assert.equal(tabForKey('editor', 'Enter'), null);
+const page = await readFile(new URL('./index.html', import.meta.url), 'utf8');
+assert.match(page, /role="tablist"/);
+for (const name of ['quick', 'editor', 'help']) {
+  assert.match(page, new RegExp(`id="tab-${name}"[^>]*role="tab"[^>]*aria-controls="${name}"`));
+  assert.match(page, new RegExp(`id="${name}"[^>]*role="tabpanel"[^>]*aria-labelledby="tab-${name}"`));
+}
 console.log('studio pure logic: ok');

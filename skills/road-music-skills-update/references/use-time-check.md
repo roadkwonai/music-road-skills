@@ -9,7 +9,7 @@ UPDATE_SKILL="$SKILLS_PARENT/road-music-skills-update"
 node "$UPDATE_SKILL/scripts/manage.cjs" check --target "$SKILLS_PARENT"
 ```
 
-- Codex, Antigravity, 프로젝트 범위마다 실제 설치 부모가 다르므로 `--target`은 그 스킬 폴더들을 담는 절대 경로로 쓴다.
+- Codex, Claude Code, Antigravity, 프로젝트 범위마다 실제 설치 부모가 다르므로 `--target`은 그 스킬 폴더들을 담는 절대 경로로 쓴다. Claude의 개인 기본값은 `${CLAUDE_CONFIG_DIR:-~/.claude}/skills`이며 프로젝트 설치는 `.claude/skills`를 쓴다.
 - 같은 요청에서 이미 확인했거나 버전 변화가 없으면 조용히 제작을 계속한다.
 - 새 Release만 짧게 알리고, 설치·업데이트·`watch`는 사용자의 명시 요청이 있을 때만 실행한다.
 - 관리 상태가 없는 체크아웃도 현재 `manifest.json`/`VERSION`과 최신 Release를 비교한다. 설치되지 않았다는 이유만으로 새 버전이라고 알리지 않는다.

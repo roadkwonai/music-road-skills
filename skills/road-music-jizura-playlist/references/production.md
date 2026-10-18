@@ -102,6 +102,10 @@ node "$JIZURA_SKILL/scripts/render-jizura.mjs" \
 
 원음 해시를 확인하고 분석된 음원 길이로 영상을 잘라 원음과 연결한다. 영상 프레임 수는 누적 오디오 시계에서 반올림하고 오디오는 별도로 연결해 곡 사이에 프레임 반올림 무음을 넣지 않는다. 영상 경계는 반 프레임 안에서 양자화되며 최종 AAC/컨테이너에는 끝 패딩이 있을 수 있다. 크로스페이드/리믹스는 자동 적용하지 않는다. `.mp4.json`의 실제 규격/길이/챕터를 읽는다. 스트림 검사를 청취/가사 정답 검수로 확대하지 않는다. 부분 미리보기를 전체 본편이라고 하지 않는다.
 
+## 가사 검수
+
+가사가 있으면 [가독성·싱크 검수](lyrics-readability.md)를 적용한다. 렌더의 `readability.json`은 후보 검사이고 `readability-final`은 실제 native MP4의 검수 자료다. compose/assemble도 최종 파일에서 자동으로 검수 자료를 생성한다. 이전 출력만 재검수할 때는 도구를 직접 실행한다. 사진/후보 생성은 자동이며 실제 가독성 판정과 청취 확정은 별도 기록한다. `ok:true`는 파일 생성 성공이고, 별도 시각검수 판정 전 `visualReady:false`를 유지한다.
+
 ## 자체 확인
 
 ```bash
@@ -109,6 +113,7 @@ node "$JIZURA_SKILL/scripts/render-jizura.mjs" \
 node --check "$JIZURA_SKILL/scripts/render-jizura.mjs"
 node "$JIZURA_SKILL/scripts/directing.test.mjs"
 node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"
+node "$JIZURA_SKILL/scripts/readability.test.mjs"
 ```
 
 래퍼 변경 후에는 격리된 짧은 음원으로 실제 inspect/MP4도 실행하고, directed 프로젝트를 새 브라우저에서 재로드해 이벤트 시각과 배치 파라미터가 같은지 확인한다. 자동 검사는 취향·가사 정답·청취까지 증명하지 않는다.
@@ -153,7 +158,7 @@ node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"
 <a id="html-studio"></a>
 ## HTML Studio: 여러 추천과 커스텀 제작
 
-로컬 공식 편집기를 같은 origin에 연결해 27개 스타일·860개 부품을 그대로 사용한다. 원격 사이트 iframe에 명령을 보내는 방식이 아니다. 기획과 기능 대응은 [설계](studio-design.md), [공식 기능 분석](official-features.md)에 있다.
+로컬 공식 편집기를 같은 origin에 연결해 27개 스타일·860개 부품을 그대로 사용한다. 원격 사이트 iframe에 명령을 보내는 방식이 아니다. 제작실과 가독성 검수 HTML은 저장소 `DESIGN.md` 토큰과 번들 Paperlogy를 적용한다. 공식 편집기의 Canvas·영상 글꼴과 렌더 출력은 바꾸지 않고 UI에만 적용한다. 기획과 기능 대응은 [설계](studio-design.md), [공식 기능 분석](official-features.md)에 있다.
 
 Codex가 음원/가사를 해석해 단일 스타일 후보는 `direction.recommendations`에 기록한다. 조합안은 `direction.compositionRecommendations`로 구간·강도·이유를 구분하고 [조합 비교](style-composition.md#recommend)로 보여 준다. profile/genre/interpretation/sections/motifs도 유지한다. 현재 HTML의 profile 카드는 단일 프로젝트를 바꾸며, 조합 배열을 자동 합성하거나 전곡 스타일 시퀀스를 재생하지 않는다. 조합 후보는 실제 비교 영상과 구간 프로젝트로 선택권을 제공한다.
 
@@ -215,6 +220,7 @@ Codex가 음원/가사를 해석해 단일 스타일 후보는 `direction.recomm
 node "$JIZURA_SKILL/assets/studio/studio.test.mjs"
 node "$JIZURA_SKILL/scripts/directing.test.mjs"
 node "$JIZURA_SKILL/scripts/render-jizura.test.mjs"
+node "$JIZURA_SKILL/scripts/readability.test.mjs"
 ```
 
 실제 브라우저에서도 음원 연결→여러 후보 선택→수동 스타일/효과 변경→공식 세부 편집→저장→새 세션 재열기→짧은 MP4를 확인한다. 업로드 폰트가 있으면 다른 포트와 깨끗한 렌더 프로필에서 복원되는지 검사한다. 결과를 실제 청취·정밀 가창 싱크 검수로 확대하지 않는다.

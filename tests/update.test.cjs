@@ -10,12 +10,42 @@ const ids = ['road-music-showreel-cd', 'road-music-showreel-mv', 'road-music-jiz
 async function fixture (parent, version, marker = version) {
   const root = path.join(parent, `bundle-${version}`); await fs.mkdir(path.join(root, 'skills'), { recursive: true })
   const skills = []
-  for (const id of ids) { const directory = path.join(root, 'skills', id); await fs.mkdir(directory, { recursive: true }); await fs.writeFile(path.join(directory, 'SKILL.md'), `---\nname: ${id}\ndescription: test\n---\n${marker}\n`); skills.push({ id, path: `skills/${id}` }) }
+  for (const id of ids) {
+    const directory = path.join(root, 'skills', id)
+    await fs.mkdir(directory, { recursive: true })
+    await fs.writeFile(path.join(directory, 'SKILL.md'), `---\nname: ${id}\ndescription: test\n---\n${marker}\n`)
+    if (id === 'road-music-video-studio') {
+      await fs.mkdir(path.join(directory, 'assets', 'design', 'fonts'), { recursive: true })
+      await fs.writeFile(path.join(directory, 'assets', 'design', 'DESIGN.md'), '# shared design\n')
+      await fs.writeFile(path.join(directory, 'assets', 'design', 'fonts', 'Paperlogy-7Bold.ttf'), 'font fixture\n')
+    }
+    skills.push({ id, path: `skills/${id}` })
+  }
   await fs.writeFile(path.join(root, 'manifest.json'), JSON.stringify({ schemaVersion: 1, name: 'music-road-skills', version, skills }))
   await fs.writeFile(path.join(root, 'VERSION'), `${version}\n`)
   return root
 }
 async function temporary (callback) { const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'road-music-skills-test-')); try { return await callback(directory) } finally { await fs.rm(directory, { recursive: true, force: true }) } }
+
+test('Claude installs into its config skills directory and explicit targets still win', async () => temporary(async base => {
+  const previous = process.env.CLAUDE_CONFIG_DIR
+  const config = path.join(base, 'Claude configuration')
+  process.env.CLAUDE_CONFIG_DIR = config
+  try {
+    const source = await fixture(base, '0.1.0')
+    const installed = await execute('install', { source, host: 'claude' })
+    assert.equal(installed.target, path.join(config, 'skills'))
+    assert.deepEqual(installed.skills, ids)
+    assert.equal((await execute('status', { host: 'claude' })).version, '0.1.0')
+    const target = path.join(base, 'project', '.claude', 'skills')
+    assert.equal((await execute('install', { source, host: 'claude', target })).target, target)
+    assert.equal((await execute('status', { host: 'claude', target })).locallyModified.length, 0)
+    await assert.rejects(execute('status', { host: 'claude-web' }), error => error.code === 'INVALID_ARGUMENT')
+  } finally {
+    if (previous === undefined) delete process.env.CLAUDE_CONFIG_DIR
+    else process.env.CLAUDE_CONFIG_DIR = previous
+  }
+}))
 
 test('local bundle installs, adopts exact existing files, and reports status', async () => temporary(async base => {
   const source = await fixture(base, '0.1.0'); const target = path.join(base, 'target')
@@ -23,6 +53,23 @@ test('local bundle installs, adopts exact existing files, and reports status', a
   assert.deepEqual(installed.skills, ids); assert.equal((await execute('status', { target })).version, '0.1.0')
   const adopted = path.join(base, 'adopted'); await fs.mkdir(adopted); for (const id of ids) await fs.cp(path.join(source, 'skills', id), path.join(adopted, id), { recursive: true })
   assert.equal((await execute('install', { source, target: adopted })).version, '0.1.0')
+}))
+
+test('installs all six managed skills and shared design/font assets as one bundle', async () => temporary(async base => {
+  const source = await fixture(base, '0.1.0'); const target = path.join(base, 'target')
+  const installed = await execute('install', { source, target })
+  assert.deepEqual(installed.skills, ids)
+  assert.equal(await fs.readFile(path.join(target, 'road-music-video-studio', 'assets', 'design', 'DESIGN.md'), 'utf8'), '# shared design\n')
+  assert.equal(await fs.readFile(path.join(target, 'road-music-video-studio', 'assets', 'design', 'fonts', 'Paperlogy-7Bold.ttf'), 'utf8'), 'font fixture\n')
+  assert.equal((await execute('status', { target })).locallyModified.length, 0)
+}))
+
+test('rejects a bundle that omits one of the six managed skills', async () => temporary(async base => {
+  const source = await fixture(base, '0.1.0')
+  const manifest = JSON.parse(await fs.readFile(path.join(source, 'manifest.json'), 'utf8'))
+  manifest.skills = manifest.skills.filter(item => item.id !== 'road-music-skills-update')
+  await fs.writeFile(path.join(source, 'manifest.json'), JSON.stringify(manifest))
+  await assert.rejects(execute('install', { source, target: path.join(base, 'target') }), error => error.code === 'UPDATE_VERIFY')
 }))
 
 test('update preserves a versioned backup and rejects local modifications', async () => temporary(async base => {

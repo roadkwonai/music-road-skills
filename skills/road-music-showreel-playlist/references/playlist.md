@@ -1,5 +1,7 @@
 # 표시 선택과 여러 곡 플레이리스트
 
+자유 연출은 네 응답을 완성한 display JSON과 곡 목록을 `native_project.py prepare --display ... --playlist ...`에 전달한다. 아래 CD용 plan/assets 예시는 명시한 프리셋에서만 사용한다. 새 음악의 기본 경로가 스타일 선택 화면을 요구하는 것은 아니다.
+
 ## 입력 질문
 
 HTML 선택을 요청한 CLI 흐름은 [selection.md](selection.md)의 화면에서 먼저 답을 받는다. 이미 저장한 선택은 `--selection`으로 전달하고 대화로 다시 묻지 않는다.
@@ -31,7 +33,7 @@ display-options.json:
 
 `plan --display <옵션.json>`으로 계획에 저장하거나 `create --display <옵션.json>`으로 최종 적용한다. create의 명시 파일이 계획보다 우선한다. 옵션 파일은 네 답을 모두 반영한 완성본으로 만든다. 기존 프로젝트 수정에서는 저장한 값을 읽어 필요한 항목만 바꾼 완성 파일을 쓴다.
 
-raw CLI의 기존 호출은 질문 도구를 실행하지 않고 all-off를 기본으로 유지한다. **Codex 스킬을 사용하는 새 제작에서는 위 네 답을 먼저 받는다.** 이 두 경로를 혼동하지 않는다. create는 최종 display-options.json과 production.display/displaySource를 저장한다.
+기존 preset CLI 호출은 질문 도구를 실행하지 않고 all-off 기본을 유지한다. 새 native prepare는 네 표시 키가 모두 적힌 완성 파일을 요구한다. **Codex 스킬을 사용하는 새 제작에서는 위 네 답을 먼저 받는다.** 이 두 경로를 혼동하지 않는다. create는 최종 display-options.json과 production.display/displaySource를 저장한다.
 
 SKIP한 표시 옵션을 프리셋 기본값이나 다음 곡 전환에서 다시 켜지 않는다. 현재 곡명 표시를 꺼도 가창 자막은 기존 설정대로 유지한다. 대기 목록은 현재/이미 끝난 곡을 제외한 다음 곡만 보여주며, 마지막에는 다음 곡 없음으로 표시한다. 현재 곡명은 `[startSeconds,endSeconds)`의 곡만 표시한다.
 

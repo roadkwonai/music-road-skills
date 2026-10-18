@@ -11,9 +11,12 @@ description: 음악 한 곡이나 승인 자산으로 장르에 맞는 연출·�
 
 결과물은 전곡 MP4, `reel/` 또는 원본을 연결한 편집 프로젝트, 스토리보드·전체 이미지 프롬프트·원본 자산·타임라인·QA다. 가사 자막이 있으면 SRT도 납품한다. 기본 LTX, 긴 하네스, 고정 장수 보드/애니매틱은 쓰지 않으며 LTX는 사용자가 명시할 때만 연결한다.
 
+
+신규 음원 제작과 비트·모션·가사 싱크 수정은 [비트·모션·가사·섬광 품질 절차](references/production-quality.md)를 먼저 읽고 적용한다. 구간별 강세가 부족하면 동봉 `scripts/audio_onsets.py`로 실제 소리의 로컬 변화를 보강해 장면 코드까지 연결하고, 가사 정렬의 근거·불확실성, 역순 시크, 최종 섬광·전곡 QA를 함께 확인한다. 기존 표시 선택·원문·원곡 시계는 유지한다. 기술 검사와 음악·미술 적합성을 따로 판정하고, 약한 구간은 실제 이동·착지·정착과 가사 소재의 조형 변화를 원음 proof로 보완한다. 큰 활자의 대비·범위와 연속 효과의 구간 경계도 확인한다.
+
 ## 이미지 모델·유료 사용 경계
 
-기본 이미지 생성은 **ChatGPT/Codex의 내장 `image_gen` 또는 Antigravity의 내장 Nano Banana 이미지 기능**만 사용한다. Antigravity에서는 현재 버전이 제공하는 네이티브 도구/`image-generator` 경로를 확인하며, 추론 모델을 이미지 모델로 바꾸지 않는다.
+기본 이미지 생성은 **ChatGPT/Codex의 내장 `image_gen`, 로컬 Claude Code CLI/IDE의 `gpt-image` ChatGPT 로그인 Codex CLI 브리지, 또는 Antigravity의 내장 Nano Banana 이미지 기능**만 사용한다. Antigravity에서는 현재 버전이 제공하는 네이티브 도구/`image-generator` 경로를 확인하며, 추론 모델을 이미지 모델로 바꾸지 않는다.
 
 `gpt-image-2.5` 등 별도 과금되는 API/모델은 **사용자가 해당 작업에 별도로 유료 모델/API 사용을 명시적으로 요청한 경우에만** 사용한다. “고품질로”, “알아서”, “GPT 이미지”, 모델명 비교·인용·사용 금지는 유료 사용 승인이 아니다. 생성 실패·한도·도구 미지원·참조 수 부족을 유료 API 자동 전환으로 해결하지 않는다.
 
@@ -21,9 +24,11 @@ description: 음악 한 곡이나 승인 자산으로 장르에 맞는 연출·�
 
 ## 호스트별 이미지 도구
 
-ChatGPT/Codex에서는 내장 `image_gen`, Antigravity에서는 현재 세션의 네이티브 이미지 생성 기능 또는 내장 `image-generator` 경로를 사용한다. [공통 이미지 계약](../road-music-video-studio/references/image-providers.md)을 따른다. 아래 문서의 `image_gen` 전용 인자는 ChatGPT 경로이며 Antigravity에 같은 도구명·모델 옵션을 강제하지 않는다. 실제 파일·도구·반환 모델을 기록하고 동일한 자산 검수/렌더 계약으로 전달한다. 이미지가 필요 없는 절차형 연출은 그대로 유지한다.
+ChatGPT/Codex에서는 내장 `image_gen`, 로컬 Claude Code CLI/IDE에서는 실제로 읽은 `gpt-image` 스킬의 ChatGPT 로그인 Codex CLI 브리지를, Antigravity에서는 현재 세션의 네이티브 이미지 생성 기능 또는 내장 `image-generator` 경로를 사용한다. [공통 이미지 계약](../road-music-video-studio/references/image-providers.md)을 따른다. `image_gen` 전용 인자는 ChatGPT 경로이며 Claude의 브리지 인자와 Antigravity 도구명·모델 옵션을 추정하지 않는다. Claude에서 `gpt-image`가 없으면 의존성 누락을 보고하고 로그인·설치·유료 API 대체를 하지 않는다. 실제 파일·도구·반환 모델을 기록하고 동일한 자산 검수/렌더 계약으로 전달한다. 이미지가 필요 없는 절차형 연출은 그대로 유지한다.
 
 ## HTML 제작·검수 화면
+HTML을 사용하는 단계에서는 [단계별 페이지 열기](../road-music-video-studio/references/page-flow.md)에 따라 필요한 화면을 Ego 브라우저에서 실제로 열어 확인한다. 이미 저장한 선택을 다시 묻거나 같은 화면을 불필요하게 다시 로드하지 않는다.
+
 
 실제 영상 제작은 [공통 HTML 영상 제작실](../road-music-video-studio/SKILL.md)을 함께 사용한다. 스타일과 음악을 보고·들으며 고르고, 기획/이미지·부분 영상·최종 결과·수정 의견을 같은 프로젝트 화면에 게시한다. `publish`는 검수 등록 전체를 manifest로 교체하므로, 후속 게시에서도 유지할 기존 스토리보드·음원·영상·자막을 모두 manifest에 다시 넣는다. 이미 받은 선택은 유지하고 저장된 selection.json/feedback.json을 실제로 읽어 이 스킬의 입력에 반영한다. 표시용 페이지 생성이나 버튼 저장을 렌더 완료로 보고하지 않는다. HTML은 제작·검수 인터페이스이며, 엔진별 실제 생성·편집·렌더와 원곡/가사 시계는 아래 절차가 맡는다.
 
@@ -43,7 +48,7 @@ ChatGPT/Codex에서는 내장 `image_gen`, Antigravity에서는 현재 세션의
 
 완성본의 오프닝 길이·무음 같은 부분 수정은 기존 네이티브 렌더와 FFmpeg 마감 편집을 재사용할 수 있다. 변경된 구간만 재처리하고, 보존한 본편은 프레임·음원·자막의 대응 관계를 검증한다. 원본 `reel/`을 남긴 파생 편집은 원본 프로젝트와 최종 편집표의 역할을 구분해 기록한다. 오프닝 부분 수정에는 [오프닝 지침](references/opening-thumbnail.md)의 시간 매핑·오디오 검증을 적용한다.
 
-Node·ffmpeg·Chrome와 Python 경로를 단계별 확인한다. 기본 `python3` 실패 뒤 local venv/bundled Python의 NumPy/Pillow를 찾아 하나를 고정하고 이후 Python 도구에 일관되게 쓴다. legacy preflight의 성공 문구는 충분한 증거가 아니다. 미설치 도구는 의존 단계만 보류하고 시트·보드·검수 같은 독립 작업은 계속한다. Claude helper 미설치와 무관하게 현재 호스트의 네이티브 이미지 생성 기능이 있으면 생성 가능하다. 사용자가 별도로 해당 유료 모델/API의 사용을 명시적으로 요청한 경우에만 `gpt-image-api`를 읽어 적용하며, 일반 “GPT 이미지”는 API 권한이 아니다.
+Node·ffmpeg·Chrome와 Python 경로를 단계별 확인한다. 기본 `python3` 실패 뒤 local venv/bundled Python의 NumPy/Pillow를 찾아 하나를 고정하고 이후 Python 도구에 일관되게 쓴다. legacy preflight의 성공 문구는 충분한 증거가 아니다. 미설치 도구는 의존 단계만 보류하고 시트·보드·검수 같은 독립 작업은 계속한다. Claude Code의 이미지 단계에는 로드된 `gpt-image`가 필요하며, Codex/Antigravity의 실제 네이티브 이미지 기능은 그 외부 스킬과 독립적이다. 사용자가 별도로 해당 유료 모델/API의 사용을 명시적으로 요청한 경우에만 `gpt-image-api`를 읽어 적용하며, 일반 “GPT 이미지”는 API 권한이 아니다.
 
 ## 5단계 제작
 
@@ -56,3 +61,5 @@ Node·ffmpeg·Chrome와 Python 경로를 단계별 확인한다. 기본 `python3
 ## 통과와 보고
 
 선택한 미술 양식에서 인물-공간의 원근·지지·그림자·광원/반사·소품 상호작용을 검수하고, 인물 없는 작품은 공간·물성·모티프의 일관성을 본다. 전체 섬광은 초당 3회 이하로 둔다. 보고에는 장르/연출 선택 근거, 절대 경로, 재사용/새 key, 스토리보드·프롬프트, 사용 도구·글꼴, 실제 렌더/QA 결과와 자막·청취 검증 범위, shot별 자산/해시·반복 이유를 적는다. 최종 MP4·해당하는 SRT·포스터·검토 페이지·편집표·크레딧의 버전을 일치시키고, 원본과 파생 편집이 다르면 최신 진입 파일을 명시한다. 음악·Showreel·생성 도구가 실제로 없으면 의존 단계만 보류하고 가능한 작업은 계속한다. 가사 없는 연주곡을 미완료로 취급하거나, 기술 검사만으로 모든 장르의 품질을 보증하지 않는다.
+
+HTML 제작·선택·검수 화면에는 [공통 DESIGN.md](../road-music-video-studio/assets/design/DESIGN.md)와 번들 Paperlogy를 적용한다. 현재 프로젝트의 DESIGN.md가 있으면 이를 먼저 대조한다. 화면 열기는 [단계별 페이지 이동](../road-music-video-studio/references/page-flow.md)의 같은 Ego 페이지를 재사용하며, 이미 열린 화면에 새 탭을 추가하지 않는다.

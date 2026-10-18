@@ -11,9 +11,10 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 import cd_presets as cd
-from playlist_chooser import MAX_BODY, ChooserSession, handler_for, load_selection
+from playlist_chooser import MAX_BODY, ChooserSession, handler_for, load_selection, open_chooser_page
 
 
 class ChooserServerTests(unittest.TestCase):
@@ -67,6 +68,13 @@ class ChooserServerTests(unittest.TestCase):
         page, _, body = self.request('GET', f'/?token={self.session.token}')
         self.assertEqual(page, 200)
         self.assertIn(b'groove-dial', body)
+        self.assertIn(b'data-road-music-ui', body)
+        self.assertIn(b'Paperlogy', body)
+        self.assertIn(b'data-road-music-nav', body)
+        self.assertIn('스타일 선택'.encode(), body)
+        self.assertIn(b'href="#display-settings"', body)
+        self.assertIn('aria-label="그루브 다이얼 스타일 미리보기"'.encode(), body)
+        self.assertEqual(self.request('GET', f'/design/fonts/Paperlogy-4Regular.ttf?token={self.session.token}')[0], 200)
         partial = self.valid_choice()
         del partial['display']['showNowPlaying']
         self.assertEqual(self.post(partial)[0], 422)
@@ -95,6 +103,7 @@ class ChooserServerTests(unittest.TestCase):
             'X-Playlist-Token': self.session.token,
         })[0], 415)
         self.assertEqual(self.request('GET', f'/asset/../../scripts/cd_presets.py?token={self.session.token}')[0], 404)
+        self.assertEqual(self.request('GET', f'/design/fonts/not-a-font.ttf?token={self.session.token}')[0], 404)
         self.assertEqual(self.request('POST', '/api/submit', b'', {
             'Content-Type': 'application/json', 'Content-Length': str(MAX_BODY + 1), 'Origin': self.origin,
             'X-Playlist-Token': self.session.token,
@@ -130,6 +139,18 @@ class ChooserServerTests(unittest.TestCase):
             ChooserSession(existing, self.music)
         self.assertEqual(sentinel.read_text(encoding='utf-8'), 'keep')
 
+    def test_browser_open_uses_shared_helper_and_keeps_selection_session_alive_on_failure(self):
+        events = []
+        url = f'{self.origin}/?token={self.session.token}'
+        with patch('playlist_chooser.open_page', return_value=True) as opener:
+            self.assertTrue(open_chooser_page(url, events.append))
+        opener.assert_called_once_with(url)
+        self.assertEqual(events, [])
+        with patch('playlist_chooser.open_page', side_effect=RuntimeError('ego unavailable')):
+            self.assertFalse(open_chooser_page(url, events.append))
+        self.assertEqual(events[-1], {'event': 'chooser-open-failed', 'url': url, 'error': 'ego unavailable'})
+        self.assertFalse(self.session.done.is_set())
+
     def test_plan_reads_selection_and_rejects_conflicting_explicit_style(self):
         choice = self.valid_choice()
         self.session.save(choice)
@@ -137,11 +158,25 @@ class ChooserServerTests(unittest.TestCase):
         self.assertEqual(loaded['value']['styleId'], 'groove-dial')
         args = type('Args', (), {'genre': '록 발라드', 'brief': '', 'artist': '', 'instrumental': False,
             'style': None, 'look': None, 'vocal': None, 'act': 'auto', 'display': None,
-            'selection': str(self.output / 'request.json'), 'out': None})()
-        self.assertEqual(cd.plan_command(args)['basePresetId'], 'groove-dial')
+            'selection': str(self.output / 'request.json'), 'out': None, 'host': None})()
+        plan = cd.plan_command(args)
+        self.assertEqual(plan['basePresetId'], 'groove-dial')
+        self.assertEqual(plan['imageGeneration']['host'], 'codex')
         args.style = '네온'
         with self.assertRaisesRegex(ValueError, 'selection'):
             cd.plan_command(args)
+
+    def test_selection_loader_accepts_only_supported_optional_hosts(self):
+        request = self.root / 'selection.json'
+        for host in ('codex', 'claude', 'antigravity', 'antigravity-cli'):
+            choice = self.valid_choice()
+            choice['host'] = host
+            request.write_text(json.dumps(choice), encoding='utf-8')
+            self.assertEqual(load_selection(request)['value']['host'], host)
+        choice['host'] = 'imaginary'
+        request.write_text(json.dumps(choice), encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'host'):
+            load_selection(request)
 
     def test_create_rejects_a_different_music_than_the_selection(self):
         self.session.save(self.valid_choice())

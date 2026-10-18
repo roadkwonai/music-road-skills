@@ -27,7 +27,7 @@ BUNDLE_ROOT="/absolute/path/to/music-road-skills"
 node "$UPDATE_SKILL/scripts/manage.cjs" install \
   --target "$SKILLS_PARENT" --source "$BUNDLE_ROOT"
 ```
-- `--host antigravity`의 기본 대상은 `~/.gemini/config/skills`, `--host antigravity-cli`는 `~/.gemini/antigravity-cli/skills`다. 프로젝트별 `.agents/skills`는 항상 `--target` 절대 경로로 지정한다. 기존 `~/.gemini/antigravity/skills`는 자동 이전하지 않는다.
+- `--host claude`의 기본 대상은 `~/.claude/skills`이며 `CLAUDE_CONFIG_DIR`가 있으면 그 아래 경로다. `--host antigravity`의 기본 대상은 `~/.gemini/config/skills`, `--host antigravity-cli`는 `~/.gemini/antigravity-cli/skills`다. 프로젝트별 Claude는 `.claude/skills`, 공통 프로젝트는 `.agents/skills`를 항상 `--target` 절대 경로로 지정한다. 기존 `~/.gemini/antigravity/skills`는 자동 이전하지 않는다.
 - Release 설치는 `roadkwonai/music-road-skills`의 `vX.Y.Z`, `MusicRoad-Skills-X.Y.Z.zip`, `SHA256SUMS.txt`가 모두 일치할 때만 진행한다.
 - 기존 관리 파일이 바뀌었거나 같은 이름의 미관리 스킬이 다르면 중단한다. 완전히 동일한 기존 스킬만 최초 설치에서 안전하게 채택한다.
 - 설치 전 파일은 대상의 `.music-road-skills/backups/`에 보관하며 실패하면 롤백한다. 다른 스킬, 음악, 모델, 제작 결과는 건드리지 않는다.

@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import tempfile
 import threading
 import unicodedata
@@ -75,7 +76,8 @@ class StudioServerTest(unittest.TestCase):
         self.assertTrue(saved['display']['showSpectrum'])
         self.assertIsNone(saved['display']['showQueue'])
         showreel = json.loads((self.project / 'showreel-request.json').read_text())
-        self.assertEqual(set(showreel), {'schemaVersion', 'styleId', 'display', 'music'})
+        self.assertEqual(set(showreel), {'schemaVersion', 'host', 'styleId', 'display', 'music'})
+        self.assertEqual(showreel['host'], 'antigravity')
         self.assertFalse(showreel['display']['showQueue'])
         response, raw = self.post_json('/api/feedback', {'status': 'needs-revision', 'note': '인트로를 조금 짧게'})
         self.assertEqual(response.status, 201, raw)
@@ -168,6 +170,8 @@ console.log(JSON.stringify({initial,changed,musicWritesAfterMode,musicWritesAfte
         self.assertEqual(checked.returncode, 0, checked.stderr)
         self.assertIn('최근 제작 샘플', template)
         self.assertIn('프리셋 구조 참고', template)
+        self.assertIn('value="claude"', template)
+        self.assertIn('gpt-image 스킬을 통해 ChatGPT 로그인 Codex CLI의 내장 image_gen', template)
 
     def test_publish_refreshes_existing_session_and_marks_source(self):
         video = Path(self.temp.name) / 'final.mp4'
@@ -186,9 +190,39 @@ console.log(JSON.stringify({initial,changed,musicWritesAfterMode,musicWritesAfte
         self.assertEqual(self.session.state()['media']['review']['videos'][0]['sourceStatus'], 'different-source')
 
     def test_all_supported_hosts_round_trip(self):
-        for host in ('codex', 'antigravity', 'antigravity-cli'):
+        providers = {'codex': 'image_gen', 'claude': 'gpt-image', 'antigravity': 'antigravity-native', 'antigravity-cli': 'antigravity-native'}
+        for host, provider in providers.items():
             self.assertEqual(studio.Session(str(self.project), host=host).state()['host'], host)
             self.assertEqual(json.loads((self.project / 'selection.json').read_text())['host'], host)
+            self.assertEqual(json.loads((self.project / 'studio-project.json').read_text())['imagePolicy'], {'provider': provider, 'allowPaidModels': False})
+
+    def test_claude_selection_persists_bridge_policy_in_request_and_reopen(self):
+        value = self.selection()
+        value['host'] = 'claude'
+        self.session.save_selection(value)
+        request = json.loads((self.project / 'production-request.json').read_text())
+        self.assertEqual(request['selection']['host'], 'claude')
+        self.assertEqual(request['imagePolicy'], {'provider': 'gpt-image', 'allowPaidModels': False})
+        reopened = studio.Session(str(self.project)).state()
+        self.assertEqual(reopened['host'], 'claude')
+        self.assertEqual(reopened['imagePolicy'], {'provider': 'gpt-image', 'allowPaidModels': False})
+
+    def test_claude_showreel_request_reaches_plan_unless_host_is_explicit(self):
+        value = self.selection()
+        value['host'] = 'claude'
+        self.session.save_selection(value)
+        selection = self.project / 'showreel-request.json'
+        planner = SCRIPT.parents[2] / 'road-music-showreel-playlist' / 'scripts' / 'cd_presets.py'
+
+        def plan(*args):
+            result = subprocess.run([sys.executable, str(planner), 'plan', '--genre', '록 발라드', '--selection', str(selection), *args], text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            return json.loads(result.stdout)
+
+        inherited = plan()
+        self.assertEqual(inherited['imageGeneration']['host'], 'claude')
+        self.assertEqual((inherited['imageGeneration']['requiredTool'], inherited['imageGeneration']['mode']), ('gpt-image', 'codex-cli-bridge'))
+        self.assertEqual(plan('--host', 'antigravity')['imageGeneration']['host'], 'antigravity')
 
     def test_skip_retains_saved_display_values_when_switching_modes(self):
         previous = self.selection()

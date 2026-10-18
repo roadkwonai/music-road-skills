@@ -11,7 +11,7 @@ $road-music-showreel-mv로 이 확정 음원의 감정 변화에 맞는 전곡 M
 
 1. 원음의 절대 경로·가사·사용 가능한 자산·목적을 고정합니다.
 2. 곡 구조와 가사의 정서 변화로 장면·카메라·전환·자막을 설계합니다.
-3. 필요한 가상 인물·공간·소품 키와 장면 이미지를 현재 호스트에서 실제로 제공하는 도구로 만들고 결과를 확인합니다. Codex/ChatGPT에서는 내장 `image_gen`을, Antigravity에서는 해당 환경의 네이티브 이미지 기능을 사용합니다. [호스트별 이미지 생성 계약](antigravity.md)을 따르며, 지원되지 않는 모델명·API 권한을 가정하지 않습니다.
+3. 필요한 가상 인물·공간·소품 키와 장면 이미지를 현재 호스트에서 실제로 제공하는 도구로 만들고 결과를 확인합니다. Codex/ChatGPT에서는 내장 `image_gen`, 로컬 Claude Code CLI/IDE에서는 로드된 `gpt-image`의 ChatGPT 로그인 Codex CLI 브리지, Antigravity에서는 해당 환경의 네이티브 이미지 기능을 사용합니다. [Claude Code 계약](claude.md)과 [Antigravity 계약](antigravity.md)을 따르며, 지원되지 않는 모델명·API 권한을 가정하지 않습니다.
 4. Showreel 시간축에 비트·가창·장면을 연결해 짧은 원음 미리보기를 먼저 검수합니다.
 5. 전곡 MP4, 프로젝트, 스토리보드, 프롬프트 기록, QA를 남깁니다.
 
@@ -24,4 +24,4 @@ $road-music-showreel-mv로 이 확정 음원의 감정 변화에 맞는 전곡 M
 
 ## 이미지 비용 정책
 
-기본은 ChatGPT `image_gen` 또는 Antigravity Nano Banana다. `gpt-image-2.5` 등 별도 유료 API는 사용자가 해당 작업에 **별도로 유료 사용을 요청한 경우에만** 사용한다. 품질·오류·한도를 이유로 자동 전환하지 않는다.
+기본은 ChatGPT `image_gen`, 로컬 Claude Code의 `gpt-image` Codex CLI 브리지 또는 Antigravity Nano Banana다. `gpt-image-2.5` 등 별도 유료 API는 사용자가 해당 작업에 **별도로 유료 사용을 요청한 경우에만** 사용한다. 품질·오류·한도를 이유로 자동 전환하지 않는다.

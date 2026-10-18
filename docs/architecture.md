@@ -29,4 +29,4 @@ music-road-skills/
 
 ## 호스트와 이미지 생성
 
-Codex와 Antigravity는 같은 프로젝트 선택·미디어·이미지 manifest 계약을 사용합니다. Codex 기본 스킬 대상은 `CODEX_HOME/skills`(기본 `~/.codex/skills`)이고, Antigravity App/IDE는 `~/.gemini/config/skills`, Antigravity CLI는 `~/.gemini/antigravity-cli/skills`, 공통 프로젝트는 `.agents/skills`입니다. Codex는 대화 환경의 내장 `image_gen`을, Antigravity는 그 환경에서 실제로 제공되는 네이티브 이미지 도구를 선택합니다. 어느 쪽도 이 저장소의 Python/Node 스크립트가 이미지 모델을 내장 실행하거나 유료 API 권한을 추정한다는 뜻은 아닙니다. [Antigravity 설치·실행](antigravity.md)
+Codex·Claude Code·Antigravity는 같은 프로젝트 선택·미디어·이미지 manifest 계약을 사용합니다. Codex 기본 스킬 대상은 `CODEX_HOME/skills`(기본 `~/.codex/skills`), Claude Code는 `~/.claude/skills`(`CLAUDE_CONFIG_DIR`가 있으면 그 아래), Antigravity App/IDE는 `~/.gemini/config/skills`, Antigravity CLI는 `~/.gemini/antigravity-cli/skills`입니다. Codex는 대화 환경의 내장 `image_gen`, 로컬 Claude Code CLI/IDE는 실제로 로드한 `gpt-image` 스킬의 ChatGPT 로그인 Codex CLI 브리지, Antigravity는 그 환경에서 실제로 제공되는 네이티브 이미지 도구를 선택합니다. 어느 쪽도 이 저장소의 Python/Node 스크립트가 이미지 모델을 내장 실행하거나 유료 API 권한을 추정한다는 뜻은 아닙니다. [Claude Code 설치·실행](claude.md) · [Antigravity 설치·실행](antigravity.md)

@@ -1,6 +1,6 @@
 # 가상 아티스트 이미지
 
-이미지 공급자는 [호스트별 이미지 생성](../../road-music-video-studio/references/image-providers.md)을 따른다. `image_gen` 인자 설명은 ChatGPT에 해당하며 Antigravity에서는 해당 세션의 이미지 기능/참조 입력으로 연결한다.
+이미지 공급자는 [호스트별 이미지 생성](../../road-music-video-studio/references/image-providers.md)을 따른다. `image_gen` 인자 설명은 ChatGPT에 해당하며, 로컬 Claude Code CLI/IDE에서는 로드된 `gpt-image`의 Codex CLI 브리지, Antigravity에서는 해당 세션의 이미지 기능/참조 입력으로 연결한다.
 
 
 이 문서는 `requiresArtist:true`인 프리셋에만 적용한다. 프리셋은 시각 문법, 인물은 곡마다 설계한다. 장르·명시된 보컬·편성·무드와 사용자 설정을 `artist.json`에 기록하고 성인 가상 인물의 얼굴/헤어/의상/인원/공간을 고정한다. 실존 인물이나 데모 가수를 새 곡에 자동 복사하지 않는다. 보컬 성별은 장르·음역·사진의 인상으로 추정하지 않고 사용자 설명 또는 확인 가능한 음악 생성 메타데이터를 쓴다. 근거가 없으면 `unknown`으로 남긴다.
@@ -11,7 +11,7 @@
 
 기존 CD 또는 그루브 다이얼의 장르별 `plan`이 있다면 `imageGeneration.assets`의 5개 프롬프트를 출발점으로 삼는다. `referenceRoles`는 아직 파일 경로가 아니다. photoA를 먼저 생성/검수한 뒤 B/C/case의 참조 역할을 실제 로컬 경로로 바꿔 `referenced_image_paths`에 전달한다. 일반 커스텀 프리셋은 Codex가 자체 prompts와 assetSchema 역할을 계획한다. 그루브 다이얼도 장르 계획의 5역할 프롬프트를 사용하며 새 음악의 아티스트·사진·공간을 생성한다. 선택한 재질이 prism이면 낡은 종이·찢김·필름 그레인을 넣지 않고, vintage/retro는 실제 촬영·인쇄 물성으로 표현한다. `prompt`와 `transparent_background`를 도구에 전달하고 `referenceRoles` 같은 계획용 필드를 도구 인자로 넘기지 않는다. 완료 여부는 실제 도구 결과와 저장 파일로 판단하며 `prompts-ready-not-generated`를 이미지 생성 완료로 보고하지 않는다.
 
-ChatGPT에서는 내장 `image_gen`을, Antigravity에서는 호스트가 제공하는 이미지 기능을 사용한다. 로컬 참조는 view_image로 본 뒤 `referenced_image_paths`로 전달한다. 생성 결과를 프로젝트에 복사해 default generated_images 경로만 참조하지 않는다. 유료 API로 임의 전환하지 않는다.
+ChatGPT에서는 내장 `image_gen`, 로컬 Claude Code CLI/IDE에서는 로드된 `gpt-image`의 `--reference`/`--edit-target` 브리지, Antigravity에서는 호스트가 제공하는 이미지 기능을 사용한다. ChatGPT 경로의 로컬 참조는 view_image로 본 뒤 `referenced_image_paths`로 전달한다. Claude의 `gpt-image`가 없으면 의존성 누락을 보고하고 로그인·설치·유료 API 대체를 하지 않는다. 생성 결과를 프로젝트에 복사해 default generated_images 경로만 참조하지 않는다. 유료 API로 임의 전환하지 않는다.
 
 | 자산 | 제작 |
 |---|---|
@@ -47,4 +47,4 @@ CD 이미지 manifest에는 기존 다섯 경로와 함께 캐스팅 검수 기�
 }
 ```
 
-프로젝트 `assets/generation.json`에 도구, 프롬프트, 참조 역할, 원본 결과 경로, 실제 복사 경로, 가상 인물 설정을 남긴다. 내장 도구를 사용했다고 보고한다.
+프로젝트 `assets/generation.json`에 도구, 모드, 프롬프트, 참조 역할, 원본 결과 경로, 실제 복사 경로, 가상 인물 설정을 남긴다. Claude 브리지 기록은 `provider:"gpt-image"`, `mode:"codex-cli-bridge"`를 쓰고, 다른 호스트에는 해당 공급자 값을 쓴다.

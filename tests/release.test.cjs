@@ -27,13 +27,13 @@ test('release builder packs only the allow-listed bundle tree', async () => {
     await fs.mkdir(path.join(root, 'skills', 'road-music-showreel-cd'), { recursive: true })
     const manifest = { schemaVersion: 1, name: 'music-road-skills', version: '0.1.0', skills: [{ id: 'road-music-showreel-cd', path: 'skills/road-music-showreel-cd' }] }
     await fs.writeFile(path.join(root, 'manifest.json'), JSON.stringify(manifest)); await fs.writeFile(path.join(root, 'skills', 'road-music-showreel-cd', 'SKILL.md'), '---\nname: test\ndescription: test\n---\n')
-    for (const name of ['README.md', 'LICENSE', 'AGENTS.md']) await fs.writeFile(path.join(root, name), name)
+    for (const name of ['README.md', 'LICENSE', 'AGENTS.md', 'DESIGN.md']) await fs.writeFile(path.join(root, name), name)
     await fs.mkdir(path.join(root, 'scripts', '__pycache__'), { recursive: true }); await fs.writeFile(path.join(root, 'scripts', '__pycache__', 'ignored.pyc'), 'cache')
     const script = path.resolve(__dirname, '..', 'scripts', 'build-release.py'); const output = path.join(root, 'out')
     const built = spawnSync('python3', [script, '--root', root, '--out', output], { encoding: 'utf8' })
     assert.equal(built.status, 0, built.stderr)
     const archive = path.join(output, 'MusicRoad-Skills-0.1.0.zip'); assert.ok((await fs.stat(archive)).size > 0)
     const names = spawnSync('/usr/bin/unzip', ['-Z1', archive], { encoding: 'utf8' }).stdout
-    assert.match(names, /MusicRoad-Skills-0.1.0\/README.md/); assert.match(names, /MusicRoad-Skills-0.1.0\/skills\/road-music-showreel-cd\/SKILL.md/); assert.doesNotMatch(names, /__pycache__/)
+    assert.match(names, /MusicRoad-Skills-0.1.0\/README.md/); assert.match(names, /MusicRoad-Skills-0.1.0\/skills\/road-music-showreel-cd\/SKILL.md/); assert.match(names, /MusicRoad-Skills-0.1.0\/DESIGN.md/); assert.doesNotMatch(names, /__pycache__/)
   } finally { await fs.rm(root, { recursive: true, force: true }) }
 })

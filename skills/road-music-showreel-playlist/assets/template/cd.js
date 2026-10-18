@@ -65,8 +65,8 @@
   }
   function fitText(ctx, text, maxWidth, start, minimum) {
     let size = start;
-    while (size > minimum) { ctx.font = `700 ${size}px Pretendard`; if (ctx.measureText(text).width <= maxWidth) break; size -= 1; }
-    ctx.font = `700 ${size}px Pretendard`;
+    while (size > minimum) { ctx.font = `700 ${size}px Paperlogy`; if (ctx.measureText(text).width <= maxWidth) break; size -= 1; }
+    ctx.font = `700 ${size}px Paperlogy`;
   }
   function ellipsize(ctx, text, maxWidth) {
     if (ctx.measureText(text).width <= maxWidth) return text;

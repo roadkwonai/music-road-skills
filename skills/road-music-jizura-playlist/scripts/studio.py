@@ -19,6 +19,10 @@ from urllib.parse import parse_qs, quote, unquote, urlparse
 
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
+HTML_DESIGN_ROOT = SKILL_ROOT.parent / 'road-music-video-studio' / 'scripts'
+sys.path.insert(0, str(HTML_DESIGN_ROOT))
+from html_design import FONT_FILES, add_navigation, css_text, open_page
+
 DEFAULT_JIZURA_ROOT = Path.home() / '.local/share/roadmusic-video-tools/jizura'
 VERSION = '0.10.1'
 SOURCE_URL = 'https://github.com/852wa/JIZURA'
@@ -478,12 +482,17 @@ def handler_for(session):
         def _error(self, status, message):
             self._json(status, {'ok': False, 'error': str(message)})
 
-        def _static(self, path, content_type, csp=None, inject_token=False):
+        def _static(self, path, content_type, csp=None, inject_token=False, inject_design=False, navigation=None):
             if not path.is_file() or path.is_symlink():
                 return self._error(404, '찾을 수 없는 자산입니다')
             body = path.read_bytes()
             if inject_token:
                 body = body.replace(b'__TOKEN__', session.token.encode('ascii'))
+            if navigation:
+                body = add_navigation(body.decode('utf-8'), **navigation).encode('utf-8')
+            if inject_design:
+                design = f'<style data-road-music-design>{css_text("/design/fonts/", session.token)}</style>'.encode('utf-8')
+                body = body.replace(b'</head>', design + b'</head>', 1)
             self.send_response(200)
             self.send_header('Content-Type', content_type)
             self.send_header('Content-Length', str(len(body)))
@@ -554,13 +563,16 @@ def handler_for(session):
             assets = SKILL_ROOT / 'assets' / 'studio'
             routes = {
                 '/': (assets / 'index.html', 'text/html; charset=utf-8',
-                      "default-src 'self'; connect-src 'self'; media-src 'self'; frame-src 'self'; style-src 'self'; script-src 'self'; base-uri 'none'; frame-ancestors 'none'", True),
+                      "default-src 'self'; connect-src 'self'; media-src 'self'; frame-src 'self'; style-src 'self'; font-src 'self'; script-src 'self'; base-uri 'none'; frame-ancestors 'none'", True, False,
+                      {'current': 'jizura', 'sections': [('추천·설정', '#quick'), ('전체 편집기', '#editor'), ('기능 안내', '#help')]}),
                 '/studio.mjs': (assets / 'studio.mjs', 'text/javascript; charset=utf-8', None),
                 '/studio.css': (assets / 'studio.css', 'text/css; charset=utf-8', None),
                 '/directing.mjs': (SKILL_ROOT / 'scripts' / 'directing.mjs', 'text/javascript; charset=utf-8', None),
                 '/engine/index.html': (session.engine, 'text/html; charset=utf-8',
-                                        "default-src 'self' 'unsafe-inline' blob:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; base-uri 'none'; frame-ancestors 'self'"),
+                                        "default-src 'self' 'unsafe-inline' blob:; connect-src 'self'; media-src 'self' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; base-uri 'none'; frame-ancestors 'self'", False, True),
             }
+            if parsed.path == '/design.css':
+                return self._send(200, css_text('/design/fonts/', session.token).encode('utf-8'), 'text/css; charset=utf-8')
             if parsed.path == '/api/config':
                 return self._json(200, session.config(self.server.server_port))
             if parsed.path == '/api/status':
@@ -571,6 +583,12 @@ def handler_for(session):
             font_match = re.fullmatch(r'/api/font/([^/]+)', parsed.path)
             if font_match:
                 return self._font(unquote(font_match.group(1)))
+            design_font = re.fullmatch(r'/design/fonts/([^/]+)', parsed.path)
+            if design_font:
+                name = unquote(design_font.group(1))
+                if name not in FONT_FILES:
+                    return self._error(404, '찾을 수 없는 글꼴입니다')
+                return self._static(HTML_DESIGN_ROOT.parent / 'assets' / 'design' / 'fonts' / name, 'font/ttf')
             if parsed.path in routes:
                 return self._static(*routes[parsed.path])
             return self._error(404, '지원하지 않는 경로입니다')
@@ -635,6 +653,21 @@ def handler_for(session):
     return Handler
 
 
+def open_studio_page(url):
+    """Open a ready local studio without making browser failure fatal to the server."""
+    try:
+        opened = open_page(url)
+    except Exception as error:
+        print(json.dumps({'event': 'studio-open-failed', 'url': url, 'error': str(error)}, ensure_ascii=False),
+              file=sys.stderr, flush=True)
+        return False
+    if not opened:
+        print(json.dumps({'event': 'studio-open-failed', 'url': url, 'error': '기본 브라우저가 URL을 열지 않았습니다'}, ensure_ascii=False),
+              file=sys.stderr, flush=True)
+        return False
+    return True
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', required=True)
@@ -644,6 +677,7 @@ def main(argv=None):
     parser.add_argument('--analysis')
     parser.add_argument('--jizura-root')
     parser.add_argument('--port', type=int, default=0)
+    parser.add_argument('--open', action='store_true')
     args = parser.parse_args(argv)
     if not 0 <= args.port <= 65535:
         parser.error('--port: 0..65535')
@@ -656,6 +690,8 @@ def main(argv=None):
     ready = {'ok': True, 'url': f'http://127.0.0.1:{server.server_port}/?token={session.token}',
              'output': str(session.output), 'pid': os.getpid(), 'version': VERSION}
     print(json.dumps(ready, ensure_ascii=False, allow_nan=False), flush=True)
+    if args.open:
+        threading.Thread(target=open_studio_page, args=(ready['url'],), daemon=True).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:

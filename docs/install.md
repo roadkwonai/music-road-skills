@@ -21,6 +21,22 @@ node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 
 기본 대상은 `CODEX_HOME/skills`이며 `CODEX_HOME`이 없으면 `~/.codex/skills`입니다. 이미 같은 이름의 스킬이 있으면 설치 도구가 원본을 먼저 보존합니다. 설치 뒤 새 Codex 세션에서 스킬 이름을 호출합니다.
 
+## Claude Code에서 사용
+
+Claude Code의 전역 스킬은 `~/.claude/skills`, 특정 프로젝트의 스킬은 `.claude/skills`에 둡니다. `CLAUDE_CONFIG_DIR`를 설정한 환경에서는 개인 경로가 그 디렉터리 아래로 바뀝니다. 업데이터의 Claude 호스트 지원 여부와 정확한 옵션은 설치한 `road-music-skills-update`의 `SKILL.md`가 기준이며, 프로젝트 대상은 항상 절대 경로로 명시합니다. [Claude Code 상세 안내](claude.md)
+
+```bash
+# Claude Code 전역 스킬 경로
+node skills/road-music-skills-update/scripts/manage.cjs install \
+  --source "$PWD" --host claude
+
+# 이 프로젝트에서만 사용할 경로
+node skills/road-music-skills-update/scripts/manage.cjs install \
+  --source "$PWD" --target "$PWD/.claude/skills"
+```
+
+Claude에서 새 이미지를 만들어야 하면 별도 `gpt-image` 스킬이 필요합니다. Road Music 스킬은 이를 설치하거나 ChatGPT 로그인을 열지 않습니다. 실제 로드한 `gpt-image/SKILL.md`의 부모를 `GPT_IMAGE_SKILL`로 사용하며, 누락되면 이미지 의존성 누락으로 보고합니다. `CLAUDE_CONFIG_DIR`를 쓰더라도 외부 `gpt-image` runner가 그 사용자 지정 경로를 자동 지원한다고 가정하지 말고 실제 로드 경로와 해당 스킬의 설치·진단 계약을 확인합니다.
+
 ## Antigravity에서 사용
 
 Antigravity는 Codex의 `CODEX_HOME` 경로를 추정하지 않습니다. 공식 설치 위치는 다음과 같습니다.

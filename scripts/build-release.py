@@ -14,7 +14,7 @@ import zipfile
 
 VERSION = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 ROOT = Path(__file__).resolve().parents[1]
-TOP_FILES = ("README.md", "manifest.json", "LICENSE", "VERSION", "AGENTS.md")
+TOP_FILES = ("README.md", "manifest.json", "LICENSE", "VERSION", "AGENTS.md", "DESIGN.md")
 TOP_DIRS = ("skills", "docs", "release", "scripts")
 
 def fail(message: str) -> None:

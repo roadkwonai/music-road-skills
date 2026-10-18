@@ -89,14 +89,14 @@
     R.overlay(time => { drawSpectrum(time); drawPlaylist(time); }, { layer: 'top', setup(host) {
       const color = palette();
       if (source) {
-        const spectrumWidth = options.showQueue || options.showNowPlaying ? 1240 : 1720;
+        const spectrumWidth = options.showQueue ? 1240 : 1720;
         spectrumCanvas = document.createElement('canvas'); spectrumCanvas.className = 'cd-playlist-spectrum'; spectrumCanvas.width = spectrumWidth; spectrumCanvas.height = 75; spectrumCanvas.setAttribute('aria-hidden', 'true'); spectrumCanvas.style.cssText = `position:absolute;left:100px;top:840px;width:${spectrumWidth}px;height:75px;pointer-events:none`; spectrumContext = spectrumCanvas.getContext('2d'); host.appendChild(spectrumCanvas);
       }
       if (!options.showQueue && !options.showNowPlaying) return;
-      const rail = document.createElement('aside'); rail.className = 'cd-playlist-rail'; rail.style.cssText = `position:absolute;left:1470px;top:116px;width:340px;padding:22px 22px 18px;border:1px solid ${color.faint};background:${color.panel};color:${color.text};box-shadow:0 12px 34px rgba(0,0,0,.18);font-family:Paperlogy,sans-serif;pointer-events:none`;
+      const rail = document.createElement('aside'); rail.className = `cd-playlist-rail${options.showQueue ? '' : ' cd-playlist-now-only'}`; rail.style.cssText = options.showQueue ? `position:absolute;left:1470px;top:116px;width:340px;padding:22px 22px 18px;border:1px solid ${color.faint};background:${color.panel};color:${color.text};box-shadow:0 12px 34px rgba(0,0,0,.18);font-family:Paperlogy,sans-serif;pointer-events:none` : `position:absolute;right:110px;top:40px;width:250px;padding:12px 14px;border:1px solid ${color.faint};background:${color.panel};color:${color.text};box-shadow:0 8px 20px rgba(0,0,0,.14);font-family:Paperlogy,sans-serif;pointer-events:none`;
       if (options.showNowPlaying) {
-        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = '지금 재생 중'; label.style.cssText = `font:700 16px/1.2 Paperlogy,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:10px`;
-        nowTitle = document.createElement('div'); nowTitle.className = 'cd-playlist-now-title'; nowTitle.style.cssText = `display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:700 29px/1.22 Paperlogy,sans-serif;word-break:keep-all;margin-bottom:${options.showQueue ? '30px' : '0'}`;
+        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = '지금 재생 중'; label.style.cssText = `font:700 ${options.showQueue ? 16 : 12}px/1.2 Paperlogy,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:${options.showQueue ? 10 : 6}px`;
+        nowTitle = document.createElement('div'); nowTitle.className = 'cd-playlist-now-title'; nowTitle.style.cssText = `display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:700 ${options.showQueue ? 29 : 21}px/1.22 Paperlogy,sans-serif;word-break:keep-all;margin-bottom:${options.showQueue ? '30px' : '0'}`;
         rail.append(label, nowTitle);
       }
       if (options.showQueue) {

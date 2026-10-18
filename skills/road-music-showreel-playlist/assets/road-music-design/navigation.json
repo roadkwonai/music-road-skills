@@ -1,0 +1,7 @@
+[
+  ["studio", "영상 제작실", "/", ""],
+  ["catalog", "스타일 둘러보기", "/catalog/", ""],
+  ["music", "음악", "/", "music-section"],
+  ["settings", "제작 설정", "/", "display-section"],
+  ["results", "완성 파일", "/", "deliverables"]
+]

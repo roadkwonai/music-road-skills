@@ -2,7 +2,9 @@
   'use strict';
   const R = window.REEL, G = window.GROOVE, runtime = window.GrooveRuntime;
   const {config} = runtime, palette = config.preset.palette;
-  const rail = config.display.showQueue || config.display.showNowPlaying;
+  const rail = config.display.showQueue;
+  const lyrics = Array.isArray(window.PLAYLIST_LYRICS) ? window.PLAYLIST_LYRICS.filter(cue => cue && typeof cue.text === 'string' && cue.text.trim()) : [];
+  const clean = value => typeof value === 'string' ? value.trim() : '';
   const { mix, smooth, out, settle } = G;
   let profile = G.profileAt(0);
   const W = 1920, H = 1080, TAU = Math.PI * 2;
@@ -16,14 +18,20 @@
   let records, picture, ctx;
   const cover = (c, im, x, y, w, h) => { const s = Math.max(w / im.width, h / im.height); c.drawImage(im, x + (w - im.width * s) / 2, y + (h - im.height * s) / 2, im.width * s, im.height * s); };
   let activeTrack = -1;
+  function editorialFor(track) {
+    const configured = config.editorial?.quotes;
+    const explicit = Array.isArray(configured) && config.playlist.tracks.length === 1 ? configured : configured && Array.isArray(configured[track.id]) ? configured[track.id] : null;
+    const source = explicit || lyrics.filter(cue => cue.trackId ? cue.trackId === track.id : cue.startSeconds >= track.startSeconds && cue.startSeconds < track.endSeconds).map(cue => cue.text);
+    return { title: clean(track.title), channel: clean(config.display?.channelName), quotes: source.map(clean).filter(Boolean).slice(0, 3) };
+  }
   function activate(time) {
     const index = config.playlist.tracks.indexOf(runtime.trackAt(time));
     if (activeTrack === index) return;
     activeTrack = index;
-    const assets = bundles[index];
+    const track = config.playlist.tracks[index], assets = bundles[index];
     introDiscs.length = 0;
     ring.width = 1100; discShadow.width = 1100;
-    records = RecordLayers.create(assets);
+    records = RecordLayers.create(assets, editorialFor(track));
     const b = background.getContext('2d'); cover(b, assets.paper, 0, 0, W, H);
     b.fillStyle = runtime.rgba(palette.paper,.18); b.fillRect(0, 0, W, H);
     const d = dark.getContext('2d'); d.drawImage(background, 0, 0); d.fillStyle = runtime.rgba(palette.dark,.92); d.fillRect(0, 0, W, H);
@@ -64,6 +72,12 @@
     }
     ctx.restore();
   }
+  function titleStamp(t, s) {
+    const alpha = out(t / .44) * (1 - smooth(t, T.body - .7, T.body - .12));
+    if (alpha <= 0 || !records.titleStamp) return;
+    const hit = s.hit * profile.impact;
+    records.drawTitleStamp(ctx, { x: 318, y: 182, width: 630 * (1 + hit * .025), angle: -3 + hit * .35, opacity: alpha });
+  }
   function caseSprite(opts) {
     records.drawCase(ctx,opts);
     const name = config.display.channelName;
@@ -96,7 +110,7 @@
     }
     sprite(records.discs[0], x, y, r * 2, angle, smooth(gather, .3, .96));
     sprite(records.glass, x, y, r * 2);
-    arcs(x, y, r, t, s); ink(x, y, r, t, false);
+    arcs(x, y, r, t, s); ink(x, y, r, t, false); titleStamp(t, s);
     if (t >= FAN && t < T.assemble + .95) {
       const exit = smooth(t, T.assemble, T.assemble + .95);
       for (let i = 0; i < 3; i++) {
@@ -169,5 +183,5 @@
   R.scene({ id: 'groove', start: 0, end: config.duration, push: 0, setup(el) { picture = canvas(); picture.className = 'picture'; el.append(picture); ctx = picture.getContext('2d'); }, render(lt, c) { render(c.t); } });
   R.overlay(t => GrooveCaptions.render(t), { layer: 'top', setup: GrooveCaptions.setup });
   GroovePlaylistUI.install(R);
-  window.GROOVE_DIAGNOSTICS = () => ({ duration: config.duration, profile, cues: T, activeTrack, introActive: window.__t < runtime.body, selectedOnsets: runtime.hits, captions: GrooveCaptions.state(), cached: Boolean(records), discAngle: G.state(window.__t || 0).angle, channelName: config.display.channelName, rail, spriteCounts: records ? { discs: records.discs.length, cards: records.cards.length } : null });
+  window.GROOVE_DIAGNOSTICS = () => ({ duration: config.duration, profile, cues: T, activeTrack, introActive: window.__t < runtime.body, selectedOnsets: runtime.hits, captions: GrooveCaptions.state(), cached: Boolean(records), discAngle: G.state(window.__t || 0).angle, channelName: config.display.channelName, rail, editorial: records?.editorial || null, spriteCounts: records ? { discs: records.discs.length, cards: records.cards.length, titleStamp: Boolean(records.titleStamp) } : null });
 })();

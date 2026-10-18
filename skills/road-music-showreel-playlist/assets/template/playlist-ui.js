@@ -90,21 +90,21 @@
         spectrumCanvas = document.createElement('canvas'); spectrumCanvas.className = 'cd-playlist-spectrum'; spectrumCanvas.width = spectrumWidth; spectrumCanvas.height = 75; spectrumCanvas.setAttribute('aria-hidden', 'true'); spectrumCanvas.style.cssText = `position:absolute;left:100px;top:840px;width:${spectrumWidth}px;height:75px;pointer-events:none`; spectrumContext = spectrumCanvas.getContext('2d'); host.appendChild(spectrumCanvas);
       }
       if (!options.showQueue && !options.showNowPlaying) return;
-      const rail = document.createElement('aside'); rail.className = 'cd-playlist-rail'; rail.style.cssText = `position:absolute;left:1420px;top:116px;width:400px;padding:22px 22px 18px;border:1px solid ${color.faint};background:${color.panel};color:${color.text};box-shadow:0 12px 34px rgba(0,0,0,.18);font-family:Pretendard,sans-serif;pointer-events:none`;
+      const rail = document.createElement('aside'); rail.className = 'cd-playlist-rail'; rail.style.cssText = `position:absolute;left:1420px;top:116px;width:400px;padding:22px 22px 18px;border:1px solid ${color.faint};background:${color.panel};color:${color.text};box-shadow:0 12px 34px rgba(0,0,0,.18);font-family:Paperlogy,sans-serif;pointer-events:none`;
       if (options.showNowPlaying) {
-        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = 'NOW PLAYING'; label.style.cssText = `font:700 12px/1.2 Pretendard,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:10px`;
-        nowTitle = document.createElement('div'); nowTitle.className = 'cd-playlist-now-title'; nowTitle.style.cssText = `display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:700 29px/1.22 "Noto Serif KR",serif;word-break:keep-all;margin-bottom:${options.showQueue ? '30px' : '0'}`;
+        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = 'NOW PLAYING'; label.style.cssText = `font:700 12px/1.2 Paperlogy,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:10px`;
+        nowTitle = document.createElement('div'); nowTitle.className = 'cd-playlist-now-title'; nowTitle.style.cssText = `display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:700 29px/1.22 Paperlogy,sans-serif;word-break:keep-all;margin-bottom:${options.showQueue ? '30px' : '0'}`;
         rail.append(label, nowTitle);
       }
       if (options.showQueue) {
-        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = 'UP NEXT'; label.style.cssText = `font:700 12px/1.2 Pretendard,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:12px`;
+        const label = document.createElement('div'); label.className = 'cd-playlist-label'; label.textContent = 'UP NEXT'; label.style.cssText = `font:700 12px/1.2 Paperlogy,sans-serif;letter-spacing:.13em;color:${color.edge};margin-bottom:12px`;
         queueList = document.createElement('ol'); queueList.className = 'cd-playlist-queue'; queueList.style.cssText = 'list-style:none;padding:0;margin:0';
-        queueEmpty = document.createElement('div'); queueEmpty.className = 'cd-playlist-queue-empty'; queueEmpty.style.cssText = 'font:500 17px/1.45 Pretendard,sans-serif;opacity:.72';
-        queueMore = document.createElement('div'); queueMore.className = 'cd-playlist-queue-more'; queueMore.style.cssText = `margin-top:12px;font:700 14px/1 Pretendard,sans-serif;color:${color.edge}`;
+        queueEmpty = document.createElement('div'); queueEmpty.className = 'cd-playlist-queue-empty'; queueEmpty.style.cssText = 'font:500 17px/1.45 Paperlogy,sans-serif;opacity:.72';
+        queueMore = document.createElement('div'); queueMore.className = 'cd-playlist-queue-more'; queueMore.style.cssText = `margin-top:12px;font:700 14px/1 Paperlogy,sans-serif;color:${color.edge}`;
         rail.append(label, queueList, queueEmpty, queueMore);
       }
       host.appendChild(rail);
-      const style = document.createElement('style'); style.textContent = '.cd-playlist-queue-item{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;margin:0 0 11px}.cd-playlist-queue-number{font:700 12px/1.4 Pretendard,sans-serif;opacity:.56}.cd-playlist-queue-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:600 17px/1.35 Pretendard,sans-serif;word-break:keep-all}'; host.appendChild(style);
+      const style = document.createElement('style'); style.textContent = '.cd-playlist-queue-item{display:grid;grid-template-columns:30px minmax(0,1fr);gap:8px;margin:0 0 11px}.cd-playlist-queue-number{font:700 12px/1.4 Paperlogy,sans-serif;opacity:.56}.cd-playlist-queue-title{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font:600 17px/1.35 Paperlogy,sans-serif;word-break:keep-all}'; host.appendChild(style);
     }});
   }
   window.CDPlaylistUI = { install, stateAt, spectrumValuesAt: valuesAt };

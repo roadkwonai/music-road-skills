@@ -2,12 +2,21 @@
 (() => {
   'use strict';
 
+  const config = window.PLAYLIST_CONFIG;
   const TAU = Math.PI * 2;
   const RAD = Math.PI / 180;
   const DISC = 1024;
   const CASE = 1200; // drawCase의 size는 그림자 여백을 포함한 이 투명 캔버스 한 변이다.
   const CARD_W = 1200;
   const CARD_H = 880;
+  const STAMP_W = 720;
+  const STAMP_H = 180;
+  const clean = value => typeof value === 'string' ? value.trim() : '';
+  const editorialCopy = value => ({
+    title: clean(value?.title),
+    channel: clean(value?.channel),
+    quotes: Array.isArray(value?.quotes) ? value.quotes.map(clean).filter(Boolean).slice(0, 3) : [],
+  });
   const sourceSize = (image, name, minWidth, minHeight) => {
     const width = Number(image && (image.naturalWidth || image.videoWidth || image.width));
     const height = Number(image && (image.naturalHeight || image.videoHeight || image.height));
@@ -30,6 +39,19 @@
     const drawHeight = height * scale;
     ctx.drawImage(image, x + (outWidth - drawWidth) / 2, y + (outHeight - drawHeight) / 2, drawWidth, drawHeight);
   };
+  const fit = (ctx, text, maxWidth) => {
+    let value = String(text);
+    while (value.length > 1 && ctx.measureText(value).width > maxWidth) value = `${value.slice(0, -2)}…`;
+    return value;
+  };
+  const text = (ctx, value, x, y, font, color, maxWidth, align = 'left') => {
+    if (!value) return;
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(fit(ctx, value, maxWidth), x, y);
+  };
   const tear = (ctx, x, y, width, height) => {
     if (window.PLAYLIST_CONFIG.preset.variant === 'prism') { ctx.beginPath(); ctx.rect(x,y,width,height); return; }
     const step = 48;
@@ -42,7 +64,7 @@
     ctx.closePath();
   };
 
-  function makeDisc(photo) {
+  function makeDisc(photo, copy) {
     const node = canvas(DISC, DISC);
     const ctx = node.getContext('2d');
     ctx.save();
@@ -52,6 +74,13 @@
     shade.addColorStop(0, 'rgba(15,10,18,0)');
     shade.addColorStop(1, 'rgba(12,9,16,.36)');
     ctx.fillStyle = shade; ctx.fillRect(0, 0, DISC, DISC);
+    if (copy.title) {
+      const palette = config.preset.palette;
+      ctx.fillStyle = 'rgba(247,238,216,.9)'; ctx.beginPath(); ctx.arc(512, 512, 125, 0, TAU); ctx.fill();
+      ctx.strokeStyle = palette.accent; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(512, 512, 125, 0, TAU); ctx.stroke();
+      text(ctx, copy.title, 512, 442, '800 22px Paperlogy', palette.ink, 190, 'center');
+      text(ctx, copy.channel, 512, 584, '700 16px Paperlogy', palette.accent, 190, 'center');
+    }
     ctx.restore();
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath(); ctx.arc(512, 512, 30, 0, TAU); ctx.fill();
@@ -90,18 +119,35 @@
     return node;
   }
 
-  function makeCard(photo, paper, index) {
+  function makeCard(photo, paper, index, copy) {
     const node = canvas(CARD_W, CARD_H);
     const ctx = node.getContext('2d');
+    const palette = config.preset.palette;
     ctx.save(); tear(ctx, 82, 68, 1036, 704); ctx.shadowColor = 'rgba(22,14,16,.42)'; ctx.shadowBlur = 32; ctx.shadowOffsetY = 24;
     ctx.fillStyle = 'rgba(35,25,28,.7)'; ctx.fill(); ctx.restore();
     ctx.save(); tear(ctx, 82, 68, 1036, 704); ctx.clip();
     cover(ctx, paper, CARD_W, CARD_H);
-    ctx.fillStyle = 'rgba(250,243,226,.32)'; ctx.fillRect(82, 68, 1036, 704);
-    ctx.save(); ctx.beginPath(); ctx.rect(150, 126, 900, 518); ctx.clip(); cover(ctx, photo, 900, 518, 150, 126); ctx.restore();
-    ctx.fillStyle = [window.PLAYLIST_CONFIG.preset.palette.accent, window.PLAYLIST_CONFIG.preset.palette.ink, window.PLAYLIST_CONFIG.preset.palette.light][index]; ctx.globalAlpha = .68; ctx.fillRect(150, 674, 436, 18);
-    ctx.globalAlpha = .18; ctx.fillStyle = '#20171d'; ctx.fillRect(150, 714, 720, 9); ctx.fillRect(150, 738, 510, 7);
+    ctx.fillStyle = 'rgba(250,243,226,.42)'; ctx.fillRect(82, 68, 1036, 704);
+    ctx.fillStyle = 'rgba(247,238,216,.93)'; ctx.fillRect(126, 94, 948, 68);
+    ctx.fillStyle = palette.accent; ctx.fillRect(150, 113, 66, 6);
+    text(ctx, copy.title, 234, 128, '800 43px Paperlogy', palette.ink, 790);
+    ctx.save(); ctx.beginPath(); ctx.rect(150, 178, 900, 460); ctx.clip(); cover(ctx, photo, 900, 460, 150, 178); ctx.restore();
+    ctx.fillStyle = [palette.accent, palette.ink, palette.light][index]; ctx.globalAlpha = .78; ctx.fillRect(150, 674, 436, 18);
+    text(ctx, copy.quotes[index], 150, 720, '700 31px Paperlogy', palette.ink, 820);
+    text(ctx, copy.channel, 150, 758, '700 18px Paperlogy', palette.accent, 820);
     ctx.restore();
+    return node;
+  }
+
+  function makeTitleStamp(copy) {
+    const node = canvas(STAMP_W, STAMP_H);
+    const ctx = node.getContext('2d');
+    const palette = config.preset.palette;
+    ctx.fillStyle = 'rgba(247,238,216,.96)'; ctx.fillRect(8, 8, STAMP_W - 16, STAMP_H - 16);
+    ctx.strokeStyle = palette.ink; ctx.lineWidth = 3; ctx.strokeRect(9.5, 9.5, STAMP_W - 19, STAMP_H - 19);
+    ctx.fillStyle = palette.accent; ctx.fillRect(34, 40, 10, 98);
+    text(ctx, copy.title, 74, 74, '800 57px Paperlogy', palette.ink, 600);
+    text(ctx, copy.channel, 78, 124, '700 22px Paperlogy', palette.accent, 570);
     return node;
   }
 
@@ -120,15 +166,17 @@
     ctx.drawImage(image, -width / 2, -height / 2, width, height); ctx.restore();
   };
 
-  function create(assets = {}) {
+  function create(assets = {}, editorial = {}) {
     if (!Array.isArray(assets.photos) || assets.photos.length !== 3) throw new TypeError('photos는 3개 소스 PNG 배열이어야 합니다.');
     assets.photos.forEach((photo, index) => sourceSize(photo, `photos[${index}]`, 1024, 700));
     sourceSize(assets.case, 'case', 1024, 1024);
     sourceSize(assets.paper, 'paper', 1024, 700);
-    const discs = assets.photos.map(makeDisc);
+    const copy = editorialCopy(editorial);
+    const discs = assets.photos.map(photo => makeDisc(photo, copy));
     const glass = makeGlass();
     const caseLayer = makeCase(assets.case);
-    const cards = assets.photos.map((photo, index) => makeCard(photo, assets.paper, index));
+    const cards = assets.photos.map((photo, index) => makeCard(photo, assets.paper, index, copy));
+    const titleStamp = copy.title ? makeTitleStamp(copy) : null;
     const values = (opts, sizeName, fallbackIndex) => {
       const value = opts || {};
       const index = value.index === undefined ? fallbackIndex : value.index;
@@ -138,7 +186,7 @@
       return { index, angle: value.angle === undefined ? 0 : value.angle, opacity: value.opacity === undefined ? 1 : value.opacity };
     };
     return {
-      discs, glass, case: caseLayer, cards,
+      discs, glass, case: caseLayer, cards, titleStamp, editorial: copy,
       drawDisc(ctx, opts) {
         const value = values(opts, 'r', 0); if (!Number.isInteger(value.index) || !discs[value.index]) throw new RangeError('disc index는 0~2여야 합니다.');
         draw(ctx, discs[value.index], opts.x, opts.y, opts.r * 2, opts.r * 2, value.angle, value.opacity);
@@ -150,6 +198,11 @@
       drawCard(ctx, index, opts) {
         const value = values(opts, 'width', index); if (!Number.isInteger(index) || !cards[index]) throw new RangeError('card index는 0~2여야 합니다.');
         draw(ctx, cards[index], opts.x, opts.y, opts.width, opts.width * CARD_H / CARD_W, value.angle, value.opacity);
+      },
+      drawTitleStamp(ctx, opts) {
+        if (!titleStamp) return;
+        const value = values(opts, 'width', 0);
+        draw(ctx, titleStamp, opts.x, opts.y, opts.width, opts.width * STAMP_H / STAMP_W, value.angle, value.opacity);
       },
     };
   }

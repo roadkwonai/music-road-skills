@@ -34,16 +34,29 @@ try{
  for(const t of times.toReversed())assert.equal(await frame(t),hashes.get(t),`reverse seek ${t}`);
  const boundary=await page.evaluate(([b,e])=>[b-.01,b,b+.01,e].map(t=>{window.__seek(t);return {t,art:GROOVE_DIAGNOSTICS().activeTrack,state:GroovePlaylistUI.stateAt(t),intro:GROOVE_DIAGNOSTICS().introActive};}),[boundaryTime,endTime]);
  assert.equal(boundary[0].art,0);assert.equal(boundary[1].art,1);assert.equal(boundary[3].art,1);assert.equal(boundary[1].intro,false);assert.equal(boundary[0].state.queue.length,1);assert.equal(boundary[1].state.queue.length,0);
+ const editorial=await page.evaluate(b=>[b-.01,b+.01].map(t=>{window.__seek(t);return GROOVE_DIAGNOSTICS().editorial;}),boundaryTime);
+ for(const [index,copy] of editorial.entries()){
+  const track=original.playlist.tracks[index];
+  const quotes=originalLyrics.filter(cue=>cue.trackId?cue.trackId===track.id:cue.startSeconds>=track.startSeconds&&cue.startSeconds<track.endSeconds).map(cue=>cue.text.trim()).filter(Boolean).slice(0,3);
+  assert.equal(copy.title,track.title);assert.equal(copy.channel,original.display.channelName);assert.deepEqual(copy.quotes,quotes);
+ }
  const words=await page.evaluate(()=>PLAYLIST_LYRICS.flatMap((line,li)=>(line.words||[]).map((w,wi)=>{window.__seek((w.startSeconds+w.endSeconds)/2);return {li,wi,...GrooveCaptions.state()};})));
  for(const w of words){assert.equal(w.activeLine,w.li);assert.equal(w.activeWord,w.wi);assert(w.activeScale<=1.100001);assert(Math.abs(w.activeTilt)<=2);assert(w.bounds.every(b=>b.l>=260 && b.r<=1660 && b.t>=913 && b.b<=1033));}
  const gaps=await page.evaluate(()=>PLAYLIST_LYRICS.flatMap(line=>{const ws=line.words||[],samples=[];for(let i=0;i<ws.length-1;i++)if(ws[i+1].startSeconds-ws[i].endSeconds>.06)samples.push((ws[i].endSeconds+ws[i+1].startSeconds)/2);return samples;}).map(t=>{__seek(t);return GrooveCaptions.state().activeWord;}));assert(gaps.every(v=>v===-1));
  assert(await page.evaluate(()=>document.fonts.check('800 66px Paperlogy')));
  const spectrum=await page.evaluate(()=>{const s=PLAYLIST_SPECTRUM;return [s.frames.length,s.frames[0].length,new Set(s.frames.map(f=>f.join(','))).size];});assert(spectrum[0]>1 && spectrum[1]===48 && spectrum[2]>1);
- report.push({check:'original options, captions, art boundary, FFT, seek',words:words.length,boundary});
+ report.push({check:'original options, captions, art boundary, editorial copy, FFT, seek',words:words.length,boundary});
+ config=structuredClone(original);config.editorial={quotes:{[config.playlist.tracks[0].id]:['첫 곡 인쇄'],[config.playlist.tracks[1].id]:['둘째 곡 인쇄']}};await open();
+ const explicitEditorial=await page.evaluate(b=>[b-.01,b+.01].map(t=>{__seek(t);return GROOVE_DIAGNOSTICS().editorial.quotes;}),boundaryTime);assert.deepEqual(explicitEditorial,[['첫 곡 인쇄'],['둘째 곡 인쇄']]);
+ report.push({check:'track-specific editorial quote override',ok:true});
  for(let mask=0;mask<8;mask++){
   config=structuredClone(original);config.display={showSpectrum:Boolean(mask&1),showQueue:Boolean(mask&2),showNowPlaying:Boolean(mask&4),channelName:''};await open();
-  const options=await page.evaluate(()=>({s:!!document.querySelector('.cd-playlist-spectrum'),q:!!document.querySelector('.cd-playlist-queue'),n:!!document.querySelector('.cd-playlist-now-title'),channel:GROOVE_DIAGNOSTICS().channelName}));
-  assert.deepEqual(options,{s:Boolean(mask&1),q:Boolean(mask&2),n:Boolean(mask&4),channel:''});
+  const options=await page.evaluate(()=>{const rail=document.querySelector('.cd-playlist-rail'),spectrum=document.querySelector('.cd-playlist-spectrum');return {s:!!spectrum,q:!!document.querySelector('.cd-playlist-queue'),n:!!document.querySelector('.cd-playlist-now-title'),channel:GROOVE_DIAGNOSTICS().channelName,mainRail:GROOVE_DIAGNOSTICS().rail,nowOnly:rail?.classList.contains('cd-playlist-now-only')||false,left:rail?.style.left||'',right:rail?.style.right||'',top:rail?.style.top||'',spectrumWidth:spectrum?.width||null};});
+  assert.deepEqual({s:options.s,q:options.q,n:options.n,channel:options.channel},{s:Boolean(mask&1),q:Boolean(mask&2),n:Boolean(mask&4),channel:''});
+  assert.equal(options.mainRail,Boolean(mask&2));
+  if(mask&2)assert.deepEqual({nowOnly:options.nowOnly,left:options.left},{nowOnly:false,left:'1470px'});
+  if(mask===4)assert.deepEqual({nowOnly:options.nowOnly,left:options.left,right:options.right,top:options.top},{nowOnly:true,left:'',right:'110px',top:'40px'});
+  if(mask&1)assert.equal(options.spectrumWidth,mask&2?1240:1720);
  }
  report.push({check:'all 8 display combinations and empty channel',ok:true});
  for(const mode of ['balanced','drive','soft']){

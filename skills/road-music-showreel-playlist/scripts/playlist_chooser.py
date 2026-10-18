@@ -14,10 +14,16 @@ import tempfile
 import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, urlparse
-import webbrowser
 
 from cd_presets import registry
 from playlist_tools import DISPLAY_KEYS, normalize_display
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DESIGN_SCRIPTS = ROOT.parent / 'road-music-video-studio' / 'scripts'
+if str(DESIGN_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(DESIGN_SCRIPTS))
+from html_design import ASSET_ROOT, FONT_FILES, add_navigation, css_text, open_page
 
 
 MAX_BODY = 4096
@@ -98,6 +104,7 @@ class ChooserSession:
 def _html_page(session):
     esc = html.escape
     token = quote(session.token, safe='')
+    design_css = css_text('/design/fonts/', session.token)
     cards = []
     for style_id, (spec, directory) in session.presets.items():
         preview = spec.get('preview', {})
@@ -105,27 +112,31 @@ def _html_page(session):
         poster = directory / preview.get('poster', '')
         media = ''
         if preview.get('status') == 'ready' and video.is_file() and poster.is_file():
-            media = (f'<video controls preload="metadata" playsinline poster="/asset/{quote(style_id)}/poster?token={token}">'
+            media = (f'<video controls preload="metadata" playsinline aria-label="{esc(spec["name"])} 스타일 미리보기" poster="/asset/{quote(style_id)}/poster?token={token}">'
                      f'<source src="/asset/{quote(style_id)}/preview?token={token}" type="video/mp4"></video>')
         else:
             media = '<div class="missing">미리보기 준비 중</div>'
         cards.append(f'<article><label class="card">{media}<input type="radio" name="style" aria-label="{esc(spec["name"])} 선택" data-style-name="{esc(spec["name"])}" value="{esc(style_id)}"><span><b>{esc(spec["name"])}</b><small>{esc(spec["description"])}</small></span></label></article>')
     music_label = esc(session.music.name) if session.music else '음악 파일은 다음 제작 단계에서 연결합니다'
-    return f'''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    page = f'''<!doctype html><html lang="ko" data-road-music-ui><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Showreel 스타일 선택</title><style>
-*{{box-sizing:border-box}}body{{margin:0;background:#17191b;color:#eee9df;font:16px/1.55 system-ui,sans-serif}}main{{max-width:1320px;margin:auto;padding:36px 24px}}h1{{line-height:1.18}}.music{{color:#cdb59a}}.grid{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}article,.options{{background:#252728;border:1px solid #454440;border-radius:12px;overflow:hidden}}.card{{display:block;cursor:pointer}}video,.missing{{display:block;width:100%;aspect-ratio:16/9;background:#101112}}.missing{{display:grid;place-items:center;color:#aaa}}.card span{{display:block;padding:14px 16px}}small{{display:block;color:#b8b4ad;margin-top:4px}}input{{accent-color:#e8b672}}article:has(input:checked){{outline:3px solid #e8b672;outline-offset:2px}}input:focus-visible,button:focus-visible{{outline:3px solid #e8b672;outline-offset:3px}}.option{{padding:18px;margin:18px 0}}fieldset{{border:0;padding:0;margin:0 0 16px}}legend{{font-weight:700;margin-bottom:7px}}.pick{{display:inline-flex;align-items:center;gap:6px;margin-right:12px}}#channel{{width:min(100%,480px);padding:10px;border:1px solid #716b62;border-radius:7px;background:#17191b;color:inherit;font:inherit}}button{{padding:12px 20px;border:0;border-radius:7px;background:#e8b672;color:#281b10;font-weight:700;font:inherit;cursor:pointer}}button:disabled{{opacity:.45;cursor:not-allowed}}#status{{min-height:24px}}@media(max-width:760px){{.grid{{grid-template-columns:1fr}}main{{padding:20px 14px}}}}
-</style><main><p class="music">{music_label}</p><h1>스타일과 화면 표시를 고르세요.</h1><p>아래 영상은 스타일 샘플입니다. 선택 후 지금 음악으로 새로 제작합니다. 표시 항목은 각각 SKIP할 수 있습니다.</p><form id="form"><section class="grid">{''.join(cards)}</section><section class="options option">
-<fieldset data-flag="showSpectrum"><legend>선형 스펙트럼</legend><label class="pick"><input type="radio" name="showSpectrum" value="true">표시</label><label class="pick"><input type="radio" name="showSpectrum" value="false">표시 안 함</label><label class="pick"><input type="radio" name="showSpectrum" value="SKIP">SKIP</label></fieldset>
+*{{box-sizing:border-box}}main{{max-width:1320px;margin:auto;padding:36px 24px}}.music,.missing,small{{color:var(--rm-muted)}}.grid{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}}article,.options{{border:1px solid var(--rm-border);overflow:hidden}}.card{{display:block;cursor:pointer}}video,.missing{{display:block;width:100%;aspect-ratio:16/9;background:#101112}}.missing{{display:grid;place-items:center}}.card span{{display:block;padding:14px 16px}}small{{display:block;margin-top:4px}}article:has(input:checked){{outline:3px solid var(--rm-primary);outline-offset:2px}}.option{{padding:18px;margin:18px 0}}fieldset{{border:0;padding:0;margin:0 0 16px}}legend{{font-weight:700;margin-bottom:7px}}.pick{{display:inline-flex;align-items:center;gap:6px;margin-right:12px}}#channel{{width:min(100%,480px)}}button{{padding:12px 20px;border:0;font-weight:700;cursor:pointer}}#status{{min-height:24px}}@media(max-width:760px){{.grid{{grid-template-columns:1fr}}main{{padding:20px 14px}}}}
+</style><style>{design_css}</style></head><body><main><p class="music">{music_label}</p><h1>스타일과 화면 표시를 고르세요.</h1><p>아래 영상은 스타일 샘플입니다. 선택 후 지금 음악으로 새로 제작합니다. 표시 항목은 각각 SKIP할 수 있습니다.</p><form id="form"><section class="grid">{''.join(cards)}</section><section class="options option">
+<fieldset id="display-settings" data-flag="showSpectrum"><legend>선형 스펙트럼</legend><label class="pick"><input type="radio" name="showSpectrum" value="true">표시</label><label class="pick"><input type="radio" name="showSpectrum" value="false">표시 안 함</label><label class="pick"><input type="radio" name="showSpectrum" value="SKIP">SKIP</label></fieldset>
 <fieldset data-flag="showQueue"><legend>재생 대기 곡 목록</legend><label class="pick"><input type="radio" name="showQueue" value="true">표시</label><label class="pick"><input type="radio" name="showQueue" value="false">표시 안 함</label><label class="pick"><input type="radio" name="showQueue" value="SKIP">SKIP</label></fieldset>
 <fieldset data-flag="showNowPlaying"><legend>현재 재생 곡 이름</legend><label class="pick"><input type="radio" name="showNowPlaying" value="true">표시</label><label class="pick"><input type="radio" name="showNowPlaying" value="false">표시 안 함</label><label class="pick"><input type="radio" name="showNowPlaying" value="SKIP">SKIP</label></fieldset>
-<fieldset><legend>운영 채널명</legend><input id="channel" aria-label="운영 채널명" maxlength="120" autocomplete="off" placeholder="채널명 입력"><label class="pick"><input id="channelSkip" type="checkbox">SKIP</label></fieldset>
+<fieldset><legend>운영 채널명</legend><input id="channel" type="text" aria-label="운영 채널명" maxlength="120" autocomplete="off" placeholder="채널명 입력"><label class="pick"><input id="channelSkip" type="checkbox">SKIP</label></fieldset>
 <button id="submit" type="submit" disabled>선택 저장</button><p id="status" role="status"></p></section></form></main><script>
+document.addEventListener('play',event=>{{if(event.target.matches('audio,video'))document.querySelectorAll('audio,video').forEach(media=>{{if(media!==event.target)media.pause()}})}},true);
+let completed=false;
 const form=document.querySelector('#form'), submit=document.querySelector('#submit'), status=document.querySelector('#status'), channel=document.querySelector('#channel'), channelSkip=document.querySelector('#channelSkip');
 function selected(name){{const v=form.querySelector(`input[name="${{name}}"]:checked`);return v&&v.value}}
-function ready(){{const flags=['showSpectrum','showQueue','showNowPlaying'].every(selected);submit.disabled=!(selected('style')&&flags&&(channelSkip.checked||channel.value.trim()));}}
+function ready(){{if(completed){{submit.disabled=true;return;}}const flags=['showSpectrum','showQueue','showNowPlaying'].every(selected);submit.disabled=!(selected('style')&&flags&&(channelSkip.checked||channel.value.trim()));}}
 form.addEventListener('input',ready); form.addEventListener('change',()=>{{channel.disabled=channelSkip.checked;ready();}});
-form.addEventListener('submit',async e=>{{e.preventDefault();if(submit.disabled)return;const display={{}};for(const name of ['showSpectrum','showQueue','showNowPlaying']){{const v=selected(name);display[name]=v==='true';}}display.channelName=channelSkip.checked?'SKIP':channel.value.trim();submit.disabled=true;status.textContent='저장 중…';try{{const r=await fetch('/api/submit',{{method:'POST',headers:{{'Content-Type':'application/json','X-Playlist-Token':'{token}'}},body:JSON.stringify({{schemaVersion:1,styleId:selected('style'),display}})}});const data=await r.json();if(!r.ok)throw new Error(data.error||'저장 실패');status.textContent='선택이 저장되었습니다: '+form.querySelector('input[name=style]:checked').dataset.styleName+' · 채널 '+(data.display.channelName||'SKIP')+'. 선택값이 CLI에 전달되었습니다.';}}catch(err){{status.textContent=err.message;ready();}}}});
-</script></html>'''
+form.addEventListener('submit',async e=>{{e.preventDefault();if(submit.disabled)return;const display={{}};for(const name of ['showSpectrum','showQueue','showNowPlaying']){{const v=selected(name);display[name]=v==='true';}}display.channelName=channelSkip.checked?'SKIP':channel.value.trim();submit.disabled=true;status.textContent='저장 중…';try{{const r=await fetch('/api/submit',{{method:'POST',headers:{{'Content-Type':'application/json','X-Playlist-Token':'{token}'}},body:JSON.stringify({{schemaVersion:1,styleId:selected('style'),display}})}});const data=await r.json();if(!r.ok)throw new Error(data.error||'저장 실패');completed=true;form.querySelectorAll('input,button').forEach(control=>{{control.disabled=true;}});form.querySelectorAll('video').forEach(media=>{{media.pause();media.controls=false;}});status.textContent='선택이 저장되었습니다: '+form.querySelector('input[name=style]:checked').dataset.styleName+' · 채널 '+(data.display.channelName||'SKIP')+'. 선택값이 CLI에 전달되었습니다.';}}catch(err){{status.textContent=err.message;ready();}}}});
+</script></body></html>'''
+    page = page.replace('<section class="grid">', '<section id="styles" class="grid">', 1)
+    return add_navigation(page, current='chooser', sections=[('스타일 선택', '#styles'), ('표시 설정', '#display-settings')])
 
 
 def handler_for(session):
@@ -227,6 +238,12 @@ def handler_for(session):
                 self.end_headers()
                 return self.wfile.write(body)
             parts = parsed.path.split('/')
+            if len(parts) == 4 and parts[1:3] == ['design', 'fonts'] and self._token_ok(parsed):
+                name = parts[3]
+                candidate = ASSET_ROOT / 'fonts' / name
+                if name not in FONT_FILES or candidate.is_symlink() or not candidate.is_file():
+                    return self._deny(404, '찾을 수 없는 디자인 폰트입니다')
+                return self._send_media(candidate, 'font/ttf')
             if len(parts) == 4 and parts[1] == 'asset' and self._token_ok(parsed):
                 style_id, kind = parts[2], parts[3]
                 if style_id not in session.presets or kind not in {'preview', 'poster'}:
@@ -265,6 +282,18 @@ def handler_for(session):
     return Handler
 
 
+def open_chooser_page(url, progress=None):
+    try:
+        opened = open_page(url)
+    except Exception as caught:
+        opened, message = False, str(caught)
+    else:
+        message = None if opened else '기본 브라우저가 URL을 열지 않았습니다'
+    if not opened and progress:
+        progress({'event': 'chooser-open-failed', 'url': url, 'error': message})
+    return bool(opened)
+
+
 def choose(output, music=None, open_browser=False, timeout=900, progress=None):
     if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not 1 <= timeout <= 86_400:
         raise ValueError('--timeout: 1..86400초 필요')
@@ -278,7 +307,7 @@ def choose(output, music=None, open_browser=False, timeout=900, progress=None):
     if progress:
         progress(event)
     if open_browser:
-        webbrowser.open(url)
+        open_chooser_page(url, progress)
     try:
         if not session.done.wait(timeout):
             raise TimeoutError('스타일 선택 시간이 만료되었습니다. 선택값은 저장하지 않았습니다')
@@ -301,17 +330,21 @@ def load_selection(path):
     source = Path(path).resolve(strict=True)
     value = json.loads(source.read_text(encoding='utf-8-sig'))
     required = {'schemaVersion', 'styleId', 'display'}
-    if not isinstance(value, dict) or set(value) not in (required, required | {'music'}):
-        raise ValueError('선택 JSON은 schemaVersion/styleId/display와 선택 music만 포함해야 합니다')
+    optional = {'music', 'host'}
+    if not isinstance(value, dict) or not required <= set(value) or set(value) - required - optional:
+        raise ValueError('선택 JSON은 schemaVersion/styleId/display와 선택 music/host만 포함해야 합니다')
     if value.get('schemaVersion') != SCHEMA_VERSION or not isinstance(value.get('styleId'), str):
         raise ValueError('선택 JSON의 schemaVersion/styleId가 올바르지 않습니다')
     if not isinstance(value.get('display'), dict) or set(value['display']) != DISPLAY_KEYS:
         raise ValueError('선택 JSON의 display는 네 표시 항목을 모두 포함해야 합니다')
     if 'music' in value and (not isinstance(value['music'], str) or not Path(value['music']).is_absolute()):
         raise ValueError('선택 JSON의 music은 절대 경로 문자열이어야 합니다')
+    if 'host' in value and value['host'] not in {'codex', 'claude', 'antigravity', 'antigravity-cli'}:
+        raise ValueError('선택 JSON의 host는 지원되는 작업 호스트여야 합니다')
     with source.open('rb') as stream:
         source_hash = hashlib.file_digest(stream, 'sha256').hexdigest()
     return {'path': source, 'sha256': source_hash, 'value': {
         **{'schemaVersion': SCHEMA_VERSION, 'styleId': value['styleId'], 'display': normalize_display(value.get('display'))},
         **({'music': value['music']} if 'music' in value else {}),
+        **({'host': value['host']} if 'host' in value else {}),
     }}

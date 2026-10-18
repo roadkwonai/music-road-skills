@@ -285,7 +285,7 @@
 
   function hud(opts = {}) {
     const color = opts.color || 'rgba(243,239,230,0.72)';
-    const font = opts.font || '"JetBrains Mono", "Pretendard", monospace';
+    const font = opts.font || '"Paperlogy", sans-serif';
     const chapters = opts.chapters || [];
     const from = opts.from ?? 0.4, to = opts.to ?? R.duration;
     let root, tl, tr, bl, br, bar, corners = [];
@@ -342,7 +342,7 @@
     }, { setup: p => {
       el = h('div', 'fx-sub', p);
       el.style.cssText = `position:absolute;left:6%;right:6%;bottom:${opts.bottom ?? (R.H > R.W ? 440 : 64)}px;text-align:center;` +
-        `font:${opts.weight || 600} ${size}px/1.35 ${opts.font || '"Pretendard", sans-serif'};letter-spacing:-0.01em;color:#fff;word-break:keep-all;` +
+        `font:${opts.weight || 600} ${size}px/1.35 ${opts.font || '"Paperlogy", sans-serif'};letter-spacing:-0.01em;color:#fff;word-break:keep-all;` +
         `text-shadow:0 2px 12px rgba(0,0,0,.85),0 0 30px rgba(0,0,0,.6);pointer-events:none;opacity:0`;
     } });
   }

@@ -9,3 +9,6 @@
 - `release/YYYY-MM-DD-title.md`에 변경·검증·제한을 쓰고 VERSION과 manifest의 버전을 맞춘다. 같은 정식 버전을 덮어쓰지 않는다.
 - 변경에 맞는 단위·통합 검사를 실행한다. UI는 실제 선택·재생·저장을, 업데이트는 격리 경로와 변조/충돌을 검증한다.
 - 여러 작업자가 파일을 나눠 수정할 수 있다. 담당 범위 밖의 변경을 되돌리지 않는다.
+
+- HTML 제작·선택·검수 UI는 루트 DESIGN.md와 번들 Paperlogy를 적용한다. 설치에 필요한 공통 디자인 계약도 road-music-video-studio/assets/design/DESIGN.md에 포함한다.
+- CLI/스킬은 기존 Ego 페이지 한 개에서 필요한 화면으로 이동한다. 같은 주소를 새 탭으로 반복 열지 않으며 사용자 생성 공간·제어 중단을 우회하지 않는다. 단계별 page-flow.md를 따른다.

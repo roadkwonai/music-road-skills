@@ -18,6 +18,14 @@ const MAX_TEXT_BYTES = 1024 * 1024
 const REQUEST_MS = 30_000
 const DOWNLOAD_MS = 20 * 60_000
 const MAX_WATCH_MS = 24 * 60 * 60 * 1000
+const MANAGED_SKILLS = Object.freeze([
+  'road-music-showreel-cd',
+  'road-music-showreel-mv',
+  'road-music-jizura-playlist',
+  'road-music-showreel-playlist',
+  'road-music-video-studio',
+  'road-music-skills-update'
+])
 const root = path.resolve(__dirname, '..', '..', '..')
 const responseControls = new WeakMap()
 
@@ -29,6 +37,7 @@ function stable (version) { return typeof version === 'string' && /^(0|[1-9]\d*)
 function versionParts (version) { return stable(version) ? version.split('.').map(Number) : null }
 function compareVersion (left, right) { const a = versionParts(left); const b = versionParts(right); return a[0] - b[0] || a[1] - b[1] || a[2] - b[2] }
 function defaultTarget (host = 'codex') {
+  if (host === 'claude') return path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'skills')
   if (host === 'antigravity') return path.join(os.homedir(), '.gemini', 'config', 'skills')
   if (host === 'antigravity-cli') return path.join(os.homedir(), '.gemini', 'antigravity-cli', 'skills')
   return path.join(process.env.CODEX_HOME || path.join(os.homedir(), '.codex'), 'skills')
@@ -48,7 +57,7 @@ function assertParams (params, allowed) {
   for (const key of Object.keys(params)) if (![...allowed, 'onEvent'].includes(key)) fail('INVALID_ARGUMENT', `지원하지 않는 입력값입니다: ${key}`)
   if (params.target !== undefined && (typeof params.target !== 'string' || params.target.includes('\0') || !path.isAbsolute(params.target))) fail('INVALID_ARGUMENT', 'target은 NUL 문자가 없는 절대 경로여야 합니다.')
   if (params.source !== undefined && (typeof params.source !== 'string' || params.source.includes('\0') || !path.isAbsolute(params.source))) fail('INVALID_ARGUMENT', 'source는 NUL 문자가 없는 절대 경로여야 합니다.')
-  if (params.host !== undefined && !['codex', 'antigravity', 'antigravity-cli'].includes(params.host)) fail('INVALID_ARGUMENT', 'host는 codex, antigravity 또는 antigravity-cli여야 합니다.')
+  if (params.host !== undefined && !['codex', 'claude', 'antigravity', 'antigravity-cli'].includes(params.host)) fail('INVALID_ARGUMENT', 'host는 codex, claude, antigravity 또는 antigravity-cli여야 합니다.')
   if (params.onEvent !== undefined && typeof params.onEvent !== 'function') fail('INVALID_ARGUMENT', 'onEvent는 함수여야 합니다.')
   if (params.timeoutMs !== undefined && (!Number.isSafeInteger(params.timeoutMs) || params.timeoutMs < 0 || params.timeoutMs > MAX_WATCH_MS)) fail('INVALID_ARGUMENT', `timeoutMs은 0부터 ${MAX_WATCH_MS}까지의 정수여야 합니다.`)
   if (params.intervalMs !== undefined && (!Number.isSafeInteger(params.intervalMs) || params.intervalMs < 1000 || params.intervalMs > MAX_WATCH_MS)) fail('INVALID_ARGUMENT', `intervalMs은 1000부터 ${MAX_WATCH_MS}까지의 정수여야 합니다.`)
@@ -106,7 +115,7 @@ async function bundle (source = root) {
   if (!rootInfo || !rootInfo.isDirectory() || rootInfo.isSymbolicLink()) fail('UPDATE_VERIFY', '스킬 묶음 경로가 올바르지 않습니다.')
   const manifest = await readJson(path.join(source, 'manifest.json'), 'UPDATE_VERIFY', 'manifest.json을 읽을 수 없습니다.')
   const bundleVersion = await fsp.readFile(path.join(source, 'VERSION'), 'utf8').then(value => value.trim()).catch(() => '')
-  if (manifest?.schemaVersion !== 1 || manifest?.name !== 'music-road-skills' || !stable(manifest?.version) || manifest.version !== bundleVersion || !Array.isArray(manifest.skills) || !manifest.skills.length) fail('UPDATE_VERIFY', '스킬 묶음 manifest 또는 VERSION이 올바르지 않습니다.')
+  if (manifest?.schemaVersion !== 1 || manifest?.name !== 'music-road-skills' || !stable(manifest?.version) || manifest.version !== bundleVersion || !Array.isArray(manifest.skills) || manifest.skills.length !== MANAGED_SKILLS.length) fail('UPDATE_VERIFY', '스킬 묶음 manifest 또는 VERSION이 올바르지 않습니다.')
   const ids = new Set(); const skills = []
   for (const item of manifest.skills) {
     if (!item || typeof item.id !== 'string' || !/^[a-z0-9-]+$/.test(item.id) || ids.has(item.id) || item.path !== `skills/${item.id}`) fail('UPDATE_VERIFY', 'manifest의 스킬 경로가 올바르지 않습니다.')
@@ -118,12 +127,13 @@ async function bundle (source = root) {
     if (!Object.keys(files).length) fail('UPDATE_VERIFY', `스킬 ${item.id}이 비어 있습니다.`)
     skills.push({ id: item.id, directory, files })
   }
+  if (MANAGED_SKILLS.some(id => !ids.has(id))) fail('UPDATE_VERIFY', 'manifest는 Road Music 관리 스킬 6개를 모두 등록해야 합니다.')
   return { source, version: manifest.version, manifest, skills }
 }
 async function localBundleVersion (source = root) {
   const manifest = await readJson(path.join(source, 'manifest.json'), 'UPDATE_VERIFY', 'manifest.json을 읽을 수 없습니다.')
   const version = await fsp.readFile(path.join(source, 'VERSION'), 'utf8').then(value => value.trim()).catch(() => '')
-  if (manifest?.schemaVersion !== 1 || manifest?.name !== 'music-road-skills' || !stable(manifest?.version) || manifest.version !== version) fail('UPDATE_VERIFY', '스킬 묶음 manifest 또는 VERSION이 올바르지 않습니다.')
+  if (manifest?.schemaVersion !== 1 || manifest?.name !== 'music-road-skills' || !stable(manifest?.version) || manifest.version !== version || !Array.isArray(manifest.skills) || manifest.skills.length !== MANAGED_SKILLS.length || MANAGED_SKILLS.some(id => !manifest.skills.some(item => item?.id === id && item.path === `skills/${id}`))) fail('UPDATE_VERIFY', '스킬 묶음 manifest 또는 VERSION이 올바르지 않습니다.')
   return version
 }
 async function loadState (target) {
@@ -352,7 +362,7 @@ async function execute (action, params = {}) {
   return watch(params)
 }
 function cliParams (args) {
-  const result = {}; for (let index = 0; index < args.length; index += 2) { const flag = args[index]; const value = args[index + 1]; if (!flag?.startsWith('--') || value === undefined) fail('INVALID_ARGUMENT', '사용법: manage.cjs status|check|install|update|watch [--host codex|antigravity|antigravity-cli] [--target 절대경로] [--source 절대경로] [--timeout-ms 숫자] [--interval-ms 숫자]'); const key = flag.slice(2); const mapped = { host: 'host', target: 'target', source: 'source', 'timeout-ms': 'timeoutMs', 'interval-ms': 'intervalMs' }[key]; if (!mapped || Object.hasOwn(result, mapped)) fail('INVALID_ARGUMENT', `지원하지 않는 옵션입니다: ${flag}`); result[mapped] = mapped.endsWith('Ms') ? Number(value) : value }
+  const result = {}; for (let index = 0; index < args.length; index += 2) { const flag = args[index]; const value = args[index + 1]; if (!flag?.startsWith('--') || value === undefined) fail('INVALID_ARGUMENT', '사용법: manage.cjs status|check|install|update|watch [--host codex|claude|antigravity|antigravity-cli] [--target 절대경로] [--source 절대경로] [--timeout-ms 숫자] [--interval-ms 숫자]'); const key = flag.slice(2); const mapped = { host: 'host', target: 'target', source: 'source', 'timeout-ms': 'timeoutMs', 'interval-ms': 'intervalMs' }[key]; if (!mapped || Object.hasOwn(result, mapped)) fail('INVALID_ARGUMENT', `지원하지 않는 옵션입니다: ${flag}`); result[mapped] = mapped.endsWith('Ms') ? Number(value) : value }
   return result
 }
 if (require.main === module) {

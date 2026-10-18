@@ -22,7 +22,7 @@ HTML 선택 화면에서는 다음을 각각 설정합니다.
 | 현재 곡명 | 표시/숨김 |
 | 채널명 | 문자열 또는 SKIP |
 
-선택 파일은 이후 `plan`과 `create`에 전달됩니다. 미응답을 자동 SKIP으로 처리하지 않으며, 채널명을 파일명에서 추측하지 않습니다.
+선택 파일은 이후 `plan`과 `create`에 전달됩니다. Studio가 저장한 선택에는 선택적 `host`가 들어가며 `plan --selection`은 명시 `--host`가 없을 때만 이를 상속합니다. 이전 선택처럼 host가 없으면 `codex`를 사용합니다. 미응답을 자동 SKIP으로 처리하지 않으며, 채널명을 파일명에서 추측하지 않습니다.
 
 공통 HTML 제작실에서 Showreel CD 또는 Showreel 음악 모션그래픽을 저장하면 `showreel-request.json`이 함께 생성됩니다. 이 파일은 chooser의 `request.json`과 같은 계약이므로 `plan`과 `create`의 `--selection` 입력으로 쓸 수 있습니다. `create`에는 원음과 새 출력 경로, 선택한 템플릿이 요구하는 자산 등도 함께 전달합니다.
 
@@ -41,7 +41,7 @@ python3 skills/road-music-showreel-playlist/scripts/playlist_presets.py choose \
 
 ## 장면과 자막
 
-- 현재 호스트에서 실제로 생성한 장면·표지 이미지는 프롬프트와 해시를 프로젝트에 기록합니다. Codex/ChatGPT에서는 내장 `image_gen`, Antigravity에서는 해당 환경의 네이티브 이미지 기능을 사용하며, 공통 [호스트별 이미지 생성 계약](antigravity.md)을 따릅니다.
+- 현재 호스트에서 실제로 생성한 장면·표지 이미지는 프롬프트와 해시를 프로젝트에 기록합니다. Codex/ChatGPT에서는 내장 `image_gen`, 로컬 Claude Code CLI/IDE에서는 로드된 `gpt-image`의 ChatGPT 로그인 Codex CLI 브리지, Antigravity에서는 해당 환경의 네이티브 이미지 기능을 사용하며 공통 [Claude Code 이미지 계약](claude.md)과 [Antigravity 계약](antigravity.md)을 따릅니다.
 - 리듬 캔버스는 첫 0.5초에 확인된 제목·아티스트·채널명으로 만든 썸네일을 씁니다. 음악 시계는 밀지 않습니다.
 - 그루브 다이얼은 검증된 `cues[].words`가 있을 때만 현재 어절을 호박색으로 강조하고 작은 확대·기울임을 적용합니다.
 - 자동 ASR 시간은 검토 전 초안입니다. 원문·원음 시계·cut offset을 보존하고 100% 싱크라고 주장하지 않습니다.

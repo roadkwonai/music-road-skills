@@ -22,37 +22,37 @@
       "장면·스토리보드",
       "image_gen / Nano Banana"
     ],
-    "video": "road-music-video-studio/assets/examples/showreel-mv.mp4",
-    "poster": "road-music-video-studio/assets/examples/showreel-mv.jpg",
-    "audioNote": "최근 프리즘 MV v5의 0–18초 샘플입니다. 파일의 아티스트 표기는 VELUNE(벨루네)이며 벨루나 프리즘 원곡 프로젝트를 사용합니다.",
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-mv-prism.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-mv-prism.jpg",
+    "audioNote": "프리즘 MV v5의 0–18초 대표 샘플입니다. 파일의 아티스트 표기는 VELUNE(벨루네)이며, 사용자 표기인 벨루나 — 프리즘 원곡 프로젝트를 사용합니다.",
     "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 프리즘 (VELUNE·벨루네 MV v5)"
   },
   {
     "mode": "jizura",
-    "title": "벨루나 — 나를 믿어",
+    "title": "벨루나 — 어디든 좋아",
     "summary": "가사와 비트를 타이포그래피·배치·색·전환으로 표현하고 JIZURA 편집기에서 조절합니다.",
     "tags": [
       "키네틱 타이포",
       "비트 그래픽",
       "네이티브 편집기"
     ],
-    "video": "road-music-video-studio/assets/examples/jizura.mp4",
-    "poster": "road-music-video-studio/assets/examples/jizura.jpg",
-    "audioNote": "최근 나를 믿어의 3스타일 조합 미리보기입니다. 원곡 47.79–62.86초 구간을 사용한 약 15초 샘플입니다.",
-    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 나를 믿어"
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/jizura-eodideun-joha.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/jizura-eodideun-joha.jpg",
+    "audioNote": "가사 싱크 보완본의 원곡 40–58초 대표 샘플입니다. 원가사는 유지했고 자동 정렬 초안 36행·추정 6행으로 기록되어 있으며 직접 청취로 확정하지 않았습니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 어디든 좋아"
   },
   {
     "mode": "showreel-motion",
-    "title": "벨루나 — 너도 깨어 있니",
+    "title": "벨루나 — 내일로 달려",
     "summary": "음악과 가사에 어울리는 이미지·기하 그래픽·리듬 효과를 조합해 움직이는 화면을 만듭니다.",
     "tags": [
       "사진·기하 모션",
       "구간별 변주",
       "리듬·가사 강조"
     ],
-    "video": "road-music-video-studio/assets/examples/showreel-motion.mp4",
-    "poster": "road-music-video-studio/assets/examples/showreel-motion.jpg",
-    "audioNote": "최근 전곡 제작본의 인트로와 후렴 구간을 이어 붙인 24초 샘플입니다. 선택한 새 음악의 제작 결과는 아닙니다.",
-    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 너도 깨어 있니"
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-motion-tomorrow.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-motion-tomorrow.jpg",
+    "audioNote": "전곡 리빌드 완성본의 첫 후렴 53.82–77.82초 대표 샘플입니다. 원문 가사 시각은 기존 auto-asr-unreviewed 상태로 보존되어 직접 청취로 확정하지 않았습니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 내일로 달려"
   }
 ]

@@ -41,7 +41,7 @@ look은 palette/자막 caption/회전 discPeriodSeconds의 지원 설정과 phot
 
 - genre.input/matched/unlisted/mode: 원래 장르와 인식/혼합/목록 밖 상태.
 - effectivePreset: 실제 적용할 팔레트/서체/자막 장식/회전 주기와 이미지 방향.
-- imageGeneration: **requiredTool=image_gen, mode=built-in, status=prompts-ready-not-generated**. photoA/B/C/case/paper의 프롬프트·투명 배경·참조 역할. 실제 이미지가 아니다.
+- imageGeneration: 현재 호스트의 공급자 계약과 `status=prompts-ready-not-generated`. Codex는 **requiredTool=image_gen, mode=built-in**, Claude는 **requiredTool=gpt-image, mode=codex-cli-bridge**다. photoA/B/C/case/paper의 프롬프트·투명 배경·참조 역할이며 실제 이미지는 아니다.
 - motionGuidance: 장르별 연출 제안. 새 전환을 자동 구현했다는 뜻이 아니다. 기본 native variant의 5구간은 공유하며 추가 움직임은 실제 프로젝트에서 구현·검수한다.
 - casting: 보컬/편성/연주곡 여부와 확인 필요 상태. 장르나 음역을 추정 근거로 쓰지 않는다.
 - captions/instrumental: 가사 유무와 실제 가창 시각 보존 기준.
@@ -50,7 +50,7 @@ look은 palette/자막 caption/회전 discPeriodSeconds의 지원 설정과 phot
 
 ## 이미지에서 영상까지
 
-1. Codex가 계획의 casting과 곡에 맞는 아티스트 설정을 확정한다. 내장 `image_gen`으로 5개 자산을 실제 생성하고 원본/참조/저장 경로를 기록한다. 제공 이미지가 있으면 해당 범위는 재사용한다.
+1. AI가 계획의 casting과 곡에 맞는 아티스트 설정을 확정한다. 현재 호스트의 공급자 계약으로 5개 자산을 실제 생성하고 원본/참조/저장 경로를 기록한다. Claude는 `gpt-image` 브리지의 실제 결과를 쓴다. 제공 이미지가 있으면 해당 범위는 재사용한다.
 2. [이미지 제작](images.md)대로 A의 일관성을 유지해 B/C/케이스를 만든다. 사용자가 동의하지 않은 데모/유료 API/다른 이미지 도구로 대체하지 않는다.
 3. 생성한 5개 PNG의 images.json과 실제 자막을 제공한다.
 

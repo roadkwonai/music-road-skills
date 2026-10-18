@@ -62,6 +62,9 @@ def build(audio, direction, cues):
         'overrides': {}, 'source': {k: audio[k] for k in ('path', 'sha256', 'duration') if k in audio},
         'targetDuration': duration,
     }
+    for key in ('timingStatus', 'timingEvidence', 'lyricsTimingProvenance'):
+        if key in direction:
+            project[key] = copy.deepcopy(direction[key])
     # Keep engine settings separate from the agent's interpretation and research ledger.
     custom = direction.get('jizura', {})
     allowed = {'style', 'mood', 'lang', 'seed', 'fx', 'enabled', 'colors', 'fonts',
@@ -170,7 +173,12 @@ def build(audio, direction, cues):
         # Blank lines mark sections but do not consume native parsed line indices.
         index = str(sum(bool(row) for row in rows))
         project['overrides'][index] = ov
-        cue_map.append(dict(cue, line=int(index), section=section.get('id', cue.get('section'))))
+        mapped = copy.deepcopy(cue)
+        mapped.update(line=int(index), section=section.get('id', cue.get('section')))
+        mapped.setdefault('timingStatus', direction.get('timingStatus', 'unreviewed'))
+        if 'timingEvidence' not in mapped and 'timingEvidence' in direction:
+            mapped['timingEvidence'] = copy.deepcopy(direction['timingEvidence'])
+        cue_map.append(mapped)
         if cue.get('motif'):
             motifs.setdefault(cue['motif'], []).append(int(index))
         rows.append(f'[{stamp(start)}]{text}')
@@ -204,16 +212,28 @@ def encode_final(args, filters, fps, output):
                            '-c:a', 'aac', '-b:a', '256k', '-movflags', '+faststart', str(output)], check=True)
 
 
+def review_video(output, inputs, review_out):
+    result = json.loads(subprocess.check_output([
+        'node', str(ROOT / 'scripts/readability.mjs'), *inputs,
+        '--video', str(Path(output).resolve()), '--out', str(Path(review_out).resolve())], text=True))
+    if not result.get('ok'):
+        raise ValueError(f'MP4는 보존했습니다. 가독성 자료 생성 실패: {result}')
+    return result
+
+
 def assemble(manifest_path, output):
     manifest = read_json(manifest_path)
     tracks = manifest.get('tracks', [])
     if not tracks or Path(output).exists() or Path(str(output) + '.json').exists():
         raise ValueError('tracks가 필요하며 출력 영상/검증 JSON은 새 경로여야 합니다')
     args = ['ffmpeg', '-nostdin', '-hide_banner', '-v', 'error', '-n']
-    filters, video_order, audio_order, chapters, total, dimensions = [], [], [], [], 0.0, None
+    filters, video_order, audio_order, chapters, lyric_tracks, total, dimensions = [], [], [], [], [], 0.0, None
     for i, track in enumerate(tracks):
         video, audio, project_path = (Path(track[key]).resolve(strict=True) for key in ('video', 'audio', 'project'))
         project = read_json(project_path)
+        if project.get('cueMap'):
+            plan_path = absolute_file(track.get('plan', str(video.parent / 'plan.json')), 'track.plan')
+            lyric_tracks.append((i, project_path, plan_path, total))
         if project.get('source', {}).get('sha256') != sha256(audio):
             raise ValueError('프로젝트와 원음 해시가 다릅니다')
         ap, vp = probe(audio), probe(video)
@@ -251,7 +271,15 @@ def assemble(manifest_path, output):
     if not any(s['codec_type'] == 'audio' for s in actual['streams']) or abs(float(actual['format']['duration']) - total) > .1:
         raise ValueError('최종 파일의 오디오/길이가 예상과 다릅니다; 파일은 보존했습니다')
     report = {'ok': True, 'output': str(Path(output).resolve()), 'sourceDuration': total,
-              'actual': actual, 'chapters': chapters, 'listeningReviewed': False}
+              'actual': actual, 'chapters': chapters, 'listeningReviewed': False, 'visualReady': False}
+    if lyric_tracks:
+        review_root = Path(str(output) + '.readability')
+        review_root.mkdir(exist_ok=False)
+        report['readability'] = [review_video(output, ['--project', str(project_path), '--plan', str(plan_path),
+                                '--video-start', str(video_start)], review_root / f'track-{i + 1}')
+                                 for i, project_path, plan_path, video_start in lyric_tracks]
+    else:
+        report['readability'] = {'status': 'unavailable', 'reason': '검수할 cueMap 없음'}
     write_json(str(output) + '.json', report)
     return report
 
@@ -432,7 +460,10 @@ def compose(manifest_path, output):
         raise ValueError('최종 파일의 오디오/컨테이너 길이가 원음 범위와 다릅니다; 파일은 보존했습니다')
     report = {'ok': True, 'output': str(output.resolve()), 'sourceSha256': expected_hash.lower(), 'sourceDuration': source_duration,
               'sourceRange': {'start': start, 'end': end, 'duration': end - start}, 'actual': actual,
-              'segments': reports, 'listeningReviewed': False}
+              'segments': reports, 'listeningReviewed': False, 'visualReady': False}
+    report['readability'] = (review_video(output, ['--manifest', str(manifest_path)], str(output) + '.readability')
+                             if any(item['project'].get('cueMap') for item in prepared)
+                             else {'status': 'unavailable', 'reason': '검수할 cueMap 없음'})
     write_json(sidecar, report)
     return report
 

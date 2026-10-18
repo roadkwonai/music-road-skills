@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-road-music-ui>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>JIZURA 음악 스튜디오</title>
   <link rel="stylesheet" href="/studio.css?token=__TOKEN__">
+  <link rel="stylesheet" href="/design.css?token=__TOKEN__">
 </head>
 <body>
   <header class="topbar">
@@ -28,13 +29,13 @@
       </label>
     </section>
 
-    <nav class="tabs" aria-label="제작 단계">
-      <button type="button" class="tab" data-tab="quick" aria-pressed="true">추천 · 빠른 설정</button>
-      <button type="button" class="tab" data-tab="editor" aria-pressed="false">JIZURA 전체 편집기</button>
-      <button type="button" class="tab" data-tab="help" aria-pressed="false">기능 안내</button>
+    <nav class="tabs" role="tablist" aria-label="제작 단계" aria-orientation="horizontal">
+      <button type="button" class="tab" id="tab-quick" role="tab" data-tab="quick" aria-controls="quick" aria-selected="true" aria-pressed="true" tabindex="0">추천 · 빠른 설정</button>
+      <button type="button" class="tab" id="tab-editor" role="tab" data-tab="editor" aria-controls="editor" aria-selected="false" aria-pressed="false" tabindex="-1">JIZURA 전체 편집기</button>
+      <button type="button" class="tab" id="tab-help" role="tab" data-tab="help" aria-controls="help" aria-selected="false" aria-pressed="false" tabindex="-1">기능 안내</button>
     </nav>
 
-    <section id="quick" class="panel" data-panel="quick">
+    <section id="quick" class="panel" data-panel="quick" role="tabpanel" aria-labelledby="tab-quick">
       <div class="quick-grid">
         <div class="left-column">
           <section class="block recommendation-block" aria-labelledby="recommendationTitle">
@@ -77,12 +78,12 @@
       </div>
     </section>
 
-    <section id="editor" class="panel editor-panel" data-panel="editor" hidden>
+    <section id="editor" class="panel editor-panel" data-panel="editor" role="tabpanel" aria-labelledby="tab-editor" hidden>
       <div class="editor-intro"><div><p class="eyebrow">OFFICIAL EDITOR</p><h2>전체 JIZURA 편집기</h2><p>스타일 27종과 기법, 글꼴, 팔레트, 컷, 가사 싱크, PNG·LRC·AE 내보내기를 공식 화면에서 그대로 다룹니다.</p></div><span class="native-label">공식 v0.10.1</span></div>
       <iframe id="engineFrame" title="JIZURA 공식 한국어 편집기" loading="eager"></iframe>
     </section>
 
-    <section id="help" class="panel help-panel" data-panel="help" hidden>
+    <section id="help" class="panel help-panel" data-panel="help" role="tabpanel" aria-labelledby="tab-help" hidden>
       <article class="block">
         <p class="eyebrow">USE THE FULL EDITOR</p><h2>어떤 기능을 어디서 쓰나요?</h2>
         <dl>

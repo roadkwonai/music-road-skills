@@ -50,6 +50,7 @@
   ],
   "hosts": [
     "codex",
+    "claude",
     "antigravity",
     "antigravity-cli"
   ]

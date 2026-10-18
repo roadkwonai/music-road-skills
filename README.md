@@ -4,7 +4,7 @@
 
 <h1 align="center">Music Road Skills</h1>
 
-<p align="center"><strong>Road Music에서 만든 음악을 보고, 듣고, 고른 뒤 모션그래픽 영상으로 완성하는 공개 Codex 스킬 묶음입니다.</strong></p>
+<p align="center"><strong>Road Music에서 만든 음악을 보고, 듣고, 고른 뒤 모션그래픽 영상으로 완성하는 공개 Codex·Claude Code·Antigravity 스킬 묶음입니다.</strong></p>
 
 <p align="center">
   <a href="https://github.com/roadkwonai/music-road-skills/releases/tag/v0.1.1"><img src="https://img.shields.io/badge/release-v0.1.1-172942?style=flat-square" alt="Release v0.1.1"></a>
@@ -54,9 +54,9 @@
 | 형식 | 최근 프로젝트 샘플 | 길이 | 구간 |
 | --- | --- | --- | --- |
 | Road Music Showreel CD | [락발라드 — 아직 나의 봄](skills/road-music-video-studio/assets/examples/showreel-cd.mp4) | 24초 | 0–12초 · 27–39초 |
-| Road Music 쇼릴 MV | [벨루나 — 프리즘 (VELUNE·벨루네 MV v5)](skills/road-music-video-studio/assets/examples/showreel-mv.mp4) | 18초 | 0–18초 |
-| JIZURA 음악 스튜디오 | [벨루나 — 나를 믿어](skills/road-music-video-studio/assets/examples/jizura.mp4) | 15.08초 | 최근 3스타일 조합 미리보기 |
-| Showreel 음악 모션그래픽 | [벨루나 — 너도 깨어 있니](skills/road-music-video-studio/assets/examples/showreel-motion.mp4) | 24초 | 0–8초 · 65.2–81.2초 |
+| Road Music 쇼릴 MV | [벨루나 — 프리즘 (VELUNE·벨루네 MV v5)](skills/road-music-video-studio/assets/examples/20261018-confirmed/showreel-mv-prism.mp4) | 18초 | 0–18초 |
+| JIZURA 음악 스튜디오 | [벨루나 — 어디든 좋아](skills/road-music-video-studio/assets/examples/20261018-confirmed/jizura-eodideun-joha.mp4) | 18초 | 원곡 40–58초 |
+| Showreel 음악 모션그래픽 | [벨루나 — 내일로 달려](skills/road-music-video-studio/assets/examples/20261018-confirmed/showreel-motion-tomorrow.mp4) | 24초 | 원곡 53.82–77.82초 |
 
 [최근 샘플 선정·출처·구간 안내](docs/samples.md)
 
@@ -77,6 +77,8 @@ node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 설치 도구는 기본적으로 `CODEX_HOME/skills`(없으면 `~/.codex/skills`)를 대상으로 하며, 기존 대상은 먼저 보존용 백업을 만듭니다. 영상 엔진, AI 모델, 음원은 설치하지 않습니다. [설치 상세](docs/install.md)
 
 Antigravity App/IDE는 `~/.gemini/config/skills`, Antigravity CLI는 `~/.gemini/antigravity-cli/skills`, 공통 프로젝트 설치는 `.agents/skills`를 사용합니다. 두 호스트는 같은 스킬·프로젝트 manifest를 공유하지만, 스킬을 찾는 위치는 각각의 공식 설정이 기준입니다. [Antigravity 설치·실행 안내](docs/antigravity.md)
+
+Claude Code는 전역 `~/.claude/skills`, 프로젝트 `.claude/skills`에 설치합니다. 새 이미지가 필요한 Showreel 작업은 별도 `gpt-image` 스킬이 있어야 하며, 그 스킬이 ChatGPT 로그인 Codex CLI를 통해 내장 `image_gen`으로 연결합니다. [Claude Code 설치·사용 안내](docs/claude.md)
 
 ```bash
 # 현재 저장소를 Antigravity App/IDE 전역 스킬 경로에 설치
@@ -120,7 +122,7 @@ flowchart LR
 Road Music CLI를 새로 설치할 때에는 Node 런타임을 준비한 뒤, CLI가 번들한 이 스킬 묶음도 함께 설치합니다. AI는 `song:generate` → `job:wait` → `songs:list`에서 반환한 **절대 경로** → `motion:handoff` 순서로 넘깁니다. CLI의 `skills:status`, `skills:check`, `skills:install`, `skills:update`, `skills:watch`, `motion:studio`, `motion:handoff`는 이 연결을 위한 공개 명령입니다. 각 명령의 실제 입력값은 설치한 Road Music CLI의 `schema`가 기준입니다. [CLI 연계 가이드](docs/cli-workflow.md)
 
 > [!NOTE]
-> `image_gen`은 Codex 호스트 도구입니다. Antigravity의 기본 이미지는 Nano Banana 네이티브 기능을 사용합니다. Showreel MV는 `image_gen`/Nano Banana를 기본으로 하며, `gpt-image-2.5` 같은 별도 유료 API는 사용자가 그 작업에 명시적으로 요청한 경우에만 씁니다. CLI가 이미지 생성을 내장 실행하는 기능은 아닙니다. ASR 기반 자막 시간도 자동 초안일 수 있으므로 100% 가창 싱크로 표현하지 않습니다.
+> Codex는 호스트의 내장 `image_gen`, Antigravity는 Nano Banana 네이티브 기능을 사용합니다. Claude Code는 설치된 `gpt-image` 스킬의 ChatGPT 로그인 Codex CLI 브리지를 사용합니다. Showreel MV는 이 기본 경로를 벗어나 `gpt-image-2.5` 같은 별도 유료 API로 자동 전환하지 않습니다. CLI가 이미지 생성을 내장 실행하는 기능은 아닙니다. ASR 기반 자막 시간도 자동 초안일 수 있으므로 100% 가창 싱크로 표현하지 않습니다.
 
 <a id="studio"></a>
 
@@ -136,15 +138,16 @@ Road Music CLI를 새로 설치할 때에는 Node 런타임을 준비한 뒤, CL
 검수 전용으로 열면 선택과 피드백을 여러 번 저장해도 창이 종료되지 않습니다. 다른 터미널에서 새 결과를 `publish`한 뒤 화면의 **새 결과 확인**으로 갱신하고, 마지막에 **검수 마치기**를 눌러 세션을 종료합니다.
 
 ```bash
+VIDEO_STUDIO_HOST="${ROAD_MUSIC_HOST:-codex}" # Claude Code에서는 claude
 python3 skills/road-music-video-studio/scripts/studio.py init \
-  --out /absolute/path/to/project --host codex
+  --out /absolute/path/to/project --host "$VIDEO_STUDIO_HOST"
 python3 skills/road-music-video-studio/scripts/studio.py serve \
-  --project /absolute/path/to/project --host codex --open
+  --project /absolute/path/to/project --host "$VIDEO_STUDIO_HOST" --open
 ```
 
 처음에는 음악 없이 프로젝트를 만들고 HTML에서 파일을 올려도 됩니다. 이미 확정한 곡이 있다면 `init`에 `--music /absolute/path/to/song.wav`를 더합니다. 로컬 루프백 서버 URL은 현재 컴퓨터의 브라우저에서만 열립니다. 화면 저장은 렌더나 외부 게시가 아닙니다. [HTML 템플릿과 조작](docs/html-studio.md)
 
-Antigravity 작업에서는 같은 프로젝트를 `--host antigravity`로 열 수 있습니다. 이미지 생성은 Codex에서는 내장 `image_gen`, Antigravity에서는 해당 환경이 실제로 제공하는 네이티브 이미지 도구를 사용합니다. 특정 모델명이나 유료 API 권한을 추정하지 않으며, 두 경우 모두 결과 이미지의 경로·해시·프롬프트를 같은 manifest 계약에 남깁니다.
+Claude Code 작업에서는 `--host claude`, Antigravity 작업에서는 `--host antigravity`로 같은 프로젝트를 엽니다. 이미지 생성은 Codex에서는 내장 `image_gen`, 로컬 Claude Code에서는 로드된 `gpt-image`의 ChatGPT 로그인 Codex CLI 브리지, Antigravity에서는 해당 환경이 실제로 제공하는 네이티브 이미지 도구를 사용합니다. 특정 모델명이나 유료 API 권한을 추정하지 않으며, 세 경우 모두 결과 이미지의 경로·해시·프롬프트를 같은 manifest 계약에 남깁니다.
 
 <a id="updates"></a>
 

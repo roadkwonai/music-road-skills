@@ -131,6 +131,8 @@ export function canBakeDirecting(score, source, audio) {
 export function needsTimingReview(previousAudio, nextAudio) { return !!(previousAudio && nextAudio && previousAudio.sha256 && nextAudio.sha256 && previousAudio.sha256 !== nextAudio.sha256); }
 
 const state = { config: null, profiles: [], direction: null, audio: null, sourceExtra: {}, initial: null, J: null, ready: false, selectedProfile: null, playRaf: 0, staticRenderer: null, unreviewed: false, timingReviewNeeded: false, busy: false, suppressNativeImport: false, hasUserContent: false, clock: null, clockStartedAt: 0, clockStartTime: 0 };
+const DRAFT_SCHEMA_VERSION = 1;
+const MAX_DRAFT_BYTES = 1024 * 1024;
 
 function status(message, error = false) { const el = $('toast'); el.textContent = message; el.hidden = false; el.style.background = error ? '#8c3535' : '#17222d'; clearTimeout(status.timer); status.timer = setTimeout(() => { el.hidden = true; }, 3600); }
 function fmt(seconds = 0) { const n = Math.max(0, Math.floor(seconds)); return `${String(Math.floor(n / 60)).padStart(2, '0')}:${String(n % 60).padStart(2, '0')}`; }
@@ -138,6 +140,50 @@ function native() { if (!state.J || !state.J.ui) throw new Error('공식 JIZURA 
 function nativeProject() { return native().ui.project; }
 function replan() { const J = native(); J.uiApi.syncUI(); J.uiApi.replan(); drawPreview(); reflect(); }
 function isSame(a, b) { return JSON.stringify(a || {}) === JSON.stringify(b || {}); }
+function isRecord(value) { return !!value && typeof value === 'object' && !Array.isArray(value); }
+function audioSha(audio) { return audio && typeof audio.sha256 === 'string' && /^[0-9a-f]{64}$/i.test(audio.sha256) ? audio.sha256.toLowerCase() : null; }
+export async function validateAudioFile(file, createDecoder = () => new OfflineAudioContext(1, 1, 44100)) {
+  let decoder;
+  try {
+    if (!file || typeof file.arrayBuffer !== 'function') throw new Error('파일이 필요합니다');
+    decoder = createDecoder();
+    const decoded = await decoder.decodeAudioData(await file.arrayBuffer());
+    if (!decoded || !Number.isFinite(decoded.duration) || decoded.duration <= 0) throw new Error('길이가 없는 음원입니다');
+    return decoded.duration;
+  } catch (_) {
+    throw new Error('이 음원은 브라우저에서 디코드할 수 없습니다. 원본 파일을 확인해 주세요.');
+  } finally {
+    try { await decoder?.close?.(); } catch (_) {}
+  }
+}
+export function studioDraft(project, sourceExtra, direction, selectedProfile, timingReviewNeeded, audio) {
+  if (!isRecord(project) || !isRecord(sourceExtra) || (direction !== null && !isRecord(direction)) || (selectedProfile !== null && typeof selectedProfile !== 'string')) return null;
+  const value = { schemaVersion: DRAFT_SCHEMA_VERSION, audioSha: audioSha(audio), project: clone(project), sourceExtra: clone(sourceExtra), direction: clone(direction), selectedProfile, timingReviewNeeded: !!timingReviewNeeded };
+  try { return JSON.stringify(value).length <= MAX_DRAFT_BYTES ? value : null; } catch (_) { return null; }
+}
+export function restoreStudioDraft(value, audio) {
+  if (!isRecord(value) || value.schemaVersion !== DRAFT_SCHEMA_VERSION || value.audioSha !== audioSha(audio) || !isRecord(value.project) || !isRecord(value.sourceExtra) || (value.direction !== null && !isRecord(value.direction)) || (value.selectedProfile !== null && typeof value.selectedProfile !== 'string') || typeof value.timingReviewNeeded !== 'boolean') return null;
+  return { project: clone(value.project), sourceExtra: clone(value.sourceExtra), direction: clone(value.direction), selectedProfile: value.selectedProfile, timingReviewNeeded: value.timingReviewNeeded };
+}
+function draftKey() { return `road-music-jizura-draft:${token}`; }
+function rememberDraft() {
+  if (!state.ready) return true;
+  const value = studioDraft(nativeProject(), state.sourceExtra, state.direction, state.selectedProfile, state.timingReviewNeeded || state.unreviewed, state.audio);
+  try {
+    if (!value) { sessionStorage.removeItem(draftKey()); return false; }
+    sessionStorage.setItem(draftKey(), JSON.stringify(value));
+    return true;
+  } catch (_) { return false; }
+}
+function savedDraft() {
+  try {
+    const raw = sessionStorage.getItem(draftKey());
+    if (!raw || raw.length > MAX_DRAFT_BYTES) return null;
+    const value = restoreStudioDraft(JSON.parse(raw), state.audio);
+    if (!value) sessionStorage.removeItem(draftKey());
+    return value;
+  } catch (_) { return null; }
+}
 function setBusy(on) { state.busy = on; ['saveButton', 'exportButton', 'audioInput'].forEach(id => { $(id).disabled = on; }); }
 async function waitUntil(check, message, timeout = 10000) { const started = Date.now(); while (Date.now() - started < timeout) { if (check()) return; await new Promise(resolve => setTimeout(resolve, 80)); } throw new Error(message); }
 function setClock(audio) { if (!audio || !audio.url) return; if (state.clock) state.clock.pause(); state.clock = new Audio(audio.url); state.clock.muted = true; state.clock.preload = 'auto'; state.clock.addEventListener('ended', () => { if (state.J && state.J.ui.playing) state.J.uiApi.pause(); }); }
@@ -345,25 +391,57 @@ async function save() {
     const response = await api('/api/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ project: P, direction: state.direction || null, plan: clone(J.ui.plan), studio }) });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok) throw new Error(result.error || '설정 저장에 실패했습니다');
-    state.sourceExtra.fontAssets = clone(P.fontAssets); state.sourceExtra.studio = clone(studio); state.initial = { lyrics: J.ui.project.lyrics, timing: clone(J.ui.project.timing) }; reflect(); status(`저장됨 · revision ${result.revision || ''}`.trim());
+    state.sourceExtra.fontAssets = clone(P.fontAssets); state.sourceExtra.studio = clone(studio); state.initial = { lyrics: J.ui.project.lyrics, timing: clone(J.ui.project.timing) }; reflect(); status('설정을 새 버전으로 저장했습니다.');
   } finally { setBusy(false); }
 }
 async function uploadAudio(file) {
   if (!file) return;
-  setBusy(true); $('projectStatus').textContent = '새 음원을 복사하고 분석하는 중…';
+  setBusy(true); $('projectStatus').textContent = '새 음원을 디코드하는 중…';
   try {
+    await validateAudioFile(file);
+    $('projectStatus').textContent = '새 음원을 복사하고 분석하는 중…';
     const response = await api('/api/import-audio', { method: 'POST', headers: { 'content-type': 'application/octet-stream', 'X-File-Name': encodeURIComponent(file.name) }, body: file });
     const result = await response.json().catch(() => ({}));
     if (!response.ok || !result.ok || !result.audio) throw new Error(result.error || '음원을 가져오지 못했습니다');
-    const oldAudio = sourceBaseline(); state.timingReviewNeeded ||= needsTimingReview(oldAudio, result.audio); state.direction = null; state.selectedProfile = null;
+    const oldAudio = sourceBaseline();
+    await importAudio(result.audio);
+    state.timingReviewNeeded ||= needsTimingReview(oldAudio, result.audio); state.direction = null; state.selectedProfile = null;
     $('analysisText').textContent = '새 음원은 리듬 분석 기반 보조 방향으로 제안합니다. 장르와 가사 설명을 더하면 연출 근거가 선명해집니다.';
-    state.audio = result.audio;
-    setClock(result.audio);
-    state.sourceExtra.source = Object.assign({}, state.sourceExtra.source || {}, { sha256: result.audio.sha256, path: result.audio.path });
-    await importAudio(result.audio); configureInstrumentalDefault(); state.initial = { lyrics: nativeProject().lyrics, timing: clone(nativeProject().timing) }; replan(); populateCards(); status(`${file.name}을 연결했습니다.`);
-  } finally { setBusy(false); }
+    configureInstrumentalDefault(); state.initial = { lyrics: nativeProject().lyrics, timing: clone(nativeProject().timing) }; replan(); populateCards(); status(`${file.name}을 연결했습니다.`);
+  } finally { setBusy(false); if (state.ready) reflect(); }
 }
-function switchTab(name) { document.querySelectorAll('.tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab.dataset.tab === name))); document.querySelectorAll('[data-panel]').forEach(panel => { panel.hidden = panel.dataset.panel !== name; }); if (name === 'quick') { reflect(); drawPreview(); } }
+const tabOrder = ['quick', 'editor', 'help'];
+const tabNames = new Set(tabOrder);
+export function tabForKey(current, key) {
+  const index = tabOrder.indexOf(current);
+  if (index < 0) return null;
+  if (key === 'Home') return tabOrder[0];
+  if (key === 'End') return tabOrder.at(-1);
+  if (key === 'ArrowRight') return tabOrder[(index + 1) % tabOrder.length];
+  if (key === 'ArrowLeft') return tabOrder[(index - 1 + tabOrder.length) % tabOrder.length];
+  return null;
+}
+function switchTab(name, scroll = false) {
+  if (!tabNames.has(name)) return;
+  document.querySelectorAll('.tab').forEach(tab => {
+    const selected = tab.dataset.tab === name;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.setAttribute('aria-pressed', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+  });
+  document.querySelectorAll('[data-panel]').forEach(panel => { panel.hidden = panel.dataset.panel !== name; });
+  if (name === 'quick') { reflect(); drawPreview(); }
+  if (scroll) requestAnimationFrame(() => $(name).scrollIntoView({ block: 'start' }));
+}
+function switchTabFromHash(scroll = true) {
+  const name = location.hash.slice(1);
+  if (tabNames.has(name)) switchTab(name, scroll);
+}
+function openTab(name) {
+  if (!tabNames.has(name)) return;
+  if (location.hash === `#${name}`) switchTab(name, true);
+  else location.hash = name;
+}
 async function syncNativeAudio(file, beforeAudio, timing) {
   if (!file || state.suppressNativeImport) return;
   setBusy(true);
@@ -413,7 +491,28 @@ function watchNativeImports() {
   }, true);
 }
 function bind() {
-  document.querySelectorAll('.tab').forEach(tab => tab.addEventListener('click', () => switchTab(tab.dataset.tab)));
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => openTab(tab.dataset.tab));
+    tab.addEventListener('keydown', event => {
+      const name = tabForKey(tab.dataset.tab, event.key);
+      if (!name) return;
+      event.preventDefault();
+      document.getElementById(`tab-${name}`).focus();
+      openTab(name);
+    });
+  });
+  document.querySelectorAll('[data-road-music-nav] a[href^="#"]').forEach(link => link.addEventListener('click', event => {
+    const name = link.getAttribute('href').slice(1);
+    if (!tabNames.has(name)) return;
+    event.preventDefault(); openTab(name);
+  }));
+  document.querySelectorAll('[data-road-music-nav] a:not([href^="#"])').forEach(link => link.addEventListener('click', event => {
+    if (rememberDraft()) return;
+    event.preventDefault();
+    status('임시 설정을 보관하지 못했습니다. 설정을 저장한 뒤 페이지를 이동해 주세요.', true);
+  }));
+  window.addEventListener('hashchange', () => switchTabFromHash());
+  window.addEventListener('pagehide', rememberDraft);
   $('genreSearch').addEventListener('input', event => populateCards(event.target.value));
   $('styleSelect').addEventListener('change', event => { state.selectedProfile = null; nativeProject().style = event.target.value; nativeProject().mood = null; replan(); populateCards($('genreSearch').value); });
   $('themeSelect').addEventListener('change', event => { nativeProject().themeId = event.target.value || null; replan(); status('테마를 골랐습니다. 재구성을 눌러 적용하세요.'); });
@@ -423,7 +522,7 @@ function bind() {
   $('centerToggle').addEventListener('change', event => { nativeProject().centerFree = event.target.checked; replan(); });
   $('keyBgSelect').addEventListener('change', event => { nativeProject().keyBg = event.target.value; replan(); });
   $('rebuildButton').addEventListener('click', rebuild); $('saveButton').addEventListener('click', () => save().catch(error => status(error.message, true)));
-  $('exportButton').addEventListener('click', () => { if (state.audio && !native().ui.audio && nativeProject().includeAudio !== false) { status('음원을 다시 연결한 뒤 MP4를 만들어 주세요.', true); return; } $('engineFrame').contentDocument.getElementById('btnMP4').click(); switchTab('editor'); });
+  $('exportButton').addEventListener('click', () => { if (state.audio && !native().ui.audio && nativeProject().includeAudio !== false) { status('음원을 다시 연결한 뒤 MP4를 만들어 주세요.', true); return; } $('engineFrame').contentDocument.getElementById('btnMP4').click(); openTab('editor'); });
   $('audioInput').addEventListener('change', event => uploadAudio(event.target.files && event.target.files[0]).catch(error => status(error.message, true)));
   $('playButton').addEventListener('click', () => { const J = native(), wasPlaying = J.ui.playing; $('engineFrame').contentDocument.getElementById('btnPlay').click(); if (wasPlaying) state.clock?.pause(); else { state.clockStartTime = J.ui.t || 0; state.clockStartedAt = performance.now(); if (state.clock) { state.clock.currentTime = state.clockStartTime; state.clock.play().catch(() => {}); } } runPlaybackLoop(); });
   $('rewindButton').addEventListener('click', () => { native().uiApi.seek(0); if (state.clock) state.clock.currentTime = 0; state.clockStartTime = 0; state.clockStartedAt = performance.now(); drawPreview(); reflect(); });
@@ -443,9 +542,19 @@ async function init() {
     if (innerWidth >= 960) frame.contentDocument.getElementById('modePro').click();
     await importProject(state.config.project);
     const directed = state.direction && (state.direction.profile || state.direction.profileId); state.selectedProfile = profileById(directed) ? directed : null;
-    await importAudio(state.audio); await bakeDirecting(state.config.project).catch(error => status(error.message, true)); configureInstrumentalDefault();
-    state.initial = { lyrics: nativeProject().lyrics, timing: clone(nativeProject().timing) }; state.ready = true;
-    populateNativeChoices(); addSettingsHelp(); populateCards(); bind(); watchNativeImports(); replan();
+    await importAudio(state.audio);
+    const initial = { lyrics: nativeProject().lyrics, timing: clone(nativeProject().timing) };
+    const draft = savedDraft();
+    if (draft) {
+      await importProject(Object.assign({}, draft.sourceExtra, { project: draft.project }));
+      state.sourceExtra = draft.sourceExtra; state.direction = draft.direction;
+      state.selectedProfile = profileById(draft.selectedProfile) ? draft.selectedProfile : null;
+      state.timingReviewNeeded = draft.timingReviewNeeded;
+    }
+    await bakeDirecting(draft ? draft.project : state.config.project).catch(error => status(error.message, true));
+    if (!draft) configureInstrumentalDefault();
+    state.initial = draft ? initial : { lyrics: nativeProject().lyrics, timing: clone(nativeProject().timing) }; state.ready = true;
+    populateNativeChoices(); addSettingsHelp(); populateCards(); bind(); switchTabFromHash(false); watchNativeImports(); replan();
   } catch (error) { $('projectStatus').textContent = '스튜디오를 열지 못했습니다'; status(error.message, true); }
 }
 

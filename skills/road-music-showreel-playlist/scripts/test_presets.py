@@ -237,6 +237,9 @@ class PresetChecks(unittest.TestCase):
         page = path.read_text()
         self.assertIn('genre-select', page)
         self.assertIn('트로트', page)
+        self.assertIn('data-road-music-ui', page)
+        self.assertIn('road-music-design/styles.css', page)
+        self.assertTrue((path.parent / 'road-music-design' / 'fonts' / 'Paperlogy-4Regular.ttf').is_file())
         self.assertEqual(page.count('<video '), sum(s.get('preview', {}).get('status') == 'ready' for s, _ in cd.registry()))
 
     def test_rhythm_cd_catalog_uses_early_cd_button_and_escaped_audio_note(self):
@@ -259,6 +262,7 @@ class PresetChecks(unittest.TestCase):
         self.assertNotIn('같은 곡 <DEMO & CHANNEL> 15초 두 구간', page)
         self.assertIn('search.value=e.target.value||\'\';', page)
         self.assertIn('음악 장르별 제작 방향', page)
+        self.assertIn('id="genre-request" role="status" aria-live="polite"', page)
         for name in ('크롬 프리즘', '그루브 다이얼'):
             end = page.index(f'<h2>{name}</h2>')
             start = page.rfind('<article data-search="', 0, end)

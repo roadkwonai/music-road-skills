@@ -7,8 +7,9 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:net';
 import { dirname, extname, isAbsolute, join } from 'node:path';
 import { homedir } from 'node:os';
-import { pathToFileURL } from 'node:url';
+import { pathToFileURL, fileURLToPath } from 'node:url';
 import { browserBakeExpression } from './directing.mjs';
+import { auditPlan } from './readability.mjs';
 
 const DEFAULT_JIZURA = join(homedir(), '.local/share/roadmusic-video-tools/jizura');
 const DEFAULT_CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -221,8 +222,14 @@ async function run(o) {
     records.analysis.fontLoadCompleted = fontLoadCompleted;
     records.analysis.restoredFontAssets = fontAssets.map(asset => asset.key);
     await Promise.all([writeFile(join(o.out, 'analysis.json'), JSON.stringify(records.analysis, null, 2)), writeFile(join(o.out, 'plan.json'), JSON.stringify(records.plan, null, 2)), writeFile(join(o.out, 'registry.json'), JSON.stringify(records.registry, null, 2))]);
+    const reviewRange = await evaluate(page, '(() => { const r = J.uiApi.exportRange(); return { start: r ? r.t0 : 0, end: r ? r.t1 : J.ui.plan.duration }; })()');
+    if (Number.isFinite(rawProject.source?.duration)) reviewRange.end = Math.min(reviewRange.end, rawProject.source.duration);
+    const readability = Array.isArray(rawProject.cueMap)
+      ? auditPlan(rawProject, records.plan, reviewRange)
+      : { schemaVersion: 1, status: 'unavailable', reason: 'cueMap이 없어 원문 행과 시각을 대조할 수 없습니다' };
+    await writeFile(join(o.out, 'readability.json'), JSON.stringify(readability, null, 2));
     await saveSamples(page, o.out, rawProject);
-    if (o.inspect) return { ok: true, mode: 'inspect', output: o.out, duration: records.analysis.audio.duration, bpm: records.analysis.audio.bpm, directing: directingReport };
+    if (o.inspect) return { ok: true, mode: 'inspect', output: o.out, duration: records.analysis.audio.duration, bpm: records.analysis.audio.bpm, directing: directingReport, readability: join(o.out, 'readability.json') };
     await waitFor(() => evaluate(page, '!document.getElementById("btnMP4").disabled'), 'JIZURA WebCodecs 준비', 30000);
     const exportSpan = await evaluate(page, '(() => { const range = J.uiApi.exportRange(); const t0 = range ? range.t0 : 0; const t1 = range ? range.t1 : J.ui.plan.duration; return { t0, dur: t1 - t0 }; })()');
     const started = Date.now();
@@ -237,11 +244,22 @@ async function run(o) {
     const streams = probe.streams || [], video = streams.find(s => s.codec_type === 'video'), audio = streams.find(s => s.codec_type === 'audio');
     const expectedDuration = exportSpan.dur;
     const audioExpected = rawProject.includeAudio !== false;
-    const result = { ok: !!(video && (!audioExpected || audio)), output: rendered.path, bytes: rendered.bytes, duration: Number(probe.format?.duration || 0), actualExportSpan: exportSpan, audioExpected, sourceDuration: Number(rawProject.source?.duration) || null, durationDelta: Number((Number(probe.format?.duration || 0) - expectedDuration).toFixed(6)), video: video && { codec: video.codec_name, width: video.width, height: video.height, frames: Number(video.nb_read_frames || video.nb_frames || 0) }, audio: audio && { codec: audio.codec_name, sampleRate: Number(audio.sample_rate || 0), channels: audio.channels }, sidecarWav: (await readdir(o.out)).filter(n => /\.wav$/i.test(n)) };
+    const result = { ok: !!(video && (!audioExpected || audio)), visualReady: false, output: rendered.path, bytes: rendered.bytes, duration: Number(probe.format?.duration || 0), actualExportSpan: exportSpan, audioExpected, sourceDuration: Number(rawProject.source?.duration) || null, durationDelta: Number((Number(probe.format?.duration || 0) - expectedDuration).toFixed(6)), video: video && { codec: video.codec_name, width: video.width, height: video.height, frames: Number(video.nb_read_frames || video.nb_frames || 0) }, audio: audio && { codec: audio.codec_name, sampleRate: Number(audio.sample_rate || 0), channels: audio.channels }, sidecarWav: (await readdir(o.out)).filter(n => /\.wav$/i.test(n)) };
     await writeFile(join(o.out, 'result.json'), JSON.stringify(result, null, 2));
     if (!video) fail('내보낸 MP4에 영상 스트림이 없습니다');
     if (audioExpected && !audio) fail(`내보낸 MP4에 오디오 스트림이 없습니다. JIZURA의 native AAC 지원을 확인하거나 ${result.sidecarWav.length ? 'WAV sidecar를 별도 mux 하세요' : 'Chrome WebCodecs/AAC 지원을 확인하세요'}.`);
-    return { ok: true, mode: 'render', output: rendered.path, duration: result.duration, frames: result.video.frames, audioCodec: result.audio?.codec || null };
+    if (Array.isArray(rawProject.cueMap) && rawProject.cueMap.length) {
+      const review = spawn(process.execPath, [fileURLToPath(new URL('./readability.mjs', import.meta.url)),
+        '--project', o.project, '--plan', join(o.out, 'plan.json'), '--video', rendered.path,
+        '--source-start', String(exportSpan.t0), '--out', join(o.out, 'readability-final')], { stdio: ['ignore', 'pipe', 'pipe'] });
+      const output = [], errors = [];
+      review.stdout.on('data', d => output.push(d)); review.stderr.on('data', d => errors.push(d));
+      const code = await new Promise((resolve, reject) => { review.once('exit', resolve); review.once('error', reject); });
+      if (code !== 0) fail(`MP4는 보존했습니다. 가독성 검수 자료 생성 실패: ${Buffer.concat([...output, ...errors]).toString().trim()}`);
+      result.readability = JSON.parse(Buffer.concat(output).toString());
+      await writeFile(join(o.out, 'result.json'), JSON.stringify(result, null, 2));
+    }
+    return { ok: true, visualReady: false, mode: 'render', output: rendered.path, duration: result.duration, frames: result.video.frames, audioCodec: result.audio?.codec || null, readability: result.readability || join(o.out, 'readability.json') };
   } finally {
     page?.close(); browser?.close(); chrome.kill('SIGTERM');
     await Promise.race([chromeExit, sleep(5000)]); await rm(profile, { recursive: true, force: true });

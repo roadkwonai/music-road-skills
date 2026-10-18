@@ -21,6 +21,7 @@ node skills/road-music-skills-update/scripts/manage.cjs watch
 2. `install`/`update`는 대상과 체크섬을 검증하고 기존 파일을 백업합니다.
 3. 로컬 수정 또는 충돌은 보존하고, 무단 덮어쓰기를 하지 않습니다.
 4. `watch`는 새 Release를 알릴 뿐 설치·재시작·모델 다운로드를 하지 않습니다.
+5. 묶음 manifest는 등록된 6개 관리 스킬을 모두 포함해야 합니다. 제작 스킬의 공용 HTML·디자인·Paperlogy 자산은 해당 스킬 폴더 안에 넣어 함께 설치하며, 프로젝트 루트의 별도 파일은 자동으로 복사하지 않습니다.
 
 ```bash
 node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
@@ -28,7 +29,7 @@ node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 
 기본 설치 대상은 `CODEX_HOME/skills` 또는 `~/.codex/skills`입니다. 프로그래밍 연동은 실제 절대 경로를 넣은 `require('/absolute/skills/road-music-skills-update/scripts/manage.cjs').execute(action, params)`를 쓰며, CLI는 stdout에 결과 JSON 한 줄, stderr에 진행 JSONL을 기록합니다. 지원 action과 매개변수는 스킬의 `SKILL.md`와 `manage.cjs`의 `execute(action, params)`가 기준입니다.
 
-이 업데이터의 기본 대상은 Codex 스킬 경로입니다. Antigravity App/IDE는 `--host antigravity`와 `~/.gemini/config/skills`, Antigravity CLI는 `--host antigravity-cli`와 `~/.gemini/antigravity-cli/skills`, 프로젝트 설치는 `--target /absolute/project/.agents/skills`를 사용합니다. 명시한 `--target`이 우선합니다. 어느 호스트에서도 `check`는 알림용이며 자동 설치·모델 설치를 하지 않습니다. [Antigravity 안내](antigravity.md)
+이 업데이터의 기본 대상은 Codex 스킬 경로입니다. Claude Code는 `--host claude`와 `~/.claude/skills`(또는 `CLAUDE_CONFIG_DIR` 아래의 동등 경로), 프로젝트 설치는 `--target /absolute/project/.claude/skills`를 사용합니다. Antigravity App/IDE는 `--host antigravity`와 `~/.gemini/config/skills`, Antigravity CLI는 `--host antigravity-cli`와 `~/.gemini/antigravity-cli/skills`, 공통 프로젝트 설치는 `--target /absolute/project/.agents/skills`를 사용합니다. 명시한 `--target`이 우선합니다. 어느 호스트에서도 `check`는 알림용이며 자동 설치·모델 설치를 하지 않습니다. [Claude Code 안내](claude.md) · [Antigravity 안내](antigravity.md)
 
 > [!WARNING]
 > 업데이트 확인만으로 동작 중 렌더나 브라우저 세션을 종료하지 않습니다. 설치 전에 진행 중인 프로젝트와 사용자 수정본을 확인하세요.

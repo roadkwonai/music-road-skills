@@ -11,12 +11,16 @@ from pathlib import Path
 import re
 import secrets
 import sys
+import subprocess
 import tempfile
 import threading
 import time
-import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, quote, unquote, urlparse
+
+if str(Path(__file__).resolve().parent) not in sys.path:
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+from html_design import ASSET_ROOT as DESIGN_ASSETS, FONT_FILES, css_text, add_navigation, studio_session_file, open_page
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS_ROOT = ROOT.parent
@@ -33,18 +37,20 @@ REQUEST_FILE = 'production-request.json'
 SHOWREEL_REQUEST_FILE = 'showreel-request.json'
 MAX_JSON = 64 * 1024
 MAX_UPLOAD = 512 * 1024 * 1024
+MAX_LYRICS_TEXT = 256 * 1024
 MODES = {
     'showreel-cd': ('Road Music Showreel CD', '실제 CD 프리셋으로 플레이리스트 영상을 준비합니다.'),
     'showreel-mv': ('Road Music 쇼릴 MV', '스토리보드와 리듬 편집 방향을 저장합니다.'),
     'jizura': ('JIZURA 음악 스튜디오', '별도 JIZURA 편집기에 전달할 제작 방향을 저장합니다.'),
     'showreel-motion': ('Showreel 음악 모션그래픽', '이미지·타이포·리듬 모션 방향을 저장합니다.'),
 }
-HOSTS = {'codex', 'antigravity', 'antigravity-cli'}
+HOSTS = {'codex', 'claude', 'antigravity', 'antigravity-cli'}
 MEDIA_EXTENSIONS = {
     'music': {'.aac', '.aif', '.aiff', '.flac', '.m4a', '.mp3', '.oga', '.ogg', '.opus', '.wav', '.webm'},
     'video': {'.m4v', '.mov', '.mp4', '.webm'},
     'storyboard': {'.avif', '.gif', '.jpeg', '.jpg', '.png', '.webp'},
     'captions': {'.ass', '.lrc', '.srt', '.vtt'},
+    'lyrics': {'.md', '.txt'},
 }
 SAFE_ID = re.compile(r'[a-z][a-z0-9-]{0,80}\Z')
 SHA256 = re.compile(r'[0-9a-f]{64}\Z')
@@ -92,10 +98,27 @@ def allowed_media(path, kind):
     return path
 
 
+def lyrics_text(path):
+    """Return a bounded UTF-8 lyric source, with an optional BOM removed."""
+    path = Path(path)
+    if path.stat().st_size > MAX_LYRICS_TEXT:
+        raise ValueError('가사 파일이 너무 큽니다')
+    with path.open('rb') as stream:
+        raw = stream.read(MAX_LYRICS_TEXT + 1)
+    if len(raw) > MAX_LYRICS_TEXT:
+        raise ValueError('가사 파일이 너무 큽니다')
+    try:
+        return raw.decode('utf-8-sig')
+    except UnicodeDecodeError as error:
+        raise ValueError('가사 파일은 UTF-8이어야 합니다') from error
+
+
 def descriptor(path, kind, identifier='music'):
     path = allowed_media(Path(path), kind).resolve(strict=True)
     if not path.is_file() or path.is_symlink():
         raise ValueError('일반 파일만 등록할 수 있습니다')
+    if kind == 'lyrics':
+        lyrics_text(path)
     return {'id': identifier, 'kind': kind, 'path': str(path), 'name': path.name,
             'size': path.stat().st_size, 'sha256': sha256(path)}
 
@@ -108,7 +131,7 @@ def empty_selection(mode='showreel-motion', host='codex'):
 def image_policy(host):
     if host not in HOSTS:
         raise ValueError('지원하지 않는 작업 호스트입니다')
-    return {'provider': 'image_gen' if host == 'codex' else 'antigravity-native', 'allowPaidModels': False}
+    return {'provider': 'gpt-image' if host == 'claude' else 'image_gen' if host == 'codex' else 'antigravity-native', 'allowPaidModels': False}
 
 
 def validate_selection(value, previous):
@@ -123,8 +146,8 @@ def validate_selection(value, previous):
     style = value.get('styleId')
     if style is not None and (not isinstance(style, str) or not SAFE_ID.fullmatch(style)):
         raise ValueError('styleId가 올바르지 않습니다')
-    if mode in {'showreel-cd', 'showreel-motion'} and style is None:
-        raise ValueError('Showreel 제작에는 실제 스타일을 선택해야 합니다')
+    if mode == 'showreel-cd' and style is None:
+        raise ValueError('CD 제작에는 실제 스타일을 선택해야 합니다')
     if mode in {'showreel-mv', 'jizura'} and style is not None:
         raise ValueError('MV와 JIZURA 제작은 CD 프리셋을 사용하지 않습니다')
     display = value.get('display')
@@ -336,8 +359,10 @@ class Session:
             try:
                 path = Path(item['path']).resolve(strict=True)
                 if path.is_file() and not path.is_symlink() and sha256(path) == item.get('sha256'):
+                    if item.get('kind') == 'lyrics':
+                        lyrics_text(path)
                     value[item['id']] = {**item, 'path': path}
-            except OSError:
+            except (OSError, ValueError):
                 continue
         return value
 
@@ -353,23 +378,35 @@ class Session:
             samples[mode] = {key: sample[key] for key in ('title', 'summary', 'tags', 'audioNote', 'provenance')}
             samples[mode]['video'] = f'/media/sample-{mode}?token={quote(self.token, safe="")}'
             samples[mode]['poster'] = f'/media/sample-poster-{mode}?token={quote(self.token, safe="")}'
-        review = {'storyboard': [], 'videos': [], 'audios': [], 'captions': []}
+        review = {'storyboard': [], 'videos': [], 'audios': [], 'captions': [], 'lyrics': []}
         current_music = media.get('music')
         for item in media.values():
             if item['id'] == 'music':
                 continue
-            target = {'storyboard': 'storyboard', 'video': 'videos', 'music': 'audios', 'captions': 'captions'}.get(item.get('kind'))
+            target = {'storyboard': 'storyboard', 'video': 'videos', 'music': 'audios', 'captions': 'captions', 'lyrics': 'lyrics'}.get(item.get('kind'))
             if target:
                 source = item.get('sourceMusicSha256')
                 source_status = ('current' if current_music and source == current_music['sha256'] else
                                  'different-source' if isinstance(source, str) else 'unverified-source')
-                review[target].append({'name': item['name'], 'url': f'/media/{item["id"]}?token={quote(self.token, safe="")}', 'sourceStatus': source_status})
+                url = f'/media/{item["id"]}?token={quote(self.token, safe="")}'
+                result = {'id': item['id'], 'name': item['name'], 'url': url,
+                          'downloadUrl': f'{url}&download=1', 'size': item['size'],
+                          'sourceStatus': source_status}
+                if item.get('kind') == 'lyrics':
+                    result['text'] = lyrics_text(item['path'])
+                review[target].append(result)
         music = current_music
-        return {'projectName': self.data.get('name', self.project.name), 'reviewSession': self.review, 'hasSavedSelection': self.has_saved_selection, 'host': self.selection.get('host', self.data.get('host', 'codex')), 'imagePolicy': image_policy(self.selection.get('host', self.data.get('host', 'codex'))), 'mode': self.selection.get('mode', self.data.get('mode', 'showreel-motion')),
+        music_state = None
+        if music:
+            url = f'/media/music?token={quote(self.token, safe="")}'
+            music_state = {'id': 'music', 'name': music['name'], 'sha256': music['sha256'], 'url': url,
+                           'downloadUrl': f'{url}&download=1', 'size': music['size'],
+                           'sourceStatus': 'current'}
+        return {'application':'road-music-video-studio', 'project':str(self.project), 'projectName': self.data.get('name', self.project.name), 'reviewSession': self.review, 'hasSavedSelection': self.has_saved_selection, 'host': self.selection.get('host', self.data.get('host', 'codex')), 'imagePolicy': image_policy(self.selection.get('host', self.data.get('host', 'codex'))), 'mode': self.selection.get('mode', self.data.get('mode', 'showreel-motion')),
                 'modeLabel': MODES.get(self.selection.get('mode'), MODES['showreel-motion'])[0],
                 'modes': [{'id': key, 'name': name, 'description': desc} for key, (name, desc) in MODES.items()],
                 'samples': samples, 'styles': cards, 'selection': self.selection, 'feedback': self.feedback,
-                'media': {'music': ({'name': music['name'], 'sha256': music['sha256'], 'url': f'/media/music?token={quote(self.token, safe="")}'} if music else None), 'review': review},
+                'media': {'music': music_state, 'review': review},
                 'jizura': {'available': (DEFAULT_JIZURA_ROOT / 'ko' / 'index.html').is_file(), 'script': str(JIZURA_SCRIPT)}}
 
     def save_selection(self, value):
@@ -385,6 +422,7 @@ class Session:
                 raise ValueError('Showreel 제작에는 등록된 음악이 필요합니다')
             showreel_request = {
                 'schemaVersion': 1,
+                'host': selection['host'],
                 'styleId': selection['styleId'],
                 'display': {
                     'showSpectrum': bool(selection['display']['showSpectrum']),
@@ -393,7 +431,7 @@ class Session:
                     'channelName': selection['display']['channelName'] or '',
                 },
                 'music': str(music['path']),
-            }
+            } if selection['styleId'] is not None else None
         with self.lock:
             self._refresh_project()
             self.data['host'] = selection['host']
@@ -404,6 +442,8 @@ class Session:
             atomic_json(self.project / REQUEST_FILE, request)
             if showreel_request is not None:
                 atomic_json(self.project / SHOWREEL_REQUEST_FILE, showreel_request)
+            else:
+                (self.project / SHOWREEL_REQUEST_FILE).unlink(missing_ok=True)
             self.selection = selection
             self.has_saved_selection = True
         result = {'status': 'saved', 'request': str(self.project / REQUEST_FILE), 'selection': selection}
@@ -465,8 +505,8 @@ def publish(project, manifest):
     if len(raw) > MAX_JSON:
         raise ValueError('--manifest: JSON이 너무 큽니다')
     value = json_load(raw.decode('utf-8-sig'))
-    if not isinstance(value, dict) or set(value) - {'title', 'sourceMusicSha256', 'video', 'audio', 'captions', 'storyboard'}:
-        raise ValueError('manifest는 title/sourceMusicSha256/video/audio/captions/storyboard만 포함합니다')
+    if not isinstance(value, dict) or set(value) - {'title', 'sourceMusicSha256', 'video', 'audio', 'captions', 'lyrics', 'storyboard'}:
+        raise ValueError('manifest는 title/sourceMusicSha256/video/audio/captions/lyrics/storyboard만 포함합니다')
     title = value.get('title')
     if title is not None and (not isinstance(title, str) or not 1 <= len(title.strip()) <= 180 or any(ord(char) < 32 for char in title)):
         raise ValueError('title은 제어문자 없는 1~180자 문자열이어야 합니다')
@@ -475,7 +515,7 @@ def publish(project, manifest):
         raise ValueError('sourceMusicSha256은 64자리 SHA-256이어야 합니다')
     session = Session(project)
     registered = [m for m in session._registered() if isinstance(m, dict) and m.get('id') == 'music']
-    fields = (('video', 'video'), ('audio', 'music'), ('captions', 'captions'), ('storyboard', 'storyboard'))
+    fields = (('video', 'video'), ('audio', 'music'), ('captions', 'captions'), ('lyrics', 'lyrics'), ('storyboard', 'storyboard'))
     for key, kind in fields:
         paths = value.get(key, [])
         if paths is None:
@@ -513,7 +553,7 @@ def make_handler(session):
             raw=self.rfile.read(length)
             if len(raw)!=length: raise ValueError('요청 본문이 중간에 끝났습니다')
             return raw,length
-        def media(self, path):
+        def media(self, path, download_name=None):
             size=path.stat().st_size; start,end,status=0,size-1,200; requested=self.headers.get('Range')
             if requested:
                 match=re.fullmatch(r'bytes=(\d*)-(\d*)',requested.strip())
@@ -526,7 +566,10 @@ def make_handler(session):
                 status=206
             length=end-start+1
             try:
-                self.send_response(status);self.send_header('Content-Type',mimetypes.guess_type(path.name)[0] or 'application/octet-stream');self.send_header('Content-Length',str(length));self.send_header('Accept-Ranges','bytes');self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff')
+                content_type = 'text/plain; charset=utf-8' if path.suffix.lower() in MEDIA_EXTENSIONS['lyrics'] else (mimetypes.guess_type(path.name)[0] or 'application/octet-stream')
+                self.send_response(status);self.send_header('Content-Type',content_type);self.send_header('Content-Length',str(length));self.send_header('Accept-Ranges','bytes');self.send_header('Cache-Control','no-store');self.send_header('X-Content-Type-Options','nosniff')
+                if download_name is not None:
+                    self.send_header('Content-Disposition', f'attachment; filename="download"; filename*=UTF-8\'\'{quote(download_name, safe="")}')
                 if status==206:self.send_header('Content-Range',f'bytes {start}-{end}/{size}')
                 self.end_headers()
                 with path.open('rb') as stream:
@@ -541,8 +584,29 @@ def make_handler(session):
             if not self.host_ok(): return self.deny(421,'허용되지 않은 Host입니다')
             if not self.token_ok(parsed): return self.deny(403,'세션 토큰이 올바르지 않습니다')
             if parsed.path=='/':
-                page=TEMPLATE.read_text(encoding='utf-8').replace('__STUDIO_BOOTSTRAP__', 'window.__STUDIO_BOOTSTRAP__='+json.dumps({'token':session.token},ensure_ascii=False).replace('<','\\u003c')+';', 1).encode()
-                self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Content-Length',str(len(page)));self.send_header('Cache-Control','no-store');self.send_header('Content-Security-Policy',"default-src 'self'; connect-src 'self'; media-src 'self'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");self.send_header('X-Content-Type-Options','nosniff');self.end_headers();return self.wfile.write(page)
+                page=TEMPLATE.read_text(encoding='utf-8').replace('__STUDIO_BOOTSTRAP__', 'window.__STUDIO_BOOTSTRAP__='+json.dumps({'token':session.token},ensure_ascii=False).replace('<','\\u003c')+';', 1).replace('__DESIGN_TOKEN__',quote(session.token,safe=''))
+                page=add_navigation(page, home_url=self.origin()+'/?token='+session.token).encode()
+                self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Content-Length',str(len(page)));self.send_header('Cache-Control','no-store');self.send_header('Content-Security-Policy',"default-src 'self'; connect-src 'self'; media-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");self.send_header('X-Content-Type-Options','nosniff');self.end_headers();return self.wfile.write(page)
+            if parsed.path == '/catalog/':
+                page=(PLAYLIST_ROOT/'assets/catalog.html').read_text(encoding='utf-8')
+                token=quote(session.token,safe='')
+                page=page.replace('href="road-music-design/styles.css"',f'href="/design.css?token={token}"')
+                page=re.sub(r'(?P<attribute>src|poster)="presets/([a-z][a-z0-9-]*)/preview\.(mp4|png)"',lambda m:f'{m["attribute"]}="/media/{"preview" if m[3]=="mp4" else "poster"}-{m[2]}?token={token}"',page)
+                page=re.sub(r'href="presets/([a-z][a-z0-9-]*)/preset.json"',lambda m:f'href="/catalog/preset/{m[1]}?token={token}"',page)
+                page=add_navigation(page,current='catalog',home_url=self.origin()+'/?token='+session.token).encode()
+                self.send_response(200);self.send_header('Content-Type','text/html; charset=utf-8');self.send_header('Content-Length',str(len(page)));self.send_header('Cache-Control','no-store');self.send_header('Content-Security-Policy',"default-src 'self'; media-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'");self.send_header('X-Content-Type-Options','nosniff');self.end_headers();return self.wfile.write(page)
+            catalog_preset=re.fullmatch(r'/catalog/preset/([a-z][a-z0-9-]{0,80})',parsed.path)
+            if catalog_preset:
+                card=next((item for item in session.cards if item['id']==catalog_preset[1]),None)
+                if not card:return self.deny(404,'등록된 스타일이 아닙니다')
+                return self.media(card['previewPath'].parent/'preset.json')
+            if parsed.path=='/design.css':
+                body=css_text('/design/fonts/',session.token).encode()
+                self.send_response(200);self.send_header('Content-Type','text/css; charset=utf-8');self.send_header('Content-Length',str(len(body)));self.send_header('Cache-Control','no-store');self.end_headers();return self.wfile.write(body)
+            if parsed.path.startswith('/design/fonts/'):
+                name=parsed.path.removeprefix('/design/fonts/')
+                if name not in FONT_FILES:return self.deny(404,'등록된 글꼴이 아닙니다')
+                return self.media(DESIGN_ASSETS/'fonts'/name)
             if parsed.path=='/api/state': return self.send_json(200,session.state())
             match=re.fullmatch(r'/media/([a-z][a-z0-9-]{0,80})',parsed.path)
             if not match:return self.deny(404,'지원하지 않는 경로입니다')
@@ -560,7 +624,7 @@ def make_handler(session):
                 return self.media(card['previewPath'] if identifier.startswith('preview-') else card['posterPath'])
             item=session.media().get(identifier)
             if not item:return self.deny(404,'등록되지 않은 파일입니다')
-            return self.media(item['path'])
+            return self.media(item['path'], item['name'] if parse_qs(parsed.query).get('download') == ['1'] else None)
         def do_POST(self):
             parsed=urlparse(self.path)
             if not self.host_ok() or self.headers.get('Origin')!=self.origin() or self.headers.get('X-Studio-Token')!=session.token or not self.token_ok(parsed):return self.deny(403,'허용되지 않은 요청입니다')
@@ -593,27 +657,36 @@ def make_handler(session):
     return Handler
 
 
-def serve(project, music=None, host=None, open_browser=False, timeout=900, review=False):
+def serve(project, music=None, host=None, open_browser=False, timeout=900, review=False, session_file=None):
     if not 1 <= timeout <= 86_400: raise ValueError('--timeout: 1..86400초가 필요합니다')
     session=Session(project,music,host,review);server=ThreadingHTTPServer(('127.0.0.1',0),make_handler(session));server.daemon_threads=True;thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start();url=f'http://127.0.0.1:{server.server_port}/?token={session.token}'
     print(json.dumps({'event':'studio-ready','url':url,'project':str(session.project),'expiresSeconds':timeout,'review':review,'localExecutorOnly':True},ensure_ascii=False),file=sys.stderr,flush=True)
-    if open_browser:webbrowser.open(url)
+    registration = Path(session_file).resolve() if session_file else studio_session_file()
+    if registration:
+        registration.parent.mkdir(parents=True, exist_ok=True)
+        atomic_json(registration, {'schemaVersion':1,'url':url,'project':str(session.project),'pid':os.getpid(),'expiresAt':int(time.time())+timeout})
+    if open_browser:
+        try:
+            if not open_page(url):print(json.dumps({"event":"studio-open-failed","message":"제작실 페이지를 열지 못했습니다"},ensure_ascii=False),file=sys.stderr,flush=True)
+        except (OSError,subprocess.TimeoutExpired,ValueError):print(json.dumps({"event":"studio-open-failed","message":"제작실 페이지를 열지 못했습니다"},ensure_ascii=False),file=sys.stderr,flush=True)
     try:
         if not session.done.wait(timeout):
             action = '검수 마치기' if review else '선택 저장'
             raise TimeoutError(f'{action} 시간이 만료되었습니다. 이미 저장한 피드백은 유지됩니다')
         result={'status':'completed','project':str(session.project),'selection':str(session.project/SELECTION_FILE),'request':str(session.project/REQUEST_FILE),'review':review}
         showreel=session.project/SHOWREEL_REQUEST_FILE
-        if showreel.is_file() and session.selection.get('mode') in {'showreel-cd','showreel-motion'}: result['showreelRequest']=str(showreel)
+        if showreel.is_file() and session.selection.get('mode') in {'showreel-cd','showreel-motion'} and session.selection.get('styleId') is not None: result['showreelRequest']=str(showreel)
         return result
     finally:
         server.shutdown();server.server_close();thread.join(timeout=2)
+        if registration and load_json(registration, {}).get('url') == url:
+            registration.unlink(missing_ok=True)
 
 
 def main(argv=None):
     parser=argparse.ArgumentParser(description=__doc__);sub=parser.add_subparsers(dest='command',required=True)
     p=sub.add_parser('init');p.add_argument('--out',required=True);p.add_argument('--music');p.add_argument('--mode',choices=MODES,default='showreel-motion');p.add_argument('--host',choices=HOSTS,default='codex')
-    p=sub.add_parser('serve');p.add_argument('--project',required=True);p.add_argument('--music');p.add_argument('--host',choices=HOSTS);p.add_argument('--mode',choices=MODES);p.add_argument('--open',action='store_true');p.add_argument('--review',action='store_true');p.add_argument('--timeout',type=int,default=900)
+    p=sub.add_parser('serve');p.add_argument('--project',required=True);p.add_argument('--music');p.add_argument('--host',choices=HOSTS);p.add_argument('--mode',choices=MODES);p.add_argument('--open',action='store_true');p.add_argument('--review',action='store_true');p.add_argument('--session-file');p.add_argument('--timeout',type=int,default=900)
     p=sub.add_parser('publish');p.add_argument('--project',required=True);p.add_argument('--manifest',required=True)
     args=parser.parse_args(argv)
     try:
@@ -621,7 +694,7 @@ def main(argv=None):
         elif args.command=='publish': result=publish(args.project,args.manifest)
         else:
             if args.mode: raise ValueError('--mode은 init에만 사용할 수 있습니다. 선택은 제작실에서 저장합니다')
-            result=serve(args.project,args.music,args.host,args.open,args.timeout,args.review)
+            result=serve(args.project,args.music,args.host,args.open,args.timeout,args.review,args.session_file)
         print(json.dumps(result,ensure_ascii=False,allow_nan=False))
     except (OSError,ValueError,FileExistsError,TimeoutError) as error:
         print(json.dumps({'error':str(error)},ensure_ascii=False),file=sys.stderr);return 2

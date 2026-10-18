@@ -3,15 +3,19 @@
 from __future__ import annotations
 
 import json
+from io import StringIO
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
 from urllib.error import HTTPError
 from urllib.parse import quote
 from urllib.request import Request, urlopen
+from unittest.mock import patch
 
+import studio
 
 SCRIPT = Path(__file__).with_name('studio.py')
 
@@ -20,7 +24,7 @@ class StudioServer:
     def __init__(self, root, audio=None, project=None):
         runtime = root / 'jizura' / 'ko'
         runtime.mkdir(parents=True)
-        (runtime / 'index.html').write_text('<!doctype html><title>engine</title>', encoding='utf-8')
+        (runtime / 'index.html').write_text('<!doctype html><html><head><title>engine</title></head><body></body></html>', encoding='utf-8')
         command = [sys.executable, str(SCRIPT), '--out', str(root / 'output'), '--jizura-root', str(runtime.parent)]
         if audio:
             command += ['--audio', str(audio)]
@@ -88,14 +92,35 @@ class StudioTest(unittest.TestCase):
         self.assertEqual(config['schemaVersion'], 1)
         self.assertEqual(config['audio']['name'], 'source.wav')
         self.assertEqual(config['runtime']['version'], '0.10.1')
-        status, page, _headers = self.server.request('/')
+        status, page, headers = self.server.request('/')
         self.assertEqual(status, 200)
         self.assertIn(self.server.token.encode(), page)
         self.assertNotIn(b'__TOKEN__', page)
+        self.assertIn(b'data-road-music-ui', page)
+        self.assertIn(b'/design.css?token=', page)
+        self.assertIn(b'data-road-music-nav', page)
+        self.assertIn('전체 편집기'.encode(), page)
+        self.assertIn("font-src 'self'", headers['Content-Security-Policy'])
+        self.assertIn("script-src 'self'", headers['Content-Security-Policy'])
+        status, script, _headers = self.server.request('/studio.mjs')
+        self.assertEqual(status, 200)
+        self.assertIn(b'hashchange', script)
+        self.assertIn(b'data-road-music-nav', script)
+        status, design, _headers = self.server.request('/design.css')
+        self.assertEqual(status, 200)
+        self.assertIn(b'Paperlogy', design)
+        self.assertIn(f'?token={self.server.token}'.encode(), design)
+        status, font, _headers = self.server.request('/design/fonts/Paperlogy-4Regular.ttf')
+        self.assertEqual(status, 200)
+        self.assertEqual(font[:4], b'\x00\x01\x00\x00')
         self.assertEqual(self.server.request('/api/config', token=False)[0], 403)
         self.assertEqual(self.server.request('/api/config', headers={'Host': 'localhost:1'})[0], 421)
         self.assertEqual(self.server.request('/../secret', token=True)[0], 404)
-        self.assertEqual(self.server.request('/engine/index.html')[0], 200)
+        status, engine, headers = self.server.request('/engine/index.html')
+        self.assertEqual(status, 200)
+        self.assertIn(b'data-road-music-design', engine)
+        self.assertIn(b'Paperlogy', engine)
+        self.assertIn("font-src 'self'", headers['Content-Security-Policy'])
         self.assertEqual(self.server.request('/api/stop', method='POST', body=b'', content_type='application/json', origin=False)[0], 403)
 
     def test_import_save_revisions_and_source_hash(self):
@@ -204,6 +229,59 @@ class StudioTest(unittest.TestCase):
         result = subprocess.run(command, capture_output=True, text=True)
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(output.exists())
+
+    def test_open_option_opens_only_a_ready_studio_and_reports_nonfatal_failure(self):
+        servers = []
+        open_threads = []
+
+        class FakeServer:
+            def __init__(self, _address, _handler):
+                self.server_port = 43123
+                self.daemon_threads = False
+                self.served = False
+                self.closed = False
+                servers.append(self)
+
+            def serve_forever(self):
+                self.served = True
+
+            def server_close(self):
+                self.closed = True
+
+        class ImmediateThread:
+            def __init__(self, target, args=(), daemon=False):
+                self.target = target
+                self.args = args
+                self.daemon = daemon
+                self.started = False
+                open_threads.append(self)
+
+            def start(self):
+                self.started = True
+                self.target(*self.args)
+
+        out = StringIO()
+        err = StringIO()
+        with patch.object(studio, 'ThreadingHTTPServer', FakeServer), \
+             patch.object(studio.threading, 'Thread', ImmediateThread), \
+             patch.object(studio, 'open_page', side_effect=RuntimeError('browser unavailable')) as opener, \
+             redirect_stdout(out), redirect_stderr(err):
+            studio.main(['--out', str(self.root / 'open-failure'), '--jizura-root', str(self.root / 'jizura'), '--open'])
+        ready = json.loads(out.getvalue())
+        warning = json.loads(err.getvalue())
+        self.assertEqual(opener.call_args.args, (ready['url'],))
+        self.assertEqual(warning['event'], 'studio-open-failed')
+        self.assertEqual(warning['url'], ready['url'])
+        self.assertTrue(open_threads[0].daemon)
+        self.assertTrue(open_threads[0].started)
+        self.assertTrue(servers[0].served)
+        self.assertTrue(servers[0].closed)
+
+        out = StringIO()
+        with patch.object(studio, 'ThreadingHTTPServer', FakeServer), \
+             patch.object(studio, 'open_page') as unopened, redirect_stdout(out):
+            studio.main(['--out', str(self.root / 'headless'), '--jizura-root', str(self.root / 'jizura')])
+        unopened.assert_not_called()
 
 
 if __name__ == '__main__':

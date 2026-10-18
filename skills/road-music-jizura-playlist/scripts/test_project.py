@@ -15,6 +15,27 @@ spec.loader.exec_module(p)
 
 
 class ProjectTests(unittest.TestCase):
+    def test_timing_evidence_survives_build_without_promoting_estimates(self):
+        evidence = {'method': 'manual placement', 'reason': 'vocal anchor not recovered'}
+        provenance = {'sourceSha256': 'a' * 64, 'sourceLyrics': '/original.txt'}
+        direction = {'profile': 'paper-ballad', 'timingStatus': 'user-approved-estimated-placement',
+                     'timingEvidence': evidence, 'lyricsTimingProvenance': provenance}
+        cues = [{'start': 1, 'end': 2, 'text': '첫 문장', 'sourceLine': 1},
+                {'start': 2, 'end': 4, 'text': '다음 문장', 'sourceLine': 2,
+                 'timingStatus': 'original-text-forced-dtw-estimated-unreviewed',
+                 'timingEvidence': {'method': 'forced DTW'},
+                 'timingReview': {'status': 'unreviewed'}}]
+        project = p.build({'duration': 5, 'sha256': 'a' * 64}, direction, cues)
+        self.assertEqual(project['lyricsTimingProvenance'], provenance)
+        self.assertEqual(project['timingStatus'], direction['timingStatus'])
+        self.assertEqual(project['cueMap'][0]['timingStatus'], direction['timingStatus'])
+        self.assertEqual(project['cueMap'][0]['timingEvidence'], evidence)
+        self.assertEqual(project['cueMap'][1]['timingEvidence'], {'method': 'forced DTW'})
+        self.assertEqual(project['cueMap'][1]['timingReview'], {'status': 'unreviewed'})
+        project['cueMap'][0]['timingEvidence']['method'] = 'changed'
+        self.assertEqual(evidence['method'], 'manual placement')
+        self.assertEqual(cues[1]['timingEvidence']['method'], 'forced DTW')
+
     def test_cues_keep_text_timing_and_gaps(self):
         cues = [{'start': 1, 'end': 3, 'text': '네가 머문 자리', 'section': 'verse'},
                 {'start': 4, 'end': 6, 'text': '다시 네게 돌아가', 'section': 'chorus'}]
@@ -117,10 +138,19 @@ class ProjectTests(unittest.TestCase):
                                            for n in range(round(rate * duration))))
             subprocess.run(['ffmpeg', '-v', 'error', '-f', 'lavfi', '-i', 'color=c=blue:s=160x90:r=30',
                             '-t', '1.1', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', str(video)], check=True)
-            p.write_json(project, {'source': {'sha256': p.sha256(audio), 'duration': duration}})
+            p.write_json(project, {'source': {'sha256': p.sha256(audio), 'duration': duration, 'path': str(audio)}, 'fps': 30,
+                                  'cueMap': [{'line': 0, 'sourceLine': 1, 'text': '검수용 문장',
+                                              'start': .1, 'end': .9, 'timingStatus': 'estimated'}]})
+            p.write_json(root / 'plan.json', {'fps': 30, 'lines': [{'visEnd': .9}],
+                                             'cuts': [{'line': 0, 'text': '검수용 문장', 'start': .1, 'end': .9}], 'events': []})
             tracks = root / 'tracks.json'
             p.write_json(tracks, {'tracks': [dict(audio=str(audio), video=str(video), project=str(project))] * 3})
             result = p.assemble(tracks, root / 'playlist.mp4')
+            self.assertFalse(result['visualReady'])
+            self.assertEqual(len(result['readability']), 3)
+            second_review = p.read_json(root / 'playlist.mp4.readability/track-2/review.json')
+            self.assertEqual(second_review['videoStart'], duration)
+            self.assertEqual(second_review['visualReview'], 'pending')
             self.assertAlmostEqual(result['chapters'][2]['start'], 2.026, places=5)
             streams = result['actual']['streams']
             self.assertEqual(int(next(s for s in streams if s['codec_type'] == 'video')['nb_frames']), 91)
@@ -155,8 +185,9 @@ class ProjectTests(unittest.TestCase):
                               'sourceDuration': actual_duration, 'actualExportSpan': {},
                               'video': {'width': video['width'], 'height': video['height'], 'frames': frames}}
 
-            base = {'source': {'sha256': p.sha256(audio), 'duration': actual_duration}, 'lyrics': '[00:00.000]테스트',
-                    'timing': {'bpm': 120, 'snap': False}, 'overrides': {'1': {'cutTime': {'1': .2}}}}
+            base = {'source': {'sha256': p.sha256(audio), 'duration': actual_duration, 'path': str(audio)}, 'lyrics': '[00:00.000]테스트',
+                    'timing': {'bpm': 120, 'snap': False}, 'overrides': {'1': {'cutTime': {'1': .2}}},
+                    'cueMap': [{'line': 0, 'sourceLine': 1, 'text': '테스트', 'start': .02, 'end': .99, 'timingStatus': 'estimated'}]}
             boundary = .347
             blue, blue_result = render('blue', 'blue', 30, .5)
             red, red_result = render('red', 'red', 30, .813)
@@ -167,6 +198,9 @@ class ProjectTests(unittest.TestCase):
             p.write_json(second, dict(base, style='acid'))
             p.write_json(root / 'blue' / 'result.json', blue_result)
             p.write_json(root / 'red' / 'result.json', red_result)
+            for folder in ('blue', 'red'):
+                p.write_json(root / folder / 'plan.json', {'fps': 30, 'lines': [{'visEnd': .99}],
+                                                        'cuts': [{'line': 0, 'text': '테스트', 'start': .02, 'end': .99}], 'events': []})
             end = actual_duration - .017
             manifest = {'audio': str(audio), 'sourceSha256': p.sha256(audio), 'start': .017, 'end': end, 'segments': [
                 {'start': .017, 'end': boundary, 'project': str(first), 'render': str(root / 'blue' / 'result.json')},
@@ -174,6 +208,11 @@ class ProjectTests(unittest.TestCase):
             manifest_path = root / 'compose.json'
             p.write_json(manifest_path, manifest)
             result = p.compose(manifest_path, root / 'composed.mp4')
+            self.assertFalse(result['visualReady'])
+            self.assertEqual(result['readability']['mode'], 'video-review')
+            review = p.read_json(root / 'composed.mp4.readability/review.json')
+            self.assertEqual(review['sourceStart'], .017)
+            self.assertEqual(review['visualReview'], 'pending')
             self.assertEqual(p.frame_count(root / 'composed.mp4'), round((end - .017) * 30))
             self.assertEqual(result['sourceSha256'], p.sha256(audio))
             self.assertEqual([row['frames'] for row in result['segments']], [10, 19])

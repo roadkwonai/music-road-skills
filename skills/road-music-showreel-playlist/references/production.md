@@ -1,71 +1,78 @@
-# 제작과 검증
+# 새 음악 전용 native 제작
 
-## 기존 설치
+자유 연출의 기본 실행 경로다. 사용자가 프리셋을 명시한 경우만 [기존 제작](preset-production.md)을 따른다. 두 경로를 겹쳐 부트하거나 새 콘셉트를 4개 스타일 enum으로 낮추지 않는다.
 
-- Showreel: `~/.local/share/roadmusic-video-tools/showreel`; 원본 commit `64521220a2f8e91cb9894400c48c15b7f45205d6`.
-- Python(NumPy/Pillow): `SHOWREEL_PYTHON 또는 현재 Python 3.11+ 환경`. 실제 제작 전 선택한 Python에서 `import numpy, PIL`을 확인하고, 기본 Python에 Pillow가 없으면 이미 준비된 `SHOWREEL_PYTHON` 환경을 사용하며 임의 설치하지 않는다.
-- Node.js 24, ffmpeg/ffprobe, Chrome, Showreel의 기존 playwright-core.
+## 기존 도구
 
-`SHOWREEL_HOME`, `SHOWREEL_PYTHON`으로 다른 기존 설치를 지정할 수 있다. 누락되면 의존성을 보고한다. 자동 모델 다운로드나 유료 API를 대안으로 쓰지 않는다.
+- Showreel: `SHOWREEL_HOME` 또는 `~/.local/share/roadmusic-video-tools/showreel`.
+- Python: `SHOWREEL_PYTHON` 또는 기존 `~/.local/share/roadmusic-ltx23/src/.venv/bin/python`.
+- Node.js24, FFmpeg/ffprobe, Chrome, Showreel의 기존 playwright-core·NumPy·Pillow.
 
-실제 제작 시 설치된 Showreel `SKILL.md`와 `references/engine.md`, `design.md`, `techniques.md`, `qa.md`를 읽는다. 이미지는 이 스킬의 내장 image_gen 경로가 우선이다. 레거시 외부 이미지 CLI 부재를 내장 도구 부재로 판단하지 않는다. 영상은 시간 t의 순수 함수이며 누적 상태/무작위/CSS 애니메이션으로 시크 결과를 바꾸지 않는다.
+누락을 확인하면 현재 설치를 찾고 제한을 보고한다. 모델/새 의존성/유료 API를 자동 설치하지 않는다. 설치본 `SKILL.md`와 필요한 brief/design/engine/techniques/qa를 읽고 사용하는 API를 확인한다. 그 경로의 예시 화면을 곡의 기본 디자인으로 복제하지 않는다.
 
-## 입력과 생성
+## 1. 원음과 시계만 준비
 
-음악 해석을 구간별 실제 모션으로 만드는 리듬 캔버스는 [music-direction.md](music-direction.md)의 `create --style` → `motion_direction.py apply` → 네이티브 render 순서다. CD용 장르 plan과 이미지 manifest를 요구하지 않는다. 새 생성 이미지·썸네일은 direction.media로 검증·복사해 적용한다.
+네 표시 항목이 모두 답해진 display-options.json을 저장한다. 미응답을 false로 채우지 않는다. 곡명은 사용자·오디오 태그·파일명 근거를 구분한다. 보컬곡의 현재 JSON/SRT와 [가사 출처](captions.md)를 먼저 준비한다.
 
-HTML에서 스타일·표시를 고르고 CLI 제작으로 넘기는 경우 [선택 화면](selection.md)의 `choose`와 `plan/create --selection`을 사용한다.
-
-새 제작의 표시 질문/선택형 선형 스펙트럼/현재 곡명/대기곡/채널명/여러 곡 연결은 [플레이리스트](playlist.md)를 따른다. --display는 plan/create 모두 지원하고 --playlist는 create에서 --music 대신 쓴다. 선택을 SKIP하면 표시하지 않는다.
-
-기존 CD와 그루브 다이얼은 [장르 계획](genres.md)을 먼저 만들고 `create --plan <genre-plan.json>`으로 적용한다. `plan --vocal`/`--act`의 캐스팅은 장르가 아니라 사용자 설명, 음악 생성 메타데이터, 확인 가능한 음원 정보에 근거한다. 일반 custom은 `--style`과 그 assetSchema로 만들며 `--plan`을 받지 않는다. 그루브 다이얼은 `genrePlanner:"cd-assets"` 계약으로 장르 계획을 받아 자체 템플릿을 사용한다. 주황 어절 추적이 필수면 계획의 자막 요구로 기록하고 검증된 `cues[].words`와 `wordTiming`을 확인한 뒤에만 제작한다. 가사 없는 곡은 --instrumental 또는 연주곡 CD 계획을 사용하고 --captions를 생략한다. 보컬 곡은 실제 자막 입력이 필요하다.
-
-K-POP·댄스 팝·일렉트로닉·EDM의 현대적 새 제품 연출은 `--style '크롬 프리즘'`을 쓴다. 이 선택은 image_gen 프롬프트뿐 아니라 prism 합성의 투명 케이스·진주 아크릴 바탕·clean light-sweep/glass reveal에도 적용된다. 스타일의 `preview.status`가 pending이면 미리보기가 완성됐다고 보고하지 않고, 새 스틸과 렌더 검수 뒤에만 ready로 올린다.
-
-CD의 `images.json`은 다음 5개 PNG 경로를 담는다. 파일 기준 상대 경로 또는 절대 경로, 최소 한 변 500px. case는 실제 투명 alpha다. custom은 선택한 preset의 assetSchema를 따르며 빈 객체 `{}`면 공통 `--assets` 입력을 요구하지 않는다. 리듬 캔버스의 선택 이미지·썸네일은 별도의 direction.media를 사용한다.
-
-```json
-{"photoA":"images/artist-a.png","photoB":"images/artist-b.png","photoC":"images/artist-c.png","case":"images/case.png","paper":"images/paper.png","casting":{"vocal":"female","act":"solo","reviewed":true,"artistId":"fictional-act-01","evidence":"visual review"}}
-```
+display/composition/media 입력 파일은 이미 존재하는 작업 루트에 둔다. `--out`은 아직 존재하지 않는 새 하위 프로젝트다. 입력 파일을 넣으려고 output을 먼저 mkdir하면 prepare가 충돌로 거부한다.
 
 ```bash
-"$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" create \
-  --style '가을 아카이브' --music '/절대/원곡.mp3' \
-  --captions '/절대/가사.json' --assets '/절대/images.json' \
+"$SHOWREEL_PYTHON" "$PLAYLIST_SKILL/scripts/native_project.py" prepare \
+  --music '/절대/원곡.mp3' --captions '/절대/현재-가사.json' \
+  --title '확인한 곡명' --display '/절대/display-options.json' \
   --out '/절대/새-프로젝트'
 ```
 
-- 전체곡은 start/duration 생략. 플레이리스트도 각 track의 start/duration을 생략하면 원곡 전체를 이어 붙인다. 미리보기는 별도 프로젝트/구간으로 `--start 79.76 --duration 18`처럼 원곡 기준으로 지정하며, 긴 최종본을 줄이거나 대체하지 않는다.
-- 최소 12초다. CD는 기본 10.17초 인트로 뒤에 본문을 남긴다. custom은 자체 template의 타임라인을 따른다. 더 짧은 영상은 장면 큐/템플릿도 조정해 검증해야 한다.
-- `--demo-assets`는 카탈로그 참고 사진을 재사용하는 명시적 옵션이며 `demo-only`다. 여성/남성/혼성 캐스팅 일치 증거로 쓰지 않는다.
-- JSON 자막은 `source.cutStartSeconds`를 원곡 offset으로 읽는다. SRT 기본 원점=원곡 0초. 클립 상대 SRT는 `--caption-origin <원곡시작초>`를 명시한다.
-- 음원은 48k stereo WAV로 자르고 네이티브 음악 분석/타임라인/믹서로 -14 LUFS 믹스를 만든다. 원본·가사 문구는 보존한다.
-- `production.json`은 원곡/자막/WAV 해시, 설정 snapshot, 실제 사용 이미지 해시, 요청 길이와 `ceil(T*30)` 렌더 길이/프레임 패딩을 따로 저장한다. 플레이리스트에는 곡별 PCM 샘플 경계·캐스팅 검수·곡별 이미지 출처도 남긴다. 1프레임 미만 패딩 때문에 음악 재생속도를 바꾸지 않는다.
+여러 곡은 [playlist 입력](playlist.md)의 path/title/captions/원곡 start/duration 목록을 `--playlist`로 준다. 무가사곡만 `--instrumental`을 지정한다. 정확한 구간 proof는 `--start/--duration`을 원곡 초로 지정한다. 같은 output을 덮지 않는다.
 
-네이티브 timeline 로그의 `발화 0.0s`는 나레이션 합계다. 가창 자막의 유무·개수·시각은 `captions/lyrics.json`을 확인한다.
+prepare는 원곡/가사 복사본, PCM 샘플 경계, playlist.json, captions/lyrics.json·srt, 분석/timeline/mix/실제 FFT, film-input.js와 **빈 native 저자 파일**을 준비한다. style/preset 선택은 없다. source 준비 상태를 새 아트·이미지 생성·모션 구현 완료로 보고하지 않는다.
 
-생성 파일: `preset.json`, `production.json`, `script.json`, `timeline.json`, `reel/`, `captions/lyrics.{json,srt}`, `audio/music/music.wav`, `audio/mix.wav`. custom reel은 선택한 template의 로컬 HTML/JS만 복사한다. 새 이미지의 프롬프트와 결과 경로/인물 설정은 필요한 경우에만 프로젝트 `assets/generation.json`에 기록한다. demo-assets는 기존 generation.json을 새 생성이 아님을 표시해 자동 복사한다. 컷 경계에 0.5초 미만만 남은 문장은 captionWarnings에 표시한다. 정확한 컷 요청을 임의로 바꾸거나 문구를 삭제하지 않고, 조정 가능한 컷이면 가창 경계를 기준으로 길이를 고른다.
+## 2. 방향과 실제 자산
 
-## 렌더
+[음악 연출](music-direction.md)로 콘셉트와 subject/action/space를 설계하고 [이미지 역할](image-direction.md)에 따라 실제 image_gen 결과를 생성·열어 검수한다. composition.json과 media.json은 [계약](composition-contract.md)을 따른다. 원곡 시간·cue id·sourceSha는 준비 입력을 사용한다.
 
 ```bash
-"$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" render --project '/절대/프로젝트' --preview
-"$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" render --project '/절대/프로젝트'
+"$SHOWREEL_PYTHON" "$PLAYLIST_SKILL/scripts/native_project.py" apply \
+  --project '/절대/새-프로젝트' --composition '/절대/composition.json' \
+  --media '/절대/media.json'
 ```
 
-preview와 본편은 각각 그 프로젝트의 전체 길이를 1920×1080으로 렌더하며 preview는 sub=1, 본편은 sub=4 PNG 캡처다. 긴 영상의 빠른 검토는 별도 구간 프로젝트/스틸로 하며 최종 전체 렌더와 구분한다. 현재 Chrome 조합은 네이티브 --scale 로그와 실제 캡처 크기가 다를 수 있어, 이 스킬은 scale=1로 고정하고 실제 ffprobe 규격을 검증한다. 네이티브 `render.mjs`→`finish.py`, H264/yuv420p/BT709/tv/AAC48k/faststart/SRT. JSON 완료 응답은 stdout 한 줄, 진행은 stderr다. 기존 출력이 있으면 거부한다. 수정본은 새 프로젝트 경로로 만들며 코드 변경 뒤 이전 네이티브 캐시를 재사용하지 않는다. 렌더러는 한 번에 하나만 실행한다.
+이미지 없는 명시적 순수 기하는 --media를 생략할 수 있다. apply가 asset 이름을 모션으로 바꾸지는 않는다. 정규화된 장면/자산·named cue를 연결하며 저자가 쓴 scenes.js를 덮지 않는다. 일반 production에는 presetId나 CD자산이 필요하지 않다.
 
-CD는 사진 인쇄면만 회전하고 케이스/허브/반사는 고정이다. 5개 기본 구간 `focus→print→memory→bokeh→cd`를 장르에 맞춰 조정할 수 있으나 원곡과 자막 시계는 보존한다. custom은 자체 template의 연출을 따르되 `PLAYLIST_CONFIG`, `PLAYLIST_LYRICS`, `PLAYLIST_SPECTRUM`, 순수 함수 `__seek(t)`, boolean `window.__ready=true`로 같은 시간 계약을 지킨다. 음악 히트가 장면 밖이면 유효 범위 내 이벤트/시각을 고른다.
+## 3. 스타일 프레임에서 장면으로
 
-스틸: Showreel `render.mjs --dir <reel> --stills 0,0.9,4.4,6.4,9.8,10.1,12.5 --outdir <새QA폴더> --workers 1`. 다른 렌더와 동시 실행하지 않는다.
+Codex가 native `REEL.scene`을 직접 작성한다. 먼저 핵심 프레임과 새로운 재질/동작을 시험해 방향을 보고, 가장 약한 안을 고친 뒤 전곡을 확장한다. 같은 index에 motion.js와 새 씬을 함께 로드하지 않는다. [native 표현](showreel-motion.md)을 따른다.
 
-## 확인
+전체 장면 등록 전의 기술/미술 시험은 기본 `render.mjs --dir <project>/reel --stills <실제로 구현한 시각들> --outdir <project>/qa/style-frames`로 할 수 있다. 이는 부분 style frame이며 전곡 구현/최종 검사 통과를 뜻하지 않는다. 빈/미구현 구간을 데모로 채워 최종 checker를 통과시키지 않는다.
 
-- helper의 실제 프레임 수/30fps/yuv420p/전체 디코드 결과와 `qa/*-media.json`을 읽는다. 해상도·색 범위·오디오 레이트/채널·음량도 확인한다.
-- 실제 첫 프레임, 전환 전후, 본문을 열어본다. 선택 템플릿의 자산 잘림·저대비·빈 프레임을 고친다. CD는 얼굴 이중상/유리 바깥 검은 판·CD 회전 위상도 확인한다.
-- `check-template.mjs`: CD 5 variant의 decode, 시크 동일성, 자막 onset/end gate, 글꼴, CD 회전 위상. 프리즘은 factory-new 케이스/바탕과 scratch·grain 부재도 스틸로 확인한다. custom은 해당 template의 `__seek(t)`/`window.__ready=true`와 assetSchema를 검수한다. 그루브 다이얼은 `test_presets.py`·`test_playlists.py`와 `check-groove-template.mjs <생성 프로젝트> <새 QA 폴더>`로 표시 8조합·3단계 모션·5개 variant 설정의 로딩·시크·가사 어절·곡 경계·장시간 시크를 검수한다. `test_custom_presets.py`는 custom의 template·자산 경로·등록 제약을 확인한다. `check-track-art.mjs`는 CD 곡별 아트의 첫 인트로/경계/짧은 첫 곡/긴 seek 동작을 확인한다. `test_vocal_cast.py`는 requiresArtist CD manifest의 캐스팅·검수 요구를 확인한다.
-- JSON/SRT/번인 문구·시각 일치, 시작 직전 숨김/직후 전문 표시를 최종 서브프레임 렌더에서도 확인한다. 가창 정렬은 [자막](captions.md) 기준이다.
-- 네이티브 `motion_check.py`로 섬광/빈 프레임을 확인한다. 템플릿의 읽기 정지는 의도라면 시각/이유를 기록한다. 섬광 실패는 의도로 무시하지 않는다.
-- `contact_sheet.py`가 현재 ffmpeg에서 `-vsync vfr` 오류를 내면 프로젝트 QA용 복사본에서만 `-fps_mode vfr`로 바꾼다. 검사 기준은 유지한다.
+공통 film-runtime.js는 자산 decode와 기존 표시/전문 가사/실제 FFT/선택 카드만 제공한다. 이것은 아트 디렉션이나 장면 템플릿이 아니다. 기본 레이아웃이 긴 제목/자막·구도와 충돌하면 그 프로젝트에서 읽기 크기/영역을 고치고 검사한다. 본문을 빼거나 너무 작게 해서 문제를 숨기지 않는다.
 
-납품: 재생 영상·카탈로그·설정/편집 프로젝트 경로, 선택 스타일, 이미지 도구, 자막 검증 범위를 짧게 적는다. 듣지 않은 가창 싱크를 청취 완료로 보고하지 않는다.
+```bash
+node "$PLAYLIST_SKILL/scripts/check-native-project.mjs" \
+  '/절대/새-프로젝트' '/절대/새-프로젝트/qa/runtime-v1'
+"$SHOWREEL_PYTHON" "$PLAYLIST_SKILL/scripts/native_project.py" render \
+  --project '/절대/새-프로젝트' --draft --name draft-v1
+```
+
+빈 씬/누락 자산/원문·가사 경계/계획 범위/잘못된 시크는 실패다. 새 checker는 먼저 Python `check`로 동결 입력·captions·미디어·장면 binding을 확인한 뒤 실제 REEL 등록과 frame을 보고 runtime 보고서를 기록한다. --draft는 원음 proof이며 최종 납품/미술 합격을 뜻하지 않는다. 저운동(`still_ratio`/`p90`/긴 정지) 경고는 draft를 `needs-review`로 남기며 섬광·decode·알 수 없는 motion 문제는 계속 실패한다. 다음 수정은 새 이름으로 내보내고 현재 fingerprint의 runtime을 다시 확인한다.
+
+## 4. 비평과 최종 마감
+
+[미술 검수](native-qa.md)와 [기술 품질](production-quality.md)을 함께 적용한다. 실제 proof를 검토한 결과를 creative-review.json에 남기고 가장 약한 장면을 수정한다. 이름/색/효과 개수만 바꿔 같은 구성을 반복하지 않는다. 입력/코드/이미지/폰트 변경 뒤 과거 검수 문서를 재사용하지 않는다.
+
+```bash
+"$SHOWREEL_PYTHON" "$PLAYLIST_SKILL/scripts/native_project.py" check --project '/절대/새-프로젝트'
+"$SHOWREEL_PYTHON" "$PLAYLIST_SKILL/scripts/native_project.py" render --project '/절대/새-프로젝트' --name final-v1
+```
+
+기본 Showreel render.mjs/finish.py/QA를 사용한다. final은 sub4 PNG, H.264/yuv420p/BT.709/TV, AAC48k stereo, 실제 전체 길이/프레임/디코드와 음량·정지·섬광을 확인한다. native QA의 종료코드0만 읽지 말고 실제 ‘고칠 것’과 motion issues를 읽는다. 완성 master의 실제 전곡 시트를 직접 보고 납품한다. helper의 rendered 응답만으로 미술·가창 싱크를 자동 완료 처리하지 않는다.
+
+FFmpeg 버전 문제로 native contact_sheet가 실패하면 현재 오류를 확인한 뒤 프로젝트 QA용 사본에서 추출 옵션만 호환 수정하고 시트를 다시 만든다. 설치본/검사 기준을 바꾸지 않는다. renderer --scale 로그를 실제 규격으로 간주하지 말고 ffprobe 결과를 읽는다.
+
+납품은 전곡·공유용·포스터/썸네일·SRT·입력/타이밍/계획·편집 프로젝트·이미지 ledger·검수 기록을 연결한다. 자동/청취/ASR/단어 정렬의 확인 범위를 밝힌다. 렌더러는 하나씩 실행하며 외부 게시·정식 배포는 별도 요청 범위다.
+
+## 최종 출력 재검증
+
+실제 최종 시트를 검토한 뒤 `native_project.py finalize --project '/절대/새-프로젝트' --name final-v1`로 마감한다. render가 저장한 입력·출력·QA 해시 기록과 현재 runtime/creative review를 대조하며 영상을 덮어쓰거나 다시 렌더하지 않는다. 입력/출력이 바뀌었으면 새 이름으로 렌더한다. 저운동 경고가 남으면 실제 final motion JSON과 master를 본 뒤 [검토 계약](composition-contract.md)의 motionReview를 기록하고 finalize한다. 섬광·규격·디코드·미분류 QA 실패는 이 경로로 허용하지 않는다.
+
+이미지 공급자·생성 기록은 [공통 이미지 계약](../../road-music-video-studio/references/image-providers.md)을 따른다. Claude Code는 로드된 `gpt-image`의 Codex CLI 브리지를 사용하며 실제 provider·프롬프트·생성 파일 해시를 기록한다.

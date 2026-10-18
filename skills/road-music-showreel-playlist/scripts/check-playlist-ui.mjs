@@ -6,6 +6,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { applyDesign } from '../../road-music-video-studio/scripts/html-design.mjs';
 
 const skill = path.resolve(import.meta.dirname, '..');
 const template = path.join(skill, 'assets/template');
@@ -30,6 +31,8 @@ const reel = path.join(project, 'reel');
 const images = path.join(project, 'assets/img');
 fs.mkdirSync(images, { recursive: true });
 fs.cpSync(template, reel, { recursive: true });
+const index = path.join(reel, 'index.html');
+fs.writeFileSync(index, await applyDesign(fs.readFileSync(index, 'utf8'), index, { ui: false }));
 fs.writeFileSync(path.join(reel, 'timeline.js'), "window.TL={duration:84,cues:{'scene.focus':0,'scene.print':3.692,'scene.memory':5.712,'scene.bokeh':8.963,'scene.cd':10.17},music:{hits:[]},vo:[]};\n");
 const server = http.createServer((request, response) => {
   const file = path.resolve(project, '.' + decodeURIComponent(new URL(request.url, 'http://localhost').pathname));

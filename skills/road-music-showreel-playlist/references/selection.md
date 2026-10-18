@@ -41,7 +41,7 @@ Road Music 앱의 공개 CLI 명령이나 MCP 서버를 새로 설치하는 기�
   --out '/절대/genre-plan.json'
 ```
 
-보컬·편성은 실제 생성 기록이나 사용자 설명으로 정한다. 스타일을 선택한 것으로 아티스트·가사 검수가 완료되지는 않는다. 이 plan으로 이미지 5개를 실제 image_gen 생성·검수한 뒤 기존 자막과 함께 제작한다. 일반 custom은 이전처럼 `--style`/assetSchema 제작 흐름을 쓰며 CD 장르 planner로 대체하지 않는다.
+보컬·편성은 실제 생성 기록이나 사용자 설명으로 정한다. 스타일을 선택한 것으로 아티스트·가사 검수가 완료되지는 않는다. 이 plan으로 호스트별 공급자 계약에 따라 이미지 5개를 실제 생성·검수한 뒤 기존 자막과 함께 제작한다. Claude는 `gpt-image` 브리지의 실제 파일을 사용한다. 일반 custom은 이전처럼 `--style`/assetSchema 제작 흐름을 쓰며 CD 장르 planner로 대체하지 않는다.
 
 ```bash
 "$PLAYLIST_PY" "$PLAYLIST_SKILL/scripts/playlist_presets.py" create \

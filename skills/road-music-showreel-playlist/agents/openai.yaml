@@ -1,4 +1,4 @@
 interface:
   display_name: "Showreel 음악 모션그래픽"
-  short_description: "음악·가사에 맞는 생성 이미지·썸네일과 비트 모션을 만드는 플레이리스트 제작"
-  default_prompt: "$road-music-showreel-playlist 이 음악의 장르·가사·감정 변화를 해석하고 어울리는 이미지와 첫 0.5초 썸네일을 image_gen으로 만들고 실제 타격음과 강약에 맞춰 Showreel 모션그래픽을 전체 길이로 제작해줘."
+  short_description: "가사와 음악에서 장면을 새로 기획하고 생성 이미지·네이티브 모션으로 제작"
+  default_prompt: "$road-music-showreel-playlist 이 음악의 장르·가사·감정 전개를 해석하고 기본 Showreel 방식으로 서로 다른 콘셉트를 비교한 뒤 곡 전용 장면을 새로 제작해줘. 필요한 image_gen 자산을 장면의 오브젝트·공간·질감에 결합하고, 실제 원음 proof와 독립 비평으로 보완해 전곡을 완성해줘. 기존 표시 선택과 가사 원문·원곡 시계를 유지해줘."

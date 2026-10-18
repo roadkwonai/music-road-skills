@@ -21,6 +21,10 @@ from playlist_tools import concat_wavs, normalize_display, spectrum_data
 from vocal_cast import casting_spec, check_asset_casting
 
 ROOT = Path(__file__).resolve().parents[1]
+DESIGN_SCRIPTS = ROOT.parent / 'road-music-video-studio' / 'scripts'
+if str(DESIGN_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(DESIGN_SCRIPTS))
+from html_design import apply_design
 PRESETS = ROOT / 'assets' / 'presets'
 SHOWREEL = Path(os.environ.get('SHOWREEL_HOME', str(Path.home() / '.local/share/roadmusic-video-tools/showreel')))
 PYTHON = os.environ.get('SHOWREEL_PYTHON', sys.executable)
@@ -281,9 +285,9 @@ def resolve_genres(text, profiles):
 
 
 def genre_plan(genre, brief='', artist='', instrumental=False, style=None, look=None, vocal=None, act='auto', host='codex', require_word_timing=False):
-    if host not in ('codex', 'antigravity', 'antigravity-cli'):
-        raise ValueError('host: codex/antigravity/antigravity-cli 필요')
-    image_tool, image_mode = ('image_gen', 'built-in') if host == 'codex' else ('antigravity-native', 'host-native')
+    if host not in ('codex', 'claude', 'antigravity', 'antigravity-cli'):
+        raise ValueError('host: codex/claude/antigravity/antigravity-cli 필요')
+    image_tool, image_mode = ('image_gen', 'built-in') if host == 'codex' else ('gpt-image', 'codex-cli-bridge') if host == 'claude' else ('antigravity-native', 'host-native')
     casting = casting_spec(vocal, act, artist, instrumental)
     instrumental = casting['instrumental']
     if style:
@@ -363,7 +367,10 @@ def plan_command(a):
         selection = load_selection(a.selection)
         if a.style and select(a.style)[0]['id'] != selection['value']['styleId']:
             raise ValueError('--style과 --selection의 styleId가 다릅니다')
-    plan = genre_plan(a.genre, a.brief, a.artist, a.instrumental, selection['value']['styleId'] if selection else a.style, read(a.look) if a.look else None, getattr(a, 'vocal', None), getattr(a, 'act', 'auto'), getattr(a, 'host', 'codex'), getattr(a, 'require_word_timing', False))
+    host = getattr(a, 'host', None)
+    if host is None:
+        host = selection['value'].get('host', 'codex') if selection else 'codex'
+    plan = genre_plan(a.genre, a.brief, a.artist, a.instrumental, selection['value']['styleId'] if selection else a.style, read(a.look) if a.look else None, getattr(a, 'vocal', None), getattr(a, 'act', 'auto'), host, getattr(a, 'require_word_timing', False))
     if getattr(a, 'display', None):
         plan['display'] = normalize_display(read(a.display))
     elif selection:
@@ -385,7 +392,7 @@ def load_plan(path):
         raise ValueError('지원되는 Showreel 장르 계획 JSON 필요')
     images, genre = plan.get('imageGeneration'), plan.get('genre')
     provider = (images.get('host', 'codex'), images.get('requiredTool'), images.get('mode')) if isinstance(images, dict) else None
-    supported = {('codex', 'image_gen', 'built-in'), ('antigravity', 'antigravity-native', 'host-native'), ('antigravity-cli', 'antigravity-native', 'host-native')}
+    supported = {('codex', 'image_gen', 'built-in'), ('claude', 'gpt-image', 'codex-cli-bridge'), ('antigravity', 'antigravity-native', 'host-native'), ('antigravity-cli', 'antigravity-native', 'host-native')}
     if provider not in supported or not isinstance(genre, dict) or not isinstance(genre.get('input'), str) or not isinstance(plan.get('instrumental'), bool) or not isinstance(plan.get('effectivePreset'), dict):
         raise ValueError('지원되는 호스트 이미지 생성 장르 계획 JSON 필요')
     if 'casting' in plan and not isinstance(plan['casting'], dict):
@@ -482,7 +489,7 @@ def map_caption_words(words, text, cue_start, cue_end, origin, start, duration):
     return result
 
 
-def map_captions(doc, start, duration, origin=None, require_word_timing=False):
+def map_captions(doc, start, duration, origin=None, *, allow_multiline=False, require_word_timing=False):
     origin = number(doc.get('source', {}).get('cutStartSeconds', 0) if origin is None else origin, 'caption origin')
     result, previous = [], 0
     for index, cue in enumerate(doc['cues']):
@@ -492,7 +499,7 @@ def map_captions(doc, start, duration, origin=None, require_word_timing=False):
             raise ValueError(f'자막 {index + 1}: 역전 또는 겹침')
         if not isinstance(cue.get('text'), str) or not cue['text'].strip():
             raise ValueError('빈 자막 불가')
-        if '\n' in cue['text'] or '\r' in cue['text']:
+        if not allow_multiline and ('\n' in cue['text'] or '\r' in cue['text']):
             raise ValueError('이 CD 템플릿은 한 줄 자막 지원. 원문은 보존하고 실제 가창 경계를 확인해 큐를 나눌 것')
         words = cue.get('words')
         mapped_words = map_caption_words(words, cue['text'], s, e, origin, start, duration) if words is not None else None
@@ -526,7 +533,7 @@ def srt(cues):
     return '\n\n'.join(f'{i}\n{stamp(c["startSeconds"])} --> {stamp(c["endSeconds"])}\n{c["text"]}' for i, c in enumerate(cues, 1)) + ('\n' if cues else '')
 
 
-def song_inputs(items, base, default_instrumental=False, default_casting=None, asset_schema_value=None, require_word_timing=False):
+def song_inputs(items, base, default_instrumental=False, default_casting=None, asset_schema_value=None, *, allow_multiline=False, require_word_timing=False):
     """음원/가사 입력을 모두 검증한 뒤에만 출력 프로젝트를 만든다."""
     if not isinstance(items, list) or not items:
         raise ValueError('playlist.tracks에 한 곡 이상 필요')
@@ -566,7 +573,7 @@ def song_inputs(items, base, default_instrumental=False, default_casting=None, a
         if expected and expected != music_hash:
             raise ValueError('자막 원곡 SHA256과 입력 음악 불일치. 해당 원곡을 쓰거나 자막 출처를 다시 검증')
         if captions:
-            map_captions(doc, start, duration, item.get('captionOriginSeconds'), track_requires_word_timing)
+            map_captions(doc, start, duration, item.get('captionOriginSeconds'), allow_multiline=allow_multiline, require_word_timing=track_requires_word_timing)
         tags = media['format'].get('tags', {})
         metadata_title = tags.get('title') or tags.get('TITLE')
         title = item.get('title', metadata_title or music.stem)
@@ -581,7 +588,7 @@ def song_inputs(items, base, default_instrumental=False, default_casting=None, a
     return tracks
 
 
-def prepare_playlist(tracks, output, multiple, require_word_timing=False):
+def prepare_playlist(tracks, output, multiple, *, allow_multiline=False, require_word_timing=False):
     paths, records, cues, offset_samples = [], [], [], 0
     for track in tracks:
         target = output / ('audio/tracks/' + track['id'] + '.wav') if multiple else output / 'audio/music/music.wav'
@@ -594,7 +601,7 @@ def prepare_playlist(tracks, output, multiple, require_word_timing=False):
         duration = samples / 48000
         start, end = offset_samples / 48000, (offset_samples + samples) / 48000
         doc = track['captionDoc']
-        local_cues, origin = map_captions(doc, track['start'], duration, track['captionOrigin'], require_word_timing or track['requireWordTiming']) if track['captions'] else ([], 0)
+        local_cues, origin = map_captions(doc, track['start'], duration, track['captionOrigin'], allow_multiline=allow_multiline, require_word_timing=require_word_timing or track['requireWordTiming']) if track['captions'] else ([], 0)
         for cue in local_cues:
             item = copy.deepcopy(cue)
             item.update(startSeconds=max(start, start + cue['startSeconds']), endSeconds=min(end, start + cue['endSeconds']))
@@ -645,6 +652,7 @@ def create(a):
         raise ValueError('require_word_timing은 bool 필요')
     require_word_timing = requested_word_timing or bool((plan or {}).get('wordTiming', {}).get('required'))
     word_timing_requirement = required_word_timing_metadata(spec, require_word_timing)
+    allow_multiline = getattr(a, 'allow_multiline', False)
     playlist_path = Path(a.playlist).resolve(strict=True) if getattr(a, 'playlist', None) else None
     instrumental = a.instrumental or bool(plan and plan.get('instrumental'))
     if not playlist_path and ((instrumental and a.captions) or (not instrumental and not a.captions)):
@@ -671,13 +679,13 @@ def create(a):
         album_cast = playlist_input.get('casting')
         if album_cast is not None and not isinstance(album_cast, dict):
             raise ValueError('playlist.casting은 보컬/편성 설정 객체 필요')
-        tracks = song_inputs(playlist_input.get('tracks'), playlist_path.parent, instrumental, album_cast, schema, require_word_timing)
+        tracks = song_inputs(playlist_input.get('tracks'), playlist_path.parent, instrumental, album_cast, schema, allow_multiline=allow_multiline, require_word_timing=require_word_timing)
     else:
         item = {'path': a.music, 'startSeconds': a.start, 'instrumental': instrumental}
         for field, value in [('durationSeconds', a.duration), ('captions', a.captions), ('captionOriginSeconds', a.caption_origin), ('title', getattr(a, 'title', None))]:
             if value is not None:
                 item[field] = value
-        tracks = song_inputs([item], Path.cwd(), instrumental, (plan or {}).get('casting'), schema, require_word_timing)
+        tracks = song_inputs([item], Path.cwd(), instrumental, (plan or {}).get('casting'), schema, allow_multiline=allow_multiline, require_word_timing=require_word_timing)
     for track in tracks:
         if track['artistPlan']:
             planned = track['artistPlan']['effectivePreset']
@@ -692,6 +700,8 @@ def create(a):
     for sub in ('assets/img', 'audio/music', 'captions', 'out', 'qa'):
         (output / sub).mkdir(parents=True, exist_ok=True)
     shutil.copytree(reel_template, output / 'reel')
+    reel_index = output / 'reel' / 'index.html'
+    reel_index.write_text(apply_design(reel_index.read_text(encoding='utf-8'), reel_index, ui=False), encoding='utf-8')
     shutil.copy2(ROOT / 'assets/LICENSE.showreel', output / 'LICENSE.showreel')
     names = asset_files(spec)
     for role, path in assets.items():
@@ -705,7 +715,7 @@ def create(a):
     if plan:
         write(output / 'genre-plan.json', plan)
     actual_audio = output / 'audio/music/music.wav'
-    playlist, cues = prepare_playlist(tracks, output, bool(playlist_path), require_word_timing)
+    playlist, cues = prepare_playlist(tracks, output, bool(playlist_path), allow_multiline=allow_multiline, require_word_timing=require_word_timing)
     duration = number(playlist['durationSeconds'], '실제 전체 길이', 12)
     for track, record in zip(tracks, playlist['tracks']):
         record['castingReview'] = track['castingReview']
@@ -820,19 +830,19 @@ def catalog(output=None):
         genre_terms = [name for p in profiles if p['baseStyle'] == spec['id'] for name in [p['name'], *p['aliases']]]
         controls = f'<button data-time="0">인트로</button> <button data-time="{6.5 if is_cd_asset_planner(spec) else 10.3}">CD 회전</button>' if cd or is_cd_asset_planner(spec) else ''
         details = f'회전 {spec["discPeriodSeconds"]}초/바퀴 · 자막 {esc(spec["caption"]["effect"])} · {esc(spec["variant"])}' if cd else f'카테고리 {esc(spec["category"])} · 템플릿 {esc(spec["template"])}'
-        cards.append(f'<article data-search="{esc(" ".join([spec["id"], spec["name"], *spec["aliases"], *spec["genres"], *genre_terms]))}">{player}<div class="body"><p class="slug">{esc(spec["id"])} · {esc(spec["category"])}</p><h2>{esc(spec["name"])}</h2><p>{esc(spec["description"])}</p><p class="genres">{" · ".join(map(esc, spec["genres"]))}</p><p class="note">{esc(media_note)}</p>{audio_note_html}{controls}<details><summary>설정과 제작 요청</summary><p>{details}</p><p>{esc(spec["artDirection"])}</p><p class="note">자막 상태: {esc(preview.get("captionStatus", "검수 여부 미확인"))}</p><a href="{link(directory / "preset.json")}">프리셋 설정 JSON</a><pre>{esc(invocation)}</pre></details></div></article>')
-    page = '''<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Showreel 플레이리스트 프리셋</title><style>
-*{box-sizing:border-box}body{margin:0;background:#17191b;color:#eee9df;font:16px/1.65 system-ui,sans-serif}main{max-width:1460px;margin:auto;padding:52px 32px}header{max-width:850px;margin-bottom:32px}h1{font-size:clamp(30px,4vw,52px);line-height:1.2;letter-spacing:-.04em}h2{font-size:26px;margin:0 0 8px}.eyebrow,.slug{font-size:12px;letter-spacing:.12em;color:#c4a58a}.note{color:#aca9a3;font-size:14px}input{width:min(100%,520px);padding:13px;border:1px solid #56534d;border-radius:8px;background:#242728;color:inherit;font:inherit}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}article{background:#252728;border:1px solid #42413e;border-radius:12px;overflow:hidden}article[hidden]{display:none}video{display:block;width:100%;aspect-ratio:16/9;background:#111}.body{padding:22px 26px}.body>p{margin:9px 0}.genres{color:#c9b59c;font-size:14px}button{padding:8px 14px;margin:10px 0;border:1px solid #696158;border-radius:6px;background:#333331;color:#f5f0e6;cursor:pointer;font:inherit}button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #d4b797;outline-offset:3px}details{border-top:1px solid #4a4741;margin-top:12px;padding-top:14px}summary{cursor:pointer}a{color:#e5c29b}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#1a1d1e;padding:14px;border-radius:5px;font:14px/1.7 system-ui}.pending{padding:80px;text-align:center}@media(max-width:850px){.grid{grid-template-columns:1fr}main{padding:30px 18px}.body{padding:20px}}
-</style><main><header><p class="eyebrow">ROAD MUSIC / SHOWREEL PLAYLIST</p><h1>음악에 어울리는 프리셋을 고르세요.</h1><p>CD 플레이와 다른 로컬 모션그래픽 템플릿을 함께 저장한 플레이리스트 프리셋입니다.</p><p class="note">저장된 프리셋 수와 Chrome 무음 미리보기 여부는 각 카드의 실제 상태를 따릅니다. 실제 제작 기본은 1920×1080 / 30fps입니다.</p><label for="filter">스타일 또는 장르 찾기</label><br><input id="filter" type="search" placeholder="예: 네온, 인디, 재즈"></header><section class="grid" aria-label="프리셋 영상 목록">''' + ''.join(cards) + '''</section><p id="count" role="status"></p><footer><p class="note">새 프리셋은 로컬 템플릿, 자산 스키마와 실제 미리보기 영상으로 등록합니다.</p></footer></main><script>
+        cards.append(f'<article data-search="{esc(" ".join([spec["id"], spec["name"], *spec["aliases"], *spec["genres"], *genre_terms]))}">{player}<div class="body"><p class="slug">{esc(spec["id"])} · {esc(spec["category"])}</p><h2>{esc(spec["name"])}</h2><p>{esc(spec["description"])}</p><p class="genres">{" · ".join(map(esc, spec["genres"]))}</p><p class="note">{esc(media_note)}</p>{audio_note_html}{controls}<details><summary>설정과 제작 요청</summary><p>{details}</p><p>{esc(spec["artDirection"])}</p><p class="note">자막 상태: {esc(preview.get("captionStatus", "검수 여부 미확인"))}</p><a href="{link(directory / "preset.json")}" download="{esc(spec["id"])}-preset.json">설정 파일 다운로드</a><pre>{esc(invocation)}</pre></details></div></article>')
+    page = '''<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Showreel 플레이리스트 프리셋</title><style>
+*{box-sizing:border-box}main{max-width:1460px;margin:auto;padding:52px 32px}header{max-width:850px;margin-bottom:32px}h1{letter-spacing:-.04em}h2{margin:0 0 8px}.eyebrow,.slug{font-size:12px;letter-spacing:.12em;color:var(--rm-muted)}.note,.genres{color:var(--rm-muted);font-size:14px}input{width:min(100%,520px)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}article{border:1px solid var(--rm-border);overflow:hidden}article[hidden]{display:none}video{display:block;width:100%;aspect-ratio:16/9;background:#111}.body{padding:22px 26px}.body>p{margin:9px 0}button{padding:8px 14px;margin:10px 0;border:0;cursor:pointer}details{border-top:1px solid var(--rm-border);margin-top:12px;padding-top:14px}summary{cursor:pointer}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--rm-bg);padding:14px;border-radius:5px}.pending{padding:80px;text-align:center}@media(max-width:850px){.grid{grid-template-columns:1fr}main{padding:30px 18px}.body{padding:20px}}
+</style></head><body><main><header><p class="eyebrow">ROAD MUSIC / SHOWREEL PLAYLIST</p><h1>음악에 어울리는 프리셋을 고르세요.</h1><p>CD 플레이와 다른 로컬 모션그래픽 템플릿을 함께 저장한 플레이리스트 프리셋입니다.</p><p class="note">저장된 프리셋 수와 무음 미리보기 여부는 각 카드의 실제 상태를 따릅니다. 실제 제작 기본은 1920×1080 / 30fps입니다.</p><label for="filter">스타일 또는 장르 찾기</label><br><input id="filter" type="search" placeholder="예: 네온, 인디, 재즈"></header><section class="grid" aria-label="프리셋 영상 목록">''' + ''.join(cards) + '''</section><p id="count" role="status"></p><footer><p class="note">새 프리셋은 로컬 템플릿, 자산 스키마와 실제 미리보기 영상으로 등록합니다.</p></footer></main><script>
 const cards=[...document.querySelectorAll('article')],videos=[...document.querySelectorAll('video')];
 document.querySelector('#filter').addEventListener('input',e=>{const q=e.target.value.normalize('NFKC').toLowerCase().trim();cards.forEach(c=>c.hidden=!c.dataset.search.normalize('NFKC').toLowerCase().includes(q));document.querySelector('#count').textContent=cards.filter(c=>!c.hidden).length+'개 스타일';});
 document.querySelector('#genre-select').addEventListener('change',e=>{const search=document.querySelector('#filter');search.value=e.target.value||'';search.dispatchEvent(new Event('input'));document.querySelector('#genre-request').textContent=e.target.value?'$road-music-showreel-playlist 이 음악을 '+e.target.value+' 장르에 맞는 플레이리스트 영상으로 만들어줘.':'';});
 videos.forEach(v=>v.addEventListener('play',()=>videos.forEach(other=>{if(other!==v)other.pause();})));
 document.querySelectorAll('[data-time]').forEach(b=>b.addEventListener('click',()=>{const v=b.closest('article').querySelector('video');if(v){v.currentTime=Number(b.dataset.time);v.play().catch(()=>{});}}));
-</script></html>'''
-    genre_panel = '<section style="margin:24px 0"><label for="genre-select">음악 장르별 제작 방향</label><br><select id="genre-select" style="width:min(100%,520px);padding:13px;background:#242728;color:#eee9df;border:1px solid #56534d;border-radius:8px;font:inherit"><option value="">전체 프리셋 보기</option>' + genre_options + '</select><p id="genre-request" style="overflow-wrap:anywhere"></p></section>'
+</script></body></html>'''
+    genre_panel = '<section style="margin:24px 0"><label for="genre-select">음악 장르별 제작 방향</label><br><select id="genre-select"><option value="">전체 프리셋 보기</option>' + genre_options + '</select><p id="genre-request" role="status" aria-live="polite" style="overflow-wrap:anywhere"></p></section>'
     page = page.replace('<label for="filter">', genre_panel + '<label for="filter">', 1)
-    target.write_text(page, encoding='utf-8')
+    target.write_text(apply_design(page, target, navigation_home=False if target.parent == ROOT / 'assets' else None), encoding='utf-8')
     return {'catalog': str(target), 'count': len(cards)}
 
 
@@ -895,7 +905,7 @@ def main():
     subs.add_parser('list')
     subs.add_parser('genres')
     p = subs.add_parser('plan'); p.add_argument('--genre', required=True)
-    p.add_argument('--host', choices=['codex', 'antigravity', 'antigravity-cli'], default='codex')
+    p.add_argument('--host', choices=['codex', 'claude', 'antigravity', 'antigravity-cli'])
     p.add_argument('--brief', default=''); p.add_argument('--artist', default=''); p.add_argument('--style')
     p.add_argument('--vocal', help='female/male/mixed/unknown/none 또는 한국어 보컬 유형')
     p.add_argument('--act', default='auto', choices=['auto','solo','duo','band','ensemble','artwork'])
@@ -920,6 +930,7 @@ def main():
     p.add_argument('--assets'); p.add_argument('--demo-assets', action='store_true')
     p.add_argument('--start', type=float, default=0); p.add_argument('--duration', type=float)
     p.add_argument('--caption-origin', type=float)
+    p.add_argument('--allow-multiline', action='store_true')
     p.add_argument('--require-word-timing', action='store_true')
     p = subs.add_parser('render'); p.add_argument('--project', required=True); p.add_argument('--preview', action='store_true')
     a = parser.parse_args()

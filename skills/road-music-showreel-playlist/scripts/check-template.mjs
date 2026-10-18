@@ -6,6 +6,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { applyDesign } from '../../road-music-video-studio/scripts/html-design.mjs';
 
 const skill = path.resolve(import.meta.dirname, '..');
 const template = path.join(skill, 'assets/template');
@@ -26,6 +27,8 @@ const sourceAssets = source;
 for (const name of ['photo-a.png','photo-b.png','photo-c.png','case.png','paper.png']) assert(fs.existsSync(path.join(sourceAssets,name)), `fixture asset missing: ${name}`);
 fs.mkdirSync(assets, { recursive: true });
 fs.cpSync(template, reel, { recursive: true });
+const index = path.join(reel, 'index.html');
+fs.writeFileSync(index, await applyDesign(fs.readFileSync(index, 'utf8'), index, { ui: false }));
 for (const name of ['photo-a.png','photo-b.png','photo-c.png','case.png','paper.png']) fs.copyFileSync(path.join(sourceAssets,name),path.join(assets,name));
 fs.writeFileSync(path.join(reel, 'timeline.js'), `window.TL={duration:30,cues:{'scene.focus':0,'scene.print':3.692,'scene.memory':5.712,'scene.bokeh':8.963,'scene.cd':10.17,'music.hit3':27,'music.hit9':29},music:{hits:[]},vo:[]};\n`);
 
@@ -64,7 +67,7 @@ try {
     });
     assert.equal(onset.text, '가사를 여기에 넣습니다');
     assert(onset.opacities.every(value => Number(value) === 1), `${variant}: caption is delayed at onset: ${onset.opacities}`);
-    assert(onset.font.includes(font === 'serif' ? 'Noto Serif KR' : 'Pretendard'), `${variant}: configured caption font was not applied`);
+    assert(onset.font.includes('Paperlogy'), `${variant}: Paperlogy caption font was not applied`);
     const cueEnd = await page.evaluate(() => {
       const line = window.ARCHIVE_LYRICS[0], frame = 1 / window.__meta.fps;
       window.__seek(line.endSeconds - frame);

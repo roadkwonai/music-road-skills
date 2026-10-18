@@ -176,7 +176,7 @@
     ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over'; ctx.filter = 'none';
     ctx.fillStyle = '#000'; ctx.strokeStyle = '#000'; ctx.lineWidth = 1; ctx.lineCap = 'butt'; ctx.lineJoin = 'miter'; ctx.miterLimit = 10; ctx.setLineDash([]); ctx.lineDashOffset = 0;
     ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.shadowBlur = 0; ctx.shadowColor = 'rgba(0, 0, 0, 0)';
-    ctx.font = '10px sans-serif'; ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic'; ctx.beginPath(); ctx.clearRect(0, 0, W, H);
+    ctx.font = '10px Paperlogy,sans-serif'; ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic'; ctx.beginPath(); ctx.clearRect(0, 0, W, H);
   };
   function orbit(ctx, time, colours, intensity, energy, alpha) {
     const centerX = 960, centerY = 486, max = 440 + intensity * 150;

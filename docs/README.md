@@ -3,6 +3,7 @@
 | 목적 | 문서 |
 | --- | --- |
 | 설치와 스킬 경로 | [설치](install.md) |
+| Claude Code에서 설치·실행 | [Claude Code](claude.md) |
 | Antigravity에서 설치·실행 | [Antigravity](antigravity.md) |
 | 기존 CD 호출 호환 | [Showreel CD](showreel-cd.md) |
 | 이미지·스토리보드형 영상 | [Showreel MV](showreel-mv.md) |
