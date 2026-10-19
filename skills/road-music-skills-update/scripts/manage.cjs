@@ -38,6 +38,15 @@ function fail (code, message) { throw new SkillsError(code, message) }
 function stable (version) { return typeof version === 'string' && /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.test(version) }
 function versionParts (version) { return stable(version) ? version.split('.').map(Number) : null }
 function compareVersion (left, right) { const a = versionParts(left); const b = versionParts(right); return a[0] - b[0] || a[1] - b[1] || a[2] - b[2] }
+function releaseStatus (release, currentVersion, sourceCheckout = false) {
+  const prefix = sourceCheckout ? 'source-' : ''
+  if (!currentVersion) return `${prefix}not-installed`
+  if (!release) return `${prefix}no-release`
+  const comparison = compareVersion(release.version, currentVersion)
+  if (comparison > 0) return `${prefix}update-available`
+  if (comparison < 0) return `${prefix}release-reset-required`
+  return `${prefix}${sourceCheckout ? 'observed' : 'up-to-date'}`
+}
 function defaultTarget (host = 'codex') {
   if (host === 'claude') return path.join(process.env.CLAUDE_CONFIG_DIR || path.join(os.homedir(), '.claude'), 'skills')
   if (host === 'antigravity') return path.join(os.homedir(), '.gemini', 'config', 'skills')
@@ -103,19 +112,20 @@ async function recordSkillComponents (result, local, release, context) {
   let next = result
   for (const item of local.skillVersions) {
     if (local.locallyModified.includes(item.id)) continue
+    const status = release === undefined ? 'installed' : releaseStatus(release, local.currentVersion, local.sourceCheckout)
     next = await recordComponent(next, {
       componentId: `skill:${item.id}`, kind: 'skill',
       name: `Road Music 스킬 · ${item.id} (${item.versionSource === 'manifest' ? '개별 manifest 버전' : local.sourceCheckout ? '소스 checkout VERSION·미설치 관찰' : '묶음 VERSION'})`,
       installedVersion: item.version,
       ...(item.versionSource === 'bundle' && release ? { latestVersion: release.version, sourceUrl: release.releaseUrl } : {}),
-      status: local.sourceCheckout ? (release && compareVersion(release.version, local.currentVersion) > 0 ? 'source-update-available' : 'source-observed') : (release && compareVersion(release.version, local.currentVersion) > 0 ? 'update-available' : 'up-to-date')
+      status
     }, context)
   }
   return next
 }
 async function recordInstalledBundle (result, values, context) {
   const recorded = await recordComponent(result, values, context)
-  return recordSkillComponents(recorded, { ...(await installedStatus(context.target)), currentVersion: values.installedVersion }, values.release || null, context)
+  return recordSkillComponents(recorded, { ...(await installedStatus(context.target)), currentVersion: values.installedVersion }, values.release, context)
 }
 
 function assertParams (params, allowed) {
@@ -320,12 +330,14 @@ async function latestRelease () {
 }
 async function check (params = {}) {
   assertParams(params, ['target', 'host'])
-  const target = resolveTarget(params); const local = await installedStatus(target); const source = local.installed ? null : await localBundleInfo(); const currentVersion = local.version || source.version; const release = await latestRelease()
+  const target = resolveTarget(params); const local = await installedStatus(target); const sourceCheckout = !local.installed && target === path.join(root, 'skills'); const source = sourceCheckout ? await localBundleInfo() : null; const currentVersion = local.version || source?.version || null; const release = await latestRelease()
   const previousRecord = await storedComponent({ target, source: root })
-  const available = !!release && compareVersion(release.version, currentVersion) > 0
-  const observed = local.installed ? local : { ...local, sourceCheckout: true, skillVersions: source.skillVersions }
-  const result = { ...observed, currentVersion, repository: REPOSITORY, available, latest: release ? { version: release.version, releaseUrl: release.releaseUrl, notes: release.notes, asset: release.asset.name } : null, ...(previousRecord ? { previousRecord } : {}) }
-  const recorded = await recordComponent(result, { name: local.installed ? 'Music Road Skills' : 'Music Road Skills 소스 checkout (미설치 관찰)', installedVersion: currentVersion, ...(release ? { latestVersion: release.version, sourceUrl: release.releaseUrl } : {}), status: local.installed ? (available ? 'update-available' : 'up-to-date') : (available ? 'source-update-available' : 'source-observed') }, { target, source: root })
+  const status = releaseStatus(release, currentVersion, sourceCheckout)
+  const available = status === 'update-available' || status === 'source-update-available'
+  const observed = source ? { ...local, sourceCheckout: true, skillVersions: source.skillVersions } : local
+  const resetRequired = status === 'release-reset-required' || status === 'source-release-reset-required'
+  const result = { ...observed, currentVersion, repository: REPOSITORY, available, status, ...(resetRequired ? { reinstallRequired: true } : {}), latest: release ? { version: release.version, releaseUrl: release.releaseUrl, notes: release.notes, asset: release.asset.name } : null, ...(previousRecord ? { previousRecord } : {}) }
+  const recorded = await recordComponent(result, { name: local.installed ? 'Music Road Skills' : source ? 'Music Road Skills 소스 checkout (미설치 관찰)' : 'Music Road Skills (미설치)', installedVersion: currentVersion, ...(release ? { latestVersion: release.version, sourceUrl: release.releaseUrl } : {}), status }, { target, source: root })
   return recordSkillComponents(recorded, { ...observed, currentVersion }, release, { target, source: root })
 }
 function checksumFor (text, name) { for (const line of text.split(/\r?\n/)) { const match = /^([a-fA-F0-9]{64})\s+\*?(.+)$/.exec(line); if (match && match[2] === name) return match[1].toLowerCase() } return null }
@@ -404,14 +416,15 @@ async function install (params = {}) {
 }
 async function update (params = {}) {
   assertParams(params, ['target', 'source', 'host']); const target = resolveTarget(params); const local = await installedStatus(target)
-  if (!local.installed && !params.source) fail('NOT_INSTALLED', '먼저 install로 스킬 묶음을 설치하세요.')
+  if (!local.installed) fail('NOT_INSTALLED', '먼저 install로 스킬 묶음을 설치하세요.')
   if (params.source) {
     const source = path.resolve(params.source); const candidate = await bundle(source)
     if (local.version && compareVersion(candidate.version, local.version) < 0) fail('UPDATE_DOWNGRADE', '낮은 버전으로 자동 업데이트할 수 없습니다.')
     if (local.version === candidate.version) return recordSkillComponents(await recordComponent({ updated: false, target, version: local.version, reason: 'UP_TO_DATE' }, { installedVersion: local.version, latestVersion: candidate.version, status: 'up-to-date' }, { target, source }), { ...local, currentVersion: local.version }, { version: candidate.version }, { target, source })
     return { ...(await recordInstalledBundle(await installBundle(source, target, params), { installedVersion: candidate.version, latestVersion: candidate.version, status: 'installed' }, { target, source })), updated: true }
   }
-  const release = await latestRelease(); if (!release || !local.version || compareVersion(release.version, local.version) <= 0) return recordSkillComponents(await recordComponent({ updated: false, target, version: local.version, reason: 'UP_TO_DATE' }, { installedVersion: local.version || await localBundleVersion(), ...(release ? { latestVersion: release.version, sourceUrl: release.releaseUrl } : {}), status: 'up-to-date' }, { target, source: null }), { ...local, currentVersion: local.version }, release, { target, source: null })
+  const release = await latestRelease(); const status = releaseStatus(release, local.version)
+  if (!release || !local.version || status !== 'update-available') return recordSkillComponents(await recordComponent({ updated: false, target, version: local.version, reason: status === 'release-reset-required' ? 'RELEASE_RESET_REQUIRED' : status === 'no-release' ? 'NO_RELEASE' : 'UP_TO_DATE', ...(status === 'release-reset-required' ? { reinstallRequired: true } : {}) }, { installedVersion: local.version || await localBundleVersion(), ...(release ? { latestVersion: release.version, sourceUrl: release.releaseUrl } : {}), status }, { target, source: null }), { ...local, currentVersion: local.version }, release, { target, source: null })
   const stageParent = await fsp.mkdtemp(path.join(os.tmpdir(), 'music-road-skills-'))
   try { event(params, 'download', { version: release.version }); const result = await recordInstalledBundle(await installBundle(await downloadRelease(release, stageParent), target, params), { installedVersion: release.version, latestVersion: release.version, status: 'installed', sourceUrl: release.releaseUrl, release }, { target, source: null }); return { ...result, updated: true } } finally { await fsp.rm(stageParent, { recursive: true, force: true }).catch(() => {}) }
 }

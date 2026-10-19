@@ -156,7 +156,38 @@ test('oversized release response keeps its verification error instead of becomin
 })
 
 test('an unmanaged source checkout compares its manifest version before reporting an update', async () => temporary(async base => {
-  const nativeFetch = global.fetch; const target = path.join(base, 'unmanaged-skills'); const version = require('../manifest.json').version; const asset = `MusicRoad-Skills-${version}.zip`
+  const nativeFetch = global.fetch; const target = path.join(path.resolve(__dirname, '..'), 'skills'); const version = require('../manifest.json').version; const asset = `MusicRoad-Skills-${version}.zip`
   global.fetch = async () => new Response(JSON.stringify([{ tag_name: `v${version}`, draft: false, prerelease: false, html_url: `https://github.com/roadkwonai/music-road-skills/releases/tag/v${version}`, assets: [{ name: asset, size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/${asset}` }, { name: 'SHA256SUMS.txt', size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/SHA256SUMS.txt` }] }]), { status: 200 })
   try { const result = await execute('check', { target }); assert.equal(result.installed, false); assert.equal(result.sourceCheckout, true); assert.equal(result.currentVersion, version); assert.equal(result.available, false); assert.deepEqual(result.skillVersions.map(item => item.id).sort(), ids.slice().sort()); assert.ok(result.skillVersions.every(item => item.versionSource === 'source')) } finally { global.fetch = nativeFetch }
+}))
+
+test('a lower reset release is never reported as current and remains blocked from automatic replacement', async () => temporary(async base => {
+  const reset = await fixture(base, '0.1.0', 'reset'); const prior = await fixture(base, '0.1.1', 'prior'); const target = path.join(base, 'target')
+  await execute('install', { source: prior, target })
+  const nativeFetch = global.fetch; const version = '0.1.0'; const asset = `MusicRoad-Skills-${version}.zip`
+  global.fetch = async () => new Response(JSON.stringify([{ tag_name: `v${version}`, draft: false, prerelease: false, html_url: `https://github.com/roadkwonai/music-road-skills/releases/tag/v${version}`, assets: [{ name: asset, size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/${asset}` }, { name: 'SHA256SUMS.txt', size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/SHA256SUMS.txt` }] }]), { status: 200 })
+  try {
+    const checked = await execute('check', { target }); assert.equal(checked.available, false); assert.equal(checked.status, 'release-reset-required'); assert.equal(checked.reinstallRequired, true)
+    const updated = await execute('update', { target }); assert.equal(updated.updated, false); assert.equal(updated.reason, 'RELEASE_RESET_REQUIRED'); assert.equal(updated.reinstallRequired, true)
+  } finally { global.fetch = nativeFetch }
+  await assert.rejects(execute('install', { source: reset, target }), error => error.code === 'UPDATE_DOWNGRADE')
+}))
+
+test('an absent release is not recorded as up-to-date', async () => temporary(async base => {
+  const source = await fixture(base, '0.1.0'); const target = path.join(base, 'target'); await execute('install', { source, target })
+  const nativeFetch = global.fetch; global.fetch = async () => new Response('[]', { status: 200 })
+  try {
+    const checked = await execute('check', { target }); assert.equal(checked.available, false); assert.equal(checked.status, 'no-release'); assert.equal(checked.latest, null)
+    const updated = await execute('update', { target }); assert.equal(updated.updated, false); assert.equal(updated.reason, 'NO_RELEASE')
+  } finally { global.fetch = nativeFetch }
+}))
+
+test('a fresh target is not treated as this source checkout and update never installs it', async () => temporary(async base => {
+  const source = await fixture(base, '0.1.0'); const target = path.join(base, 'fresh'); const version = '0.1.0'; const asset = `MusicRoad-Skills-${version}.zip`
+  const nativeFetch = global.fetch; global.fetch = async () => new Response(JSON.stringify([{ tag_name: `v${version}`, draft: false, prerelease: false, html_url: `https://github.com/roadkwonai/music-road-skills/releases/tag/v${version}`, assets: [{ name: asset, size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/${asset}` }, { name: 'SHA256SUMS.txt', size: 1, browser_download_url: `https://github.com/roadkwonai/music-road-skills/releases/download/v${version}/SHA256SUMS.txt` }] }]), { status: 200 })
+  try {
+    const checked = await execute('check', { target }); assert.equal(checked.installed, false); assert.equal(checked.currentVersion, null); assert.equal(checked.status, 'not-installed'); assert.equal(checked.sourceCheckout, undefined)
+    await assert.rejects(execute('update', { target }), error => error.code === 'NOT_INSTALLED')
+    await assert.rejects(execute('update', { source, target }), error => error.code === 'NOT_INSTALLED')
+  } finally { global.fetch = nativeFetch }
 }))

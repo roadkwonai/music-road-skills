@@ -71,6 +71,19 @@ vm.runInContext('renderComponents([{name:"소스 스킬",installedVersion:"0.1.1
 assert.match(nodes.get('#dashboardComponents').children[0].children[1].textContent,/소스 버전 0.1.1/);
 assert.match(nodes.get('#dashboardComponents').children[0].children[2].textContent,/설치 완료 기록이 아닌/);
 
+vm.runInContext('renderComponents([{name:"초기화 전 스킬",installedVersion:"0.1.1",latestVersion:"0.1.0",checkStatus:"release-reset-required"}])',context);
+const resetCard=nodes.get('#dashboardComponents').children[0];
+assert.match(resetCard.children[2].textContent,/공개 Release보다 높습니다/);
+assert.equal(resetCard.children[3].children[1].disabled,true);
+assert.match(resetCard.children[3].children[1].title,/자동 교체를 막았습니다/);
+
+vm.runInContext('renderComponents([{name:"배포 없음",installedVersion:"0.1.0",checkStatus:"no-release"}])',context);
+assert.match(nodes.get('#dashboardComponents').children[0].children[2].textContent,/공개된 정식 배포가 없어/);
+
+vm.runInContext('renderComponents([{name:"미설치 스킬",latestVersion:"0.1.0",checkStatus:"not-installed"}])',context);
+assert.match(nodes.get('#dashboardComponents').children[0].children[1].textContent,/설치 상태 미설치/);
+assert.match(nodes.get('#dashboardComponents').children[0].children[2].textContent,/install로 먼저 설치/);
+
 const summaryCard=vm.runInContext('taskCard({taskType:"review",aiSummary:"확인한 AI 응답",resultSummary:"최종 파일 1개"})',context);
 assert.ok(summaryCard.children.some(node=>node.textContent==='AI 응답: 확인한 AI 응답'));
 assert.ok(summaryCard.children.some(node=>node.textContent==='결과: 최종 파일 1개'));

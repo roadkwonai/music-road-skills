@@ -33,6 +33,9 @@ node "$UPDATE_SKILL/scripts/manage.cjs" install \
 ```
 - `--host claude`의 기본 대상은 `~/.claude/skills`이며 `CLAUDE_CONFIG_DIR`가 있으면 그 아래 경로다. `--host antigravity`의 기본 대상은 `~/.gemini/config/skills`, `--host antigravity-cli`는 `~/.gemini/antigravity-cli/skills`다. 프로젝트별 Claude는 `.claude/skills`, 공통 프로젝트는 `.agents/skills`를 항상 `--target` 절대 경로로 지정한다. 기존 `~/.gemini/antigravity/skills`는 자동 이전하지 않는다.
 - Release 설치는 `roadkwonai/music-road-skills`의 `vX.Y.Z`, `MusicRoad-Skills-X.Y.Z.zip`, `SHA256SUMS.txt`가 모두 일치할 때만 진행한다. `check`의 최신 버전 정보는 설치 완료가 아니며, install/update 뒤에는 반환된 설치 결과와 managed 상태를 다시 확인한다. 체크섬·압축 검증·교체·상태 확인 중 하나라도 실패하면 설치 성공이나 준비 완료로 보고하지 않는다.
+- 원격 Release 버전이 현재 설치본보다 낮으면 `check`는 `release-reset-required`를 기록하고 `update`는 자동 교체하지 않는다. 기존 설치본과 로컬 수정은 보존하고, 필요한 경우 새 빈 설치 대상을 명시해 설치한다. 기존 대상의 버전을 낮추는 설치는 계속 차단한다.
+- 공개된 정식 Release가 없으면 `check`는 `no-release`를 기록한다. 이 상태는 최신 설치나 설치 완료를 뜻하지 않으며 `update`는 실행하지 않는다.
+- 대상에 설치된 묶음이 없으면 `check`는 `not-installed`를 기록하고 `update`는 설치를 대신 실행하지 않는다. 먼저 명시적으로 `install`을 실행한다.
 - 기존 관리 파일이 바뀌었거나 같은 이름의 미관리 스킬이 다르면 중단한다. 완전히 동일한 기존 스킬만 최초 설치에서 안전하게 채택한다.
 - 설치 전 파일은 대상의 `.music-road-skills/backups/`에 보관하며 실패하면 롤백한다. 다른 스킬, 음악, 모델, 제작 결과는 건드리지 않는다.
 - macOS와 Linux의 `unzip`/`zipinfo`가 필요하다. Windows 자동 설치는 지원하지 않는다.
