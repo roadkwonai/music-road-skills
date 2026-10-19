@@ -56,10 +56,51 @@ def _raw_under(root, raw):
     except OSError: return None
     return resolved if resolved == raw else None
 
+def delivery_workspace(value):
+    """Accept only a completed, final-only workspace; never follow an alias."""
+    if not isinstance(value, str) or not value:
+        return None
+    root = Path(value)
+    try:
+        if not root.is_absolute() or root.is_symlink() or root.resolve(strict=True) != root:
+            return None
+        for relative in ("package.json", "cli/road-music.js", "AGENTS.md", ".roadmusic/structure.json", "Output"):
+            if _raw_under(root, root / relative) is None:
+                return None
+        if not (root / "Output").is_dir() or not all(_regular(root / name) for name in ("package.json", "cli/road-music.js", "AGENTS.md", ".roadmusic/structure.json")):
+            return None
+        metadata, structure = _json(root / "package.json"), _json(root / ".roadmusic/structure.json")
+        if (metadata.get("name") == "road-music" and metadata.get("bin", {}).get("road-music") == "cli/road-music.js" and
+                structure.get("schemaVersion") == 1 and structure.get("owner") == "road-music" and
+                structure.get("policy") == "final-only" and structure.get("phase") == "completed" and
+                structure.get("workspace") == str(root) and isinstance(structure.get("planId"), str) and
+                re.fullmatch(r"[0-9a-f]{48}", structure["planId"])):
+            return root
+    except (OSError, ValueError, TypeError, AttributeError, StorageError):
+        pass
+    return None
+
+
 def discover_trusted_root(module_file=__file__, env=None):
-    """Accept the CLI's validated kit or the enclosing kit, never an arbitrary cwd."""
+    """Keep a configured workspace separate from the installed program kit."""
+    environment = os.environ if env is None else env
+    if environment.get('ROADMUSIC_DELIVERY_ROOT'):
+        return delivery_workspace(environment['ROADMUSIC_DELIVERY_ROOT'])
+    profile = environment.get('ROADMUSIC_DATA_DIR')
+    if profile:
+        try:
+            raw = Path(profile)
+            if not raw.is_absolute() or raw.is_symlink():
+                return None
+            settings = raw.resolve() / 'settings.json'
+            if settings.exists():
+                value = _json(settings)
+                if value.get('deliveryRoot'):
+                    return delivery_workspace(value['deliveryRoot'])
+        except (OSError, ValueError, StorageError):
+            return None
     source = Path(module_file).resolve()
-    hint = (os.environ if env is None else env).get('ROADMUSIC_CLI_ROOT')
+    hint = environment.get('ROADMUSIC_CLI_ROOT')
     roots = (Path(hint),) if hint else (source.parent, *source.parents)
     for root in roots:
         try:

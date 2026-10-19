@@ -277,8 +277,11 @@ class WorkLibrary:
 
     def _sync_delivery_ownership(self, group_ids, connection):
         from storage_packaging import TRUSTED_ROOT
+        if not group_ids or TRUSTED_ROOT is None:
+            return
         live = {}
-        if group_ids and TRUSTED_ROOT is not None:
+        history_verified = False
+        if TRUSTED_ROOT is not None:
             root = Path(TRUSTED_ROOT)
             history = root / '.roadmusic' / 'history.sqlite3'
             if history.parent.is_symlink() or any(path.is_symlink() for path in (history, history.with_name(history.name + '-wal'), history.with_name(history.name + '-shm'))):
@@ -304,9 +307,12 @@ class WorkLibrary:
                                 except OSError:
                                     continue
                                 live[path] = (group_id, project_id, str(root))
+                            history_verified = True
                 except sqlite3.Error as error:
                     raise ValueError('납품 이력 DB에서 파일 소유권을 확인할 수 없습니다') from error
-        stale = connection.execute("SELECT path FROM management_paths WHERE kind='file' AND role='delivery-final'").fetchall()
+        if not history_verified:
+            return
+        stale = connection.execute("SELECT path FROM management_paths WHERE kind='file' AND role='delivery-final' AND workspace=? AND group_id IN (" + ','.join('?' for _ in group_ids) + ')', (str(root), *group_ids)).fetchall()
         connection.executemany('DELETE FROM management_paths WHERE path=?', [(path,) for (path,) in stale if path not in live])
         for path, (group_id, project_id, workspace) in live.items():
             self.management_db.claim_path(path, 'delivery-final', group_id=group_id, project_id=project_id, workspace=workspace, kind='file', connection=connection)

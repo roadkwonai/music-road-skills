@@ -34,6 +34,8 @@ node skills/road-music-skills-update/scripts/manage.cjs watch
 
 `ROADMUSIC_DATA_DIR`가 현재 Road Music 프로필을 가리키고 제작 기록 도구가 설치된 경우, 명시적 `check`와 성공한 `install`/`update`는 SQLite component 원장에 스킬 묶음과 실제 설치된 개별 스킬의 버전·마지막 확인 결과를 남깁니다. 개별 `version`이 manifest에 없으면 묶음 `VERSION` 기준임을 함께 표시합니다. 관리 설치가 아닌 소스 checkout을 확인한 경우에는 이름과 상태에 **소스 checkout·미설치 관찰**로 표시하여 설치 완료와 구분합니다. 이 기록은 대시보드 알림과 비교용입니다. 설치 성공은 계속 설치 대상의 manifest·VERSION·파일 해시·체크섬 검증으로만 판정하며, SQLite에 남은 오래된 버전만으로 설치 성공이나 업데이트 완료로 판단하지 않습니다.
 
+독립 CLI의 제작실은 프로필 `settings.deliveryRoot`가 가리키는 검증된 완료본 작업 경로를 우선 사용합니다. 설정이 없으면 설치 키트 경로를 사용하며, 이 경우 이전 작업 이력이 연결됐다고 간주하지 않습니다. 해당 작업의 WorkLibrary 이력 DB를 실제로 읽었을 때만 오래된 연결 표시를 해제하며, 확인하지 못하면 기존 상태를 유지합니다. 설치·업데이트 과정에서 기존 `Output` 폴더나 SQLite 이력을 이동·복제하지 않습니다.
+
 ```bash
 node skills/road-music-skills-update/scripts/manage.cjs install --source "$PWD"
 ```
