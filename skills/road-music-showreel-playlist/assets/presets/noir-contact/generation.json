@@ -1,0 +1,27 @@
+{
+  "tool": "built-in image_gen",
+  "artistIsFictional": true,
+  "previewPhotoNote": "카탈로그는 단일 가상 아티스트 사진을 세 장면에 재사용. 실제 곡 제작에서는 같은 인물의 별도 구도 3장 권장.",
+  "images": [
+    {
+      "role": "artist",
+      "saved": "photo-a.png",
+      "generatedPath": "local-source:exec-4464ac20-b1d8-4a3b-aaff-bb20254ffeeb.png",
+      "prompt": "Use case: photorealistic-natural. Asset: landscape 16:9 photograph for a fictional singer CD album and motion graphic. Create a striking black and white silver gelatin 35mm documentary photo of an entirely fictional adult Korean male jazz/soul vocalist in his early thirties in a cramped old rehearsal room, short slightly tousled hair, worn black shirt, holding a wired vintage microphone, half body slightly left of centre; a female upright bassist softly visible behind him. Quiet intimate expression and authentic asymmetrical candid posture. Narrow window light, deep rich blacks and silver midtones, tangible film grain, tiny optical blooming, tactile skin, slightly imperfect focus, beautifully unpolished editorial music photography. The singer face should remain comfortably inside centre 55% for circular album cropping. No text, no logos, no borders, no CD or case in this photo. Not a recognizable real person, no plastic skin or shiny commercial product look."
+    },
+    {
+      "role": "case",
+      "saved": "case.png",
+      "generatedPath": "local-source:exec-23f949d5-9fd9-4271-b4e4-8d82c6b00779.png",
+      "prompt": "Use case: product-mockup; reference Image 1 is the exact artist/photo to print on the insert, keep the same fictional faces and clothing. Create a single square full CD jewel case asset for compositing in a motion graphic. Almost straight-on flat-lay, all four corners fully inside the image with 6% transparent margin. A closed jewel case with the reference photograph clearly printed on the slightly skewed inner paper cover, handmade analog indie album physical object. Smoky clear grey polycarbonate, a black-and-white photographic insert, black torn inner sleeve, a tiny piece of aged ivory tape, subtle soft silver reflections. Realistic shallow scratches and rough imperfect photo edges. A clean isolated cutout on true transparent background; preserve alpha including the translucent plastic outline. Soft subtle object shadow only, no desk/background, no disc outside, no extra objects, no text or logos. This is a lived-in worn photo case, beautifully photographed, never a perfect glossy sterile rectangle."
+    },
+    {
+      "id": "noir-contact",
+      "role": "paper",
+      "saved": "paper.png",
+      "generatedPath": "local-source:exec-00d71af8-ef19-49a7-b870-01b7809e119e.png",
+      "prompt": "Use case: photorealistic-natural. Asset: full-frame 16:9 flat photographic background for an analog CD album layout. A charcoal black rough art-paper desktop, overlapping slightly crooked black photographic contact-sheet backing at left and a torn dark silver envelope corner at upper right; extremely subtle dust and real paper fibre, tactile and beautiful, directional soft studio light. Central area and right two-thirds empty for a jewel case and large CD added later; bottom 15% quiet dark charcoal for ivory lyrics. Grayscale only with very faint warm aged-paper edge at left. No people, no CD, no jewel case, no text, no numbers, no logos, no grids or checkerboards, no fake interface. Not glossy or smooth."
+    }
+  ],
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

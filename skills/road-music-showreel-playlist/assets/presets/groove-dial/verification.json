@@ -1,0 +1,174 @@
+{
+  "status": "ready",
+  "media": {
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "fps": "30/1",
+    "frames": 900,
+    "pixelFormat": "yuv420p",
+    "range": "tv",
+    "audioRate": "48000",
+    "audioChannels": 2
+  },
+  "motion": {
+    "duration": 30.0,
+    "still_ratio": 0.0,
+    "median": 1.91,
+    "p90": 11.22,
+    "still_runs": [],
+    "per_second": [
+      8.9,
+      7.92,
+      4.25,
+      3.84,
+      6.75,
+      4.69,
+      1.75,
+      1.11,
+      1.17,
+      8.79,
+      7.2,
+      3.33,
+      5.56,
+      13.83,
+      2.83,
+      1.11,
+      1.0,
+      1.26,
+      14.22,
+      2.09,
+      3.52,
+      12.3,
+      5.98,
+      1.75,
+      2.54,
+      3.42,
+      1.51,
+      1.84,
+      1.02,
+      1.0
+    ],
+    "issues": []
+  },
+  "runtime": {
+    "ok": true,
+    "report": [
+      {
+        "check": "original options, captions, art boundary, FFT, seek",
+        "words": 23,
+        "boundary": [
+          {
+            "t": 14.99,
+            "art": 0,
+            "state": {
+              "current": {
+                "id": "track-001",
+                "title": "너 없는 계절의 끝에서 · 검수 구간 1",
+                "startSeconds": 0,
+                "endSeconds": 15,
+                "durationSeconds": 15,
+                "index": 0
+              },
+              "queue": [
+                {
+                  "id": "track-002",
+                  "title": "너 없는 계절의 끝에서 · 검수 구간 2",
+                  "startSeconds": 15,
+                  "endSeconds": 30,
+                  "durationSeconds": 15,
+                  "index": 1
+                }
+              ]
+            },
+            "intro": false
+          },
+          {
+            "t": 15,
+            "art": 1,
+            "state": {
+              "current": {
+                "id": "track-002",
+                "title": "너 없는 계절의 끝에서 · 검수 구간 2",
+                "startSeconds": 15,
+                "endSeconds": 30,
+                "durationSeconds": 15,
+                "index": 1
+              },
+              "queue": []
+            },
+            "intro": false
+          },
+          {
+            "t": 15.01,
+            "art": 1,
+            "state": {
+              "current": {
+                "id": "track-002",
+                "title": "너 없는 계절의 끝에서 · 검수 구간 2",
+                "startSeconds": 15,
+                "endSeconds": 30,
+                "durationSeconds": 15,
+                "index": 1
+              },
+              "queue": []
+            },
+            "intro": false
+          },
+          {
+            "t": 30,
+            "art": 1,
+            "state": {
+              "current": {
+                "id": "track-002",
+                "title": "너 없는 계절의 끝에서 · 검수 구간 2",
+                "startSeconds": 15,
+                "endSeconds": 30,
+                "durationSeconds": 15,
+                "index": 1
+              },
+              "queue": []
+            },
+            "intro": false
+          }
+        ]
+      },
+      {
+        "check": "all 8 display combinations and empty channel",
+        "ok": true
+      },
+      {
+        "check": "motion mode changes with track",
+        "trackModes": [
+          "drive",
+          "soft"
+        ]
+      },
+      {
+        "check": "3 motion modes, 5 variant smoke checks, 1-hour direct seek",
+        "ok": true
+      }
+    ]
+  },
+  "genrePlans": 39,
+  "regressionTests": 51,
+  "captionStatus": "dtw-and-acoustic-crosschecked-not-human-listened",
+  "humanListening": false,
+  "allGenresRendered": false,
+  "referenceImagesReused": true,
+  "newImagesGenerated": false,
+  "notes": "실제 30초 기능 검수. 같은 원곡의 연속 15초 두 구간, 가상 DEMO CHANNEL. 1시간 seek 시험은 전체 시간 렌더 벤치마크가 아님.",
+  "repositoryTests": 201,
+  "legacyBrowserChecks": 3,
+  "forwardTest": "registered preset: two 7-second tracks, all SKIP, balanced/soft, 14-second exact audio; no render",
+  "variantCheckScope": "5 values load and seek with the same reference images; not 5 newly generated material looks",
+  "caseAlphaFix": {
+    "status": "passed",
+    "check": "check-case-alpha.mjs",
+    "originalMarginAlpha": 203,
+    "fixedMarginAlpha": 0,
+    "note": "Template case composition now follows source PNG alpha; previously rendered reference preview remains a historical style sample."
+  },
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

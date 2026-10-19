@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "neon-afterhours",
+  "name": "네온 애프터아워",
+  "aliases": [
+    "네온",
+    "애프터아워",
+    "심야 네온"
+  ],
+  "genres": [
+    "R&B",
+    "신스팝",
+    "시티팝",
+    "일렉트로닉"
+  ],
+  "description": "젖은 밤의 네온 사진, 프리즘 분할 인트로, 보랏빛 유리와 CD 반사.",
+  "variant": "neon",
+  "discPeriodSeconds": 6,
+  "caption": {
+    "font": "sans",
+    "size": 57,
+    "effect": "glow"
+  },
+  "palette": {
+    "paper": "#161524",
+    "ink": "#e8e4ff",
+    "light": "#f8f0ff",
+    "dark": "#100c20",
+    "accent": "#bb8dff"
+  },
+  "artDirection": "존재하지 않는 성인 한국인 R&B 싱어. 젖은 골목의 바이올렛/시안 조명, 거친 야간 필름, 스냅샷 같은 흐트러진 헤어와 바랜 데님. 플라스틱처럼 매끈한 피부 금지.",
+  "prompts": {
+    "artist": "존재하지 않는 성인 한국인 R&B 싱어. 젖은 골목의 바이올렛/시안 조명, 거친 야간 필름, 스냅샷 같은 흐트러진 헤어와 바랜 데님. 플라스틱처럼 매끈한 피부 금지. 음악의 장르·보컬 구성에 맞는 가상 아티스트를 설계. 실존 인물·로고·글자 없음.",
+    "case": "같은 아티스트 사진을 인쇄한 살짝 닳고 어긋난 주얼케이스. 정면에 가까운 정사각, 바깥은 실제 투명 alpha. 광고 렌더처럼 매끈하지 않게.",
+    "paper": "16:9 평면 촬영. 젖은 밤의 네온 사진, 프리즘 분할 인트로, 보랏빛 유리와 CD 반사. 케이스·CD·인물 없이 배경만. 아래 15%는 자막이 읽히게 조용하게."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "unreviewed-asr-draft-not-canonical-lyrics",
+    "musicNote": "모든 스타일은 같은 록 발라드 구간으로 비교. 추천 장르 전용 음원 아님.",
+    "durationSeconds": 18,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 540,
+    "subframes": 1,
+    "sourceClipStartSeconds": 79.76,
+    "sourceMusicSha256": "1f54b234936e97020ef1bbeb79dccfb585b1f8d211b2d1e56c3516b18dac359a"
+  }
+}

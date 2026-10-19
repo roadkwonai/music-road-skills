@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko" data-road-music-ui>
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Road Music 환경 상태</title>
+  <link rel="stylesheet" href="/design.css?token=__DESIGN_TOKEN__">
+  <style>
+    .status-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .status-card { min-width:0; padding:18px; border:1px solid var(--rm-border); border-radius:var(--rm-radius); background:var(--rm-surface); }
+    .status-card h3 { margin-bottom:8px; } .status-card dl { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 12px; margin:0; }
+    .status-card dl { max-height:240px; overflow:hidden; grid-template-columns:minmax(0,.35fr) minmax(0,1fr); } .status-card dt, .status-card dd { overflow-wrap:anywhere; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; }
+    .status-card dt { color:var(--rm-muted); font-size:14px; } .status-card dd { min-width:0; margin:0; overflow-wrap:anywhere; }
+    .status-details { margin-top:12px; border-top:1px solid var(--rm-border); padding-top:10px; } .status-details summary { cursor:pointer; font-weight:700; } .status-details pre { max-height:320px; margin:10px 0 0; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; border:1px solid var(--rm-border); border-radius:var(--rm-control-radius); background:var(--rm-surface-muted); padding:10px; font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .status-badge { display:inline-flex; min-height:24px; align-items:center; padding:2px 7px; border:1px solid var(--rm-border); border-radius:3px; background:var(--rm-surface-muted); font-size:13px; font-weight:700; }
+    .status-badge[data-state="enabled"], .status-badge[data-state="connected"], .status-badge[data-state="available"] { border-color:var(--rm-primary-strong); background:color-mix(in oklch,var(--rm-primary) 8%,var(--rm-surface)); }
+    .status-badge[data-state="missing"], .status-badge[data-state="unavailable"], .status-badge[data-state="failed"] { border-color:var(--rm-negative); color:var(--rm-negative); }
+    .status-list { display:grid; gap:8px; margin:0; padding:0; list-style:none; } .status-list li { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; border-bottom:1px solid var(--rm-border); }
+    .status-list li:last-child { border-bottom:0; } .status-empty { color:var(--rm-muted); }
+    @media (max-width:700px) { .status-grid { grid-template-columns:1fr; } }
+  </style>
+  <script defer src="/status.js?token=__DESIGN_TOKEN__"></script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+<main id="main-content" class="works-page status-page">
+  <header class="page-heading project-strip"><div><h1>환경 상태</h1><p>현재 설치된 CLI·기존 서비스·제작 스킬의 준비 상태를 확인합니다.</p></div><div class="page-actions"><a class="button secondary" href="#safety">조회 경계</a><a class="button secondary" id="referenceLink" href="#">공개 명령 레퍼런스</a><button class="secondary" id="refreshStatus" type="button">상태 새로 고침</button></div></header>
+  <p id="statusMessage" class="hint" role="status" aria-live="polite">상태를 불러오는 중…</p>
+  <aside id="safety" class="rm-callout rm-callout--important"><div class="rm-callout-heading"><strong>조회 전용</strong></div><p>이 페이지는 서비스를 시작하거나 설치·생성·렌더·업데이트를 실행하지 않습니다. 기존 서비스가 연결된 경우에만 준비 상태와 작업 상태를 읽습니다.</p></aside>
+  <section class="workflow-section" aria-labelledby="cliTitle"><div class="section-heading"><div><h2 id="cliTitle">CLI와 서비스</h2><p>로컬 schema·버전은 직접 확인하고, 서비스는 자동 시작 없이 상태만 확인합니다.</p></div></div><div id="cliStatus" class="status-grid" aria-busy="true"></div></section>
+  <section class="workflow-section" aria-labelledby="runtimeTitle"><div class="section-heading"><div><h2 id="runtimeTitle">기존 서비스의 준비 상태</h2><p>연결된 서비스가 있을 때만 엔진·도구·대기열·영상 상태를 읽습니다.</p></div></div><div id="runtimeStatus" class="status-grid" aria-busy="true"></div></section>
+  <section class="workflow-section" aria-labelledby="storageTitle"><div class="section-heading"><div><h2 id="storageTitle">저장공간 검사 항목</h2><p>현재 설치에서 사용할 수 있는 정리 검사만 표시합니다. Git 객체 분석은 Git 항목을 직접 선택할 때만 실행합니다.</p></div></div><div id="storageCapabilityStatus" class="status-grid" aria-busy="true"></div></section>
+  <section class="workflow-section" aria-labelledby="skillTitle"><div class="section-heading"><div><h2 id="skillTitle">제작 스킬 준비</h2><p>설치 경로와 실행 진입점 파일의 존재만 확인합니다. 모델 설치나 제작 가능 여부를 보장하지 않습니다.</p></div></div><ul id="skillStatus" class="status-list" aria-busy="true"></ul></section>
+</main>
+<script>__STUDIO_BOOTSTRAP__</script>
+</body></html>

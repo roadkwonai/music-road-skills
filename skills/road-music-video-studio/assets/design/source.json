@@ -1,0 +1,44 @@
+{
+  "sourceArchive": "Paperlogy-1.000.zip",
+  "sourceArchiveSha256": "bd30c2161cf8e05769240a9d42e820e12f381e2d83a8f31b886d91acaa1c73be",
+  "family": "Paperlogy",
+  "version": "1.000",
+  "files": [
+    {
+      "file": "Paperlogy-1Thin.ttf",
+      "sha256": "b7e05f378f5fcb444a10fb5d423ba8ca1ff72f18feeb98f615b760bf5fce33b2"
+    },
+    {
+      "file": "Paperlogy-2ExtraLight.ttf",
+      "sha256": "8c4148d3e0a4abf21fac5102e8f6f0098163a85a6545b5a49033289421b6b8b6"
+    },
+    {
+      "file": "Paperlogy-3Light.ttf",
+      "sha256": "5a5a4c9acdbaa99b7ca72dd3f428ba962953201d39abc7181104953919d9cf60"
+    },
+    {
+      "file": "Paperlogy-4Regular.ttf",
+      "sha256": "fde17e6e5acabcfabdad79f37fedc01405a0d6298c965b3f99378dd89a25b1ba"
+    },
+    {
+      "file": "Paperlogy-5Medium.ttf",
+      "sha256": "82850732d41ab446f807eddde46349a7ad5f3525970d7196e061f945db9731d3"
+    },
+    {
+      "file": "Paperlogy-6SemiBold.ttf",
+      "sha256": "59c1927c28ad6833adfce6298c445fe0474072be4f9ddb2b88ed2a4187db050e"
+    },
+    {
+      "file": "Paperlogy-7Bold.ttf",
+      "sha256": "fe71049fe3d3a7dd3f2e0c12efd850acd1293658181af322348edde9b016e6ba"
+    },
+    {
+      "file": "Paperlogy-8ExtraBold.ttf",
+      "sha256": "4978d68ea7a6dcba7d00e17cd346a460e24652133b0658f57a68e1e35a603dc4"
+    },
+    {
+      "file": "Paperlogy-9Black.ttf",
+      "sha256": "9570493ab4f9ab961979af822b1626aefd4ed3ac9b9c2a8e24a8d1138de17b49"
+    }
+  ]
+}

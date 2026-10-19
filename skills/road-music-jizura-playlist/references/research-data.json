@@ -1,0 +1,358 @@
+{
+  "checked_date": "2026-10-17",
+  "method": "공식/제작자설명과 원문 메타데이터를 확인. ego-browser20에서 video canvas를 여러 시각으로 seek하여 프레임 수집; 두시퀀스는0.2초간격. 완료 후 TaskSpace20 종료. 호스트 오디오를 직접 청취하지 않음.",
+  "ranking_scope": "선정된 YouTube/Bilibili 표본의 관측조회수. 플랫폼간 지표를 동일 인기척도로 취급하거나 전체JIZURA최고순위라 주장하지 않음.",
+  "sources": [
+    {
+      "id": "tutorial",
+      "url": "https://www.youtube.com/watch?v=63IOX48_eR8",
+      "title": "잘 나가는 플리 편집 효과, 돈 내고 어렵게 만드세요?! 무료 툴 이거면 끝납니다",
+      "creator": "유쾌한 케로로의 AI 개골",
+      "published": "2026-10-09T12:25:33+09:00",
+      "checked_date": "2026-10-17",
+      "views": 5987,
+      "likes": 85,
+      "production_evidence": {
+        "url": "https://www.youtube.com/watch?v=63IOX48_eR8",
+        "summary": "설명에 JIZURA 한국어 공식 링크와 도구 소개/제작순서/고급모드/MP4내보내기 챕터. 실제 영상에서 JIZURA UI 조작 확인."
+      },
+      "classification": "confirmed-jizura",
+      "observations": [
+        {
+          "time_s": 10,
+          "seen": "미색 종이 질감, 검정 손글씨풍 한글 중앙 타이틀, 작은 보조표기"
+        },
+        {
+          "time_s": 15,
+          "seen": "미색 배경의 작은 적갈색 붓글씨와 작은 숫자; 큰 타이틀과 대비되는 여백"
+        },
+        {
+          "time_s": 20,
+          "seen": "적갈색 단색 배경에 검정/아이보리 말풍선 도형"
+        },
+        {
+          "time_s": 25,
+          "seen": "적갈색 배경에 밝은 한글 한 글자 강조"
+        },
+        {
+          "time_s": 320,
+          "seen": "미색 배경에 유기적 적갈색 도형과 기울어진 큰 한글 글자"
+        },
+        {
+          "time_s": 530,
+          "seen": "JIZURA 전체 UI, 다색 컷 타임라인, 자동생성 시안 설명"
+        },
+        {
+          "time_s": 670,
+          "seen": "고급모드 스타일 썸네일과 적갈색 캔버스"
+        },
+        {
+          "time_s": 740,
+          "seen": "미색 책/신문형 프레임, 세로 한글, 적갈색 세로띠; 내보내기 UI"
+        }
+      ],
+      "derived_profile": "warm-paper-red-brush",
+      "extra": {
+        "chapter_cues": {
+          "lyrics_are_direction": 192,
+          "LRC": 279,
+          "lyric_pacing": 311,
+          "tap_sync": 331,
+          "SRT_to_LRC": 459,
+          "variation": 521,
+          "advanced": 658,
+          "export": 730
+        }
+      }
+    },
+    {
+      "id": "kaiju",
+      "url": "https://www.youtube.com/watch?v=W9UHIs5Es28",
+      "title": "怪獣 / サカナクション【野獣先輩】ネットの深淵に潜む化け物【替え歌】",
+      "creator": "Fake Beat Japan",
+      "published": "2026-10-12T19:00:28+09:00",
+      "checked_date": "2026-10-17",
+      "views": 363907,
+      "likes": 10005,
+      "production_evidence": {
+        "url": "https://www.youtube.com/watch?v=W9UHIs5Es28",
+        "quote": "MV Production: JIZURA / Filmora / Nano Banana 2 (Gemini)"
+      },
+      "classification": "confirmed-jizura-mixed-production",
+      "observations": [
+        {
+          "time_s": 10,
+          "seen": "어두운 인물 영상 위 흰 대형 텍스트/HUD와 노랑 강조"
+        },
+        {
+          "time_s": "30.0–31.6",
+          "seen": "30.0 초 굵은 가로 글자→30.4초 청록/황색 슬라이스 겹침→30.6초 텍스트 사라짐→31.0초 거대한 적색 한자→31.4초 짧은 단어와 반복 띠; 실제 0.2초 간격 프레임으로 모션 변화 확인"
+        },
+        {
+          "time_s": 32,
+          "seen": "밝은 바탕 분할면과 가로 반복 타이포띠, 적색 대형 글자"
+        },
+        {
+          "time_s": 50,
+          "seen": "어두운 장면에 세로 흰 한자와 얇은 안내선"
+        },
+        {
+          "time_s": 70,
+          "seen": "밝은 가로막대와 주황 라운드 타이포 패널"
+        },
+        {
+          "time_s": 100,
+          "seen": "검정 사선 패턴 배경, 프레임/HUD, 흰 문장"
+        },
+        {
+          "time_s": 130,
+          "seen": "기울어진 인물 영상 프레임과 다중 색 윤곽 글자"
+        },
+        {
+          "time_s": 160,
+          "seen": "검정 바탕의 수평 노이즈와 녹색 단어"
+        },
+        {
+          "time_s": 190,
+          "seen": "문자 간격을 넓힌 글자열 중 주황 박스로 한 글자 강조"
+        }
+      ],
+      "derived_profile": "noir-chroma-overlay",
+      "extra": {
+        "scope_note": "Filmora/이미지 제작 기여가 섞여 개별효과를 JIZURA 고유기능으로 귀속할 수 없음. 관측한 완성MV 표본에서 조회수 최고이며 전체 시장 순위 아님."
+      }
+    },
+    {
+      "id": "jojo",
+      "url": "https://www.youtube.com/watch?v=1CJvbGqOcNs",
+      "title": "ジョジョの奇妙な冒険 第7部　ED (ボカロ風)",
+      "creator": "Fake Beat Japan",
+      "published": "2026-10-07T19:00:01+09:00",
+      "checked_date": "2026-10-17",
+      "views": 10851,
+      "likes": 283,
+      "production_evidence": {
+        "url": "https://www.youtube.com/watch?v=1CJvbGqOcNs",
+        "quote": "MV Production: JIZURA / Filmora / Nano Banana 2 (Gemini)"
+      },
+      "classification": "confirmed-jizura-mixed-production",
+      "observations": [
+        {
+          "time_s": 10,
+          "seen": "미색 종이, serif 영문 중앙 문구, 바깥 테두리 반복글자와 컷번호"
+        },
+        {
+          "time_s": 30,
+          "seen": "검정 배경의 흰 일본어와 노란 그림자, 굵기와 크기 차이로 핵심어 강조"
+        },
+        {
+          "time_s": 50,
+          "seen": "미색바탕 검정/청록/황색 영문 글리프가 어긋나 겹친 대형키네틱 타이포"
+        },
+        {
+          "time_s": 70,
+          "seen": "주황/청록/검정 레이어 한자·가나를 2행으로 크게 배치, 바깥 원형 눈금"
+        }
+      ],
+      "derived_profile": "paper-pop-chromatic-kinetic",
+      "extra": {
+        "capture_limit": "영상10/30/50/70초만 관측에 사용. 110초 탐색에서 자동 다음 영상 전환되어 이후 캡처는 실패/제외."
+      }
+    },
+    {
+      "id": "BV1U9hs6wEjt",
+      "url": "https://www.bilibili.com/video/BV1U9hs6wEjt/",
+      "title": "JIZURA 字面｜自动生成歌词动画的浏览器工具，4种效果演示",
+      "creator": "852話_hakoniwa",
+      "published": "2026-09-23T15:40:10+09:00",
+      "checked_date": "2026-10-17",
+      "views": 6370,
+      "likes": 507,
+      "production_evidence": {
+        "url": "https://www.bilibili.com/video/BV1U9hs6wEjt/",
+        "summary": "我制作的文字PV自动构成工具「JIZURA 字面」公开了！\n输入歌词即可自动组合文字排版、运动和装饰；可更换风格、配色与构成，导入音乐调整节奏，并导出带音乐的MP4。无需安装，在浏览器中即可使用，另附After Effects面板。\n\n在线使用：https://852wa.github.io/JIZURA/\n项目代码：https://github.com/852wa/JIZURA/\n\n本视频收录「神格化してた」的4种效果示例，保留各版原音频。",
+        "metrics_api": "https://api.bilibili.com/x/web-interface/view?bvid=BV1U9hs6wEjt"
+      },
+      "classification": "confirmed-jizura",
+      "observations": [
+        {
+          "time_s": 2,
+          "seen": "검정 바탕 필름 스트립 안 세로로 분리한 흰 문구"
+        },
+        {
+          "time_s": 4,
+          "seen": "흰 글자 일부만 여러 잔상/층으로 흔들리는 처리"
+        },
+        {
+          "time_s": 8,
+          "seen": "거대한 낮은대비 글자 뒤 작은 문구, 타이포 깊이"
+        },
+        {
+          "time_s": 13,
+          "seen": "종이바탕 남색 큰 일본어와 자홍 잔상"
+        },
+        {
+          "time_s": 16,
+          "seen": "남색 동심원/파문 배경, 흰 중앙 문구, 자홍 작은 박스"
+        },
+        {
+          "time_s": 20,
+          "seen": "검정 바탕 가늘고 길게 늘어진 자홍글씨"
+        },
+        {
+          "time_s": 25,
+          "seen": "검정 바탕 흰 문장과 청록색 미세색분리, 프레임"
+        },
+        {
+          "time_s": 28,
+          "seen": "어두운바탕 작고 고요한 글자, 강약의 저점"
+        },
+        {
+          "time_s": 31,
+          "seen": "미색 파문배경 굵은검정글자와 주황 그림자"
+        },
+        {
+          "time_s": 36,
+          "seen": "검정 도트그리드, 흰 원과 흐린 글자호"
+        },
+        {
+          "time_s": 39,
+          "seen": "미색 바탕 한 글자씩 사각타일에 분리, 종이테이프 장식"
+        },
+        {
+          "time_s": 43,
+          "seen": "검정 배경 얇은 사각 프레임, 우아한 흰 serif2행, 테이프"
+        }
+      ],
+      "derived_profile": "official-four-variant: monochrome-film / indigo-paper / chromatic-impact / taped-minimal",
+      "extra": {
+        "favorite": 571,
+        "share": 91,
+        "notes": "제작자 원문 설명 근거. 852話 공식 제작자 데모"
+      }
+    },
+    {
+      "id": "BV1MUho6RE4b",
+      "url": "https://www.bilibili.com/video/BV1MUho6RE4b/",
+      "title": "大型pv师失业现场？自动生成歌词动画浏览器工具演示（Overjoy ★ OVERDOSE!!-Luna Fozer）",
+      "creator": "傲娇猫猫就是攻",
+      "published": "2026-09-26T22:54:06+09:00",
+      "checked_date": "2026-10-17",
+      "views": 11303,
+      "likes": 550,
+      "production_evidence": {
+        "url": "https://www.bilibili.com/video/BV1MUho6RE4b/",
+        "summary": "好像是才上了没几天的新网页工具。Overjoy ★ OVERDOSE!!这首歌PV本身就很经典蓝图风格，光速用JIZURA试了一下，两分半的视频一小时就做出来了\n目前玩玩感觉还行，还有一些功能待改进，还是不太智能的样子…不过已经深深感受到要被替代了，来自八年pv动画师的感叹…\n封面是自己画的，用来水下间奏（没错间奏除了曲绘也是自动生成的效果x",
+        "metrics_api": "https://api.bilibili.com/x/web-interface/view?bvid=BV1MUho6RE4b"
+      },
+      "classification": "confirmed-jizura",
+      "observations": [
+        {
+          "time_s": 5,
+          "seen": "검정 공간에 밝은 입간판/빌보드 형태, 얇은 보라 안내선"
+        },
+        {
+          "time_s": "20.0–20.4",
+          "seen": "20.0/20.2초 흰 문서형배경 outline영문→20.4초 글자 사라진후 작은 잔여형상; 퇴장 변화 직접 프레임 관측"
+        },
+        {
+          "time_s": 40,
+          "seen": "선명한 파랑 면에 거대 반투명 영문 한글자와 작은 백색 폴리곤"
+        },
+        {
+          "time_s": 60,
+          "seen": "기울어진 카드/스크린 프레임에 파랑굵은영문, 회색다이아배경"
+        },
+        {
+          "time_s": 80,
+          "seen": "세 개 검정세로패널, 흰색 회전/세로 단어, 파형"
+        },
+        {
+          "time_s": 100,
+          "seen": "파랑바탕의 인물 일러스트+노랑별방사, 연주부 합성. 제작설명에 직접그린그림 명시"
+        },
+        {
+          "time_s": 120,
+          "seen": "회색라운드패널에 굵은영문, 글자마다 명암교대"
+        },
+        {
+          "time_s": 140,
+          "seen": "방사형 타이포/광선, 중앙흰띠와 파란핵심글자"
+        }
+      ],
+      "derived_profile": "electric-blue-blueprint-pop",
+      "extra": {
+        "favorite": 565,
+        "share": 99,
+        "notes": "제작자가 JIZURA 사용과 직접 그린 인물 그림 합성을 설명. 정량 비트 오차는 미측정."
+      }
+    },
+    {
+      "id": "mikke-landscape",
+      "url": "https://mikke-media.com/tools/jizura",
+      "title": "飛行体 / feat.知声 — 제공된 가로24초 작례",
+      "creator": "미케미디어 게시/원곡 松夲小豆",
+      "published": "2026-09-26",
+      "checked_date": "2026-10-17",
+      "views": null,
+      "likes": null,
+      "production_evidence": {
+        "url": "https://mikke-media.com/tools/jizura",
+        "summary": "매체가 JIZURA제작 가로/세로24초 제공작례이며 권리자 허가를 받아 게재했다고 명시. 원곡YouTube를 JIZURA완성영상과 혼동하지 말 것.",
+        "media_url": "https://mikke-media.com/tools/jizura/example-landscape.mp4"
+      },
+      "classification": "publisher-confirmed-jizura",
+      "observations": [
+        {
+          "time_s": "약1.5,4.5,7.5,10.5,13.5,16.5,19.5,22.5",
+          "seen": "ffmpeg fps=1/3 contact sheet 표본. 미색종이/남색/자홍팔레트. 원형반복타이포, 한글자확대, 분할면 반복, 검정바탕컷, 자홍라운드띠, 원형회전글자, 밑줄강조, 글자별원형배치."
+        }
+      ],
+      "derived_profile": "indigo-paper-poetic",
+      "extra": null
+    },
+    {
+      "id": "mikke-portrait",
+      "url": "https://mikke-media.com/tools/jizura",
+      "title": "飛行体 / feat.知声 — 제공된 세로24초 작례",
+      "creator": "미케미디어 게시/원곡 松夲小豆",
+      "published": "2026-09-26",
+      "checked_date": "2026-10-17",
+      "views": null,
+      "likes": null,
+      "production_evidence": {
+        "url": "https://mikke-media.com/tools/jizura",
+        "summary": "가로작례와같은 게시확인. 사이트스펙1080x1920원본,720x1280시연.",
+        "media_url": "https://mikke-media.com/tools/jizura/example-portrait.mp4"
+      },
+      "classification": "publisher-confirmed-jizura",
+      "observations": [
+        {
+          "time_s": "약1.5,4.5,7.5,10.5,13.5,16.5,19.5,22.5",
+          "seen": "ffmpeg fps=1/3 contact sheet 표본. 차콜배경/흰세로글자, 작은중앙단어, 문서HUD+큰가로문구, 밝은블라인드와속도선, 흐림반복글자, 도트글리프, 작은다섯막대, 원근방사선과빨강포인트."
+        }
+      ],
+      "derived_profile": "monochrome-editorial-speed",
+      "extra": null
+    }
+  ],
+  "excluded": [
+    {
+      "url": "https://www.bilibili.com/video/BV1Tk4y1C7jf/",
+      "reason": "추천란24567뷰였으나 실제설명textalive.jp,2020업로드. JIZURA사례아님."
+    }
+  ],
+  "official_docs": [
+    "https://jizura.net/en/guide/",
+    "https://github.com/852wa/JIZURA/blob/main/README.en.md",
+    "https://note.com/852wa/n/nf46712c8746b"
+  ],
+  "limitations": [
+    "모든프레임을분석하지않음; 표본프레임과짧은모션연속표본만확인.",
+    "음악과컷의프레임단위오차/박자정렬은측정안함. 리듬구현은스타일에서유도한제안으로표기해야함.",
+    "곡/가사/인물/브랜드권리또는작품인기원인을검증하지않음.",
+    "사이트현재jizura.net v0.10.0와GitHub검색v0.10.1표기가상충; 런타임고정버전의실제옵션목록을확인할것.",
+    "공식release는2026-09-23, 따라서장기성과근거제한.",
+    "EgoLite0.5.1.13업데이트알림확인,업데이트실행안함."
+  ]
+}

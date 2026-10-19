@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "rhythm-canvas",
+  "name": "리듬 캔버스",
+  "aliases": [
+    "리듬캔버스",
+    "Rhythm Canvas",
+    "음악 모션그래픽"
+  ],
+  "genres": [
+    "발라드",
+    "R&B",
+    "재즈",
+    "K-POP",
+    "힙합",
+    "EDM",
+    "록",
+    "앰비언트",
+    "혼합 장르"
+  ],
+  "description": "곡에 맞춘 생성 이미지·첫 0.5초 썸네일과 궤도·리본·원근 그리드·타일을 실제 음악 타격음에 연결하는 플레이리스트. 순수 기하 모드도 지원한다.",
+  "artDirection": "가사 의미를 구간별 이미지·팔레트·모티프·강약으로 표현한다. 새 이미지는 내장 image_gen으로 만들거나 승인 자산을 재사용하며, 가창 시각·원곡 길이를 보존하고 타격음에서 효과를 선별한다. 첫 0.5초 카드 뒤로 음악·가사를 밀지 않는다.",
+  "category": "music-motion",
+  "template": "template",
+  "assetSchema": {},
+  "requiresArtist": false,
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "source-lyrics-linked-asr-timing-unreviewed",
+    "audioNote": "벨루나 원곡65.2~89.2초로 만든 4방식 기능 비교본. 장르별 완성 영상/전곡 납품본이 아님. 가사 시각은 청취 검수 전 자동 정렬 초안.",
+    "verification": "verification.json",
+    "durationSeconds": 24,
+    "width": 1920,
+    "height": 1080
+  }
+}

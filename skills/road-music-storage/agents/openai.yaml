@@ -1,0 +1,4 @@
+interface:
+  display_name: "Road Music 저장공간 관리"
+  short_description: "프로젝트별 캐시와 제작 기록을 관리하고 원본·완성본을 지키며 공간을 정리합니다"
+  default_prompt: "$road-music-storage로 진행 중인 작업과 완성본을 보존하면서 프로젝트별 저장공간을 점검하고 정리해줘."

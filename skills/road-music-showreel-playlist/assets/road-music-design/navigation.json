@@ -1,0 +1,30 @@
+[
+  [
+    "studio",
+    "제작실",
+    "/",
+    "",
+    "adjustments-horizontal"
+  ],
+  [
+    "works",
+    "내 작업물",
+    "/works/",
+    "",
+    "folder-open"
+  ],
+  [
+    "catalog",
+    "스타일",
+    "/catalog/",
+    "",
+    "squares-2x2"
+  ],
+  [
+    "guide",
+    "사용 가이드",
+    "/guide/",
+    "",
+    "book-open"
+  ]
+]

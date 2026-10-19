@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="684" viewBox="0 0 600 684" role="img" aria-labelledby="title"><!-- Heroicons Solid: MIT License
+
+Copyright (c) Tailwind Labs, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ --><title id="title">스타일 조합과 강약</title><rect width="600" height="684" fill="#f2f2f2"/><g font-family="Paperlogy, Apple SD Gothic Neo, sans-serif"><text x="28" y="44" font-size="28" fill="#171717" font-weight="700">구간에 따라 강약을 나눕니다</text><text x="28" y="80" font-size="21" fill="#525252" font-weight="400">Crimson · Mint · Acid 연출 예시</text><text x="28" y="130" font-size="25" fill="#171717" font-weight="700">벌스</text><text x="275" y="130" font-size="21" fill="#525252" font-weight="400">Mint 중심</text><text x="28" y="164" font-size="20" fill="#525252" font-weight="400">절제 · 가사 읽기에 집중</text><rect x="28" y="184" width="544" height="8" fill="#d4d4d4"/><rect x="28" y="184" width="190.39999999999998" height="8" fill="#32665b"/><text x="28" y="246" font-size="25" fill="#171717" font-weight="700">후렴</text><text x="275" y="246" font-size="21" fill="#525252" font-weight="400">Crimson + Acid</text><text x="28" y="280" font-size="20" fill="#525252" font-weight="400">강조 · 비트와 색 전환</text><rect x="28" y="300" width="544" height="8" fill="#d4d4d4"/><rect x="28" y="300" width="435.20000000000005" height="8" fill="#a12e47"/><text x="28" y="362" font-size="25" fill="#171717" font-weight="700">브리지</text><text x="275" y="362" font-size="21" fill="#525252" font-weight="400">Mint 중심</text><text x="28" y="396" font-size="20" fill="#525252" font-weight="400">호흡 · 다음 후렴과 대비</text><rect x="28" y="416" width="544" height="8" fill="#d4d4d4"/><rect x="28" y="416" width="119.68" height="8" fill="#32665b"/><text x="28" y="478" font-size="25" fill="#171717" font-weight="700">마지막 후렴</text><text x="275" y="478" font-size="21" fill="#525252" font-weight="400">Acid + Crimson</text><text x="28" y="512" font-size="20" fill="#525252" font-weight="400">가장 강하게 · 가독성 유지</text><rect x="28" y="532" width="544" height="8" fill="#d4d4d4"/><rect x="28" y="532" width="516.8" height="8" fill="#586524"/><path d="M28 600L572 600" fill="none" stroke="#737373" stroke-dasharray="4 5"/><text x="28" y="638" font-size="20" fill="#525252" font-weight="400">막대는 상대적인 연출 강약의 예시이며</text><text x="28" y="667" font-size="20" fill="#525252" font-weight="400">실제 설정값을 뜻하지 않습니다.</text></g></svg>

@@ -1,0 +1,27 @@
+{
+  "tool": "built-in image_gen",
+  "artistIsFictional": true,
+  "previewPhotoNote": "카탈로그는 단일 가상 아티스트 사진을 세 장면에 재사용. 실제 곡 제작에서는 같은 인물의 별도 구도 3장 권장.",
+  "images": [
+    {
+      "role": "artist",
+      "saved": "photo-a.png",
+      "generatedPath": "local-source:exec-28b785ec-54cd-4117-ba79-19d0efd01bdf.png",
+      "prompt": "Use case: photorealistic-natural. Asset: cinematic landscape 16:9 music photo to become a fictional artist CD cover and animated album. Entirely fictional adult Korean woman R&B singer, late twenties, chin-length tousled dark hair, charcoal denim jacket over plain dark top, half body in the central 55%, looking sideways with a wistful expression in a wet narrow Seoul backstreet after midnight. Violet storefront and subtle cyan reflected signs outside frame, real droplets on glass, disposable high ISO film with large beautiful grain, gentle lens halation, slight handheld imperfection, strong photographic skin texture, low key, intimate. Visually arresting music editorial, subdued beautiful violet and petrol blue, not a glossy futuristic illustration. No text, no legible signage, no logos, no CD or case, no real celebrity."
+    },
+    {
+      "role": "case",
+      "saved": "case.png",
+      "generatedPath": "local-source:exec-41efe46f-3fbc-4295-a4dd-538772badcf5.png",
+      "prompt": "Use case: product-mockup; reference Image 1 is the exact artist/photo to print on the insert, keep the same fictional faces and clothing. Create a single square full CD jewel case asset for compositing in a motion graphic. Almost straight-on flat-lay, all four corners fully inside the image with 6% transparent margin. A closed jewel case with the reference photograph clearly printed on the slightly skewed inner paper cover, handmade analog indie album physical object. Smoky transparent violet polycarbonate, a photographic printed insert with the same singer and night photo, a little uneven violet translucent tape at a corner, subtle cyan edge reflection. Worn physical plastic, not futuristic 3D chrome. A clean isolated cutout on true transparent background; preserve alpha including the translucent plastic outline. Soft subtle object shadow only, no desk/background, no disc outside, no extra objects, no text or logos. This is a lived-in worn photo case, beautifully photographed, never a perfect glossy sterile rectangle."
+    },
+    {
+      "id": "neon-afterhours",
+      "role": "paper",
+      "saved": "paper.png",
+      "generatedPath": "local-source:exec-bce5f762-1767-42a7-9f06-92f44fd51a3f.png",
+      "prompt": "Use case: photorealistic-natural. Asset: 16:9 photographic physical desktop background for a nighttime R&B CD motion graphic. Dark midnight violet textured paper on a deep charcoal table, little overlapping translucent tracing paper at top left, a small piece of lavender tape near an outer corner, a subtle photographic cyan light reflection from outside the frame, slight grain and imperfect paper edges. Mostly quiet empty central and right areas for CD and jewel case to be composed later. Bottom 15% almost plain dark violet for pale lyrics. Beautiful analog tactile surface not sci-fi, no grids, no text, no numbers, no people, no CD or case, no icons."
+    }
+  ],
+  "publicExportNote": "Local source paths were omitted; historical hashes and review limitations are preserved."
+}

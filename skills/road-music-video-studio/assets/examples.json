@@ -1,0 +1,58 @@
+[
+  {
+    "mode": "showreel-cd",
+    "title": "락발라드 — 아직 나의 봄",
+    "summary": "앨범 이미지와 회전 CD를 중심으로 음악을 오래 감상하는 플레이리스트 영상입니다.",
+    "tags": [
+      "회전 CD",
+      "앨범 표지",
+      "플레이리스트"
+    ],
+    "video": "road-music-video-studio/assets/examples/showreel-cd.mp4",
+    "poster": "road-music-video-studio/assets/examples/showreel-cd.jpg",
+    "audioNote": "최근 전곡 복구본의 인트로와 첫 가사 구간을 이어 붙인 24초 샘플입니다. 주황색 추적 시각은 자동 정렬 초안입니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 락발라드 — 아직 나의 봄"
+  },
+  {
+    "mode": "showreel-mv",
+    "title": "벨루나 — 프리즘 (VELUNE·벨루네 MV v5)",
+    "summary": "음악의 이야기와 감정에 맞춘 AI 이미지·장면 전환·카메라 편집으로 전곡 MV를 만듭니다.",
+    "tags": [
+      "이미지 기반 MV",
+      "장면·스토리보드",
+      "image_gen / Nano Banana"
+    ],
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-mv-prism.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-mv-prism.jpg",
+    "audioNote": "프리즘 MV v5의 0–18초 대표 샘플입니다. 파일의 아티스트 표기는 VELUNE(벨루네)이며, 사용자 표기인 벨루나 — 프리즘 원곡 프로젝트를 사용합니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 프리즘 (VELUNE·벨루네 MV v5)"
+  },
+  {
+    "mode": "jizura",
+    "title": "벨루나 — 어디든 좋아",
+    "summary": "가사와 비트를 타이포그래피·배치·색·전환으로 표현하고 JIZURA 편집기에서 조절합니다.",
+    "tags": [
+      "키네틱 타이포",
+      "비트 그래픽",
+      "네이티브 편집기"
+    ],
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/jizura-eodideun-joha.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/jizura-eodideun-joha.jpg",
+    "audioNote": "가사 싱크 보완본의 원곡 40–58초 대표 샘플입니다. 원가사는 유지했고 자동 정렬 초안 36행·추정 6행으로 기록되어 있으며 직접 청취로 확정하지 않았습니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 어디든 좋아"
+  },
+  {
+    "mode": "showreel-motion",
+    "title": "벨루나 — 내일로 달려",
+    "summary": "음악과 가사에 어울리는 이미지·기하 그래픽·리듬 효과를 조합해 움직이는 화면을 만듭니다.",
+    "tags": [
+      "사진·기하 모션",
+      "구간별 변주",
+      "리듬·가사 강조"
+    ],
+    "video": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-motion-tomorrow.mp4",
+    "poster": "road-music-video-studio/assets/examples/20261018-confirmed/showreel-motion-tomorrow.jpg",
+    "audioNote": "전곡 리빌드 완성본의 첫 후렴 53.82–77.82초 대표 샘플입니다. 원문 가사 시각은 기존 auto-asr-unreviewed 상태로 보존되어 직접 청취로 확정하지 않았습니다.",
+    "provenance": "사용자가 지정한 최근 프로젝트 · 벨루나 — 내일로 달려"
+  }
+]

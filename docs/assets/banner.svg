@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="title desc">
+  <title id="title">Music Road Skills</title><desc id="desc">AI 음악을 HTML 검토와 모션그래픽 영상으로 잇는 스킬 모음</desc>
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#132a35"/><stop offset="1" stop-color="#b86d47"/></linearGradient><filter id="b"><feGaussianBlur stdDeviation="36"/></filter></defs>
+  <rect width="1200" height="320" fill="#0e171d"/><circle cx="920" cy="90" r="155" fill="#e59b6a" opacity=".3" filter="url(#b)"/><circle cx="1050" cy="250" r="120" fill="#64bfd1" opacity=".24" filter="url(#b)"/>
+  <rect x="48" y="48" width="1104" height="224" rx="30" fill="url(#g)" opacity=".82"/><path d="M78 213c120-123 208 63 332-44s197-65 294-1 204 37 404-99" fill="none" stroke="#fff5e9" stroke-width="5" opacity=".82"/>
+  <text x="82" y="132" fill="#fffaf3" font-family="system-ui, sans-serif" font-size="57" font-weight="800" letter-spacing="-2">Music Road Skills</text><text x="85" y="174" fill="#f4dfcb" font-family="system-ui, sans-serif" font-size="22" font-weight="600">AI 음악에서 HTML 검토와 모션그래픽 영상까지</text>
+</svg>

@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-18",
+  "selection": "User explicitly named four recent projects. Three verified master videos below replaced generic samples; the Showreel CD master for 당신이 참 좋아요 was not located, so its prior verified sample remains rather than substituting a different video.",
+  "samples": [
+    {
+      "mode": "showreel-cd",
+      "title": "락발라드 — 아직 나의 봄",
+      "engine": "Showreel 그루브 다이얼 v6",
+      "sourceLabel": "local-source:아직나의봄_그루브다이얼_주황추적_전곡초안_공유용.mp4",
+      "sourceSha256": "46f85cb4f81d4ac7b3126ce6debb7a36294e4baa350325288dcf03f3be3545d3",
+      "sourceContainerRangesSeconds": [
+        [
+          0,
+          12
+        ],
+        [
+          27,
+          39
+        ]
+      ],
+      "durationSeconds": 24.0,
+      "fps": "30/1",
+      "frames": 720,
+      "width": 1280,
+      "height": 720,
+      "sha256": "4a562c46dbd8a3280bba3ce5201f30b7ee4f0d3420a6b766d866dafe5a9d2e1e",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "showreel-mv",
+      "title": "벨루나 — 프리즘 (VELUNE·벨루네 MV v5)",
+      "engine": "Showreel MV v5",
+      "sourceLabel": "local-source:VELUNE_프리즘_Showreel_MV_v5.mp4",
+      "sourceSha256": "bcda3cdcf996362849750f5e26f467e02e6b6a7c94c13dd5e496e28c409fb511",
+      "sourceContainerRangesSeconds": [
+        [
+          0,
+          18
+        ]
+      ],
+      "durationSeconds": 18.0,
+      "fps": "30/1",
+      "frames": 540,
+      "width": 1280,
+      "height": 720,
+      "sha256": "7148e70eed9dc47c01a40d6704c72b31442ea3d62b9d1c0610801cab6a98015f",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "jizura",
+      "title": "벨루나 — 어디든 좋아",
+      "engine": "JIZURA · 신스80/베이퍼/캔디 조합",
+      "sourceLabel": "local-source:벨루나 - 어디든 좋아 - 가사 싱크 보완.mp4",
+      "sourceSha256": "45c533206b35584cf2b72af77ed30f96f0ca56e7008a85240a3feb5606c8be38",
+      "sourceContainerRangesSeconds": [
+        [
+          40,
+          58
+        ]
+      ],
+      "durationSeconds": 18.0,
+      "fps": "30/1",
+      "frames": 540,
+      "width": 1280,
+      "height": 720,
+      "sha256": "8f478fc5c3449dea2458a23db2549bf04f50ad38490732cb069df5ba5ed26ed9",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    },
+    {
+      "mode": "showreel-motion",
+      "title": "벨루나 — 내일로 달려",
+      "engine": "Showreel 기본 모션",
+      "sourceLabel": "local-source:tomorrow-full-final.mp4",
+      "sourceSha256": "3b14845984d89c466498ba9037c87f0f206057fefefdd4ef8bdb5d51237f995b",
+      "sourceContainerRangesSeconds": [
+        [
+          53.82,
+          77.82
+        ]
+      ],
+      "durationSeconds": 24.0,
+      "fps": "30/1",
+      "frames": 720,
+      "width": 1280,
+      "height": 720,
+      "sha256": "7cf96ee0e0cb13abd800aff6fec82e8c6bab06a6af5eebfef7870705dceaa0a4",
+      "fullDecode": "passed",
+      "newImageGeneration": false,
+      "paidApiCalled": false,
+      "listeningReviewed": false
+    }
+  ]
+}

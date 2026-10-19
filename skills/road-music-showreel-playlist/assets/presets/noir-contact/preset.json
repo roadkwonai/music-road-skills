@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "noir-contact",
+  "name": "누아르 필름",
+  "aliases": [
+    "누아르",
+    "흑백 필름",
+    "필름 누아르"
+  ],
+  "genres": [
+    "재즈",
+    "소울",
+    "블루스",
+    "록 발라드"
+  ],
+  "description": "은염 흑백 사진과 콘택트 시트, 거친 검은 종이 위의 은색 CD.",
+  "variant": "noir",
+  "discPeriodSeconds": 8,
+  "caption": {
+    "font": "serif",
+    "size": 57,
+    "effect": "bracket"
+  },
+  "palette": {
+    "paper": "#242426",
+    "ink": "#f1eee5",
+    "light": "#f1eee5",
+    "dark": "#141417",
+    "accent": "#d9bb7a"
+  },
+  "artDirection": "존재하지 않는 성인 재즈 싱어. 작고 어두운 리허설 스튜디오의 흑백 35mm 다큐멘터리. 은염 입자, 약한 할레이션, 자연스러운 표정.",
+  "prompts": {
+    "artist": "존재하지 않는 성인 재즈 싱어. 작고 어두운 리허설 스튜디오의 흑백 35mm 다큐멘터리. 은염 입자, 약한 할레이션, 자연스러운 표정. 음악의 장르·보컬 구성에 맞는 가상 아티스트를 설계. 실존 인물·로고·글자 없음.",
+    "case": "같은 아티스트 사진을 인쇄한 살짝 닳고 어긋난 주얼케이스. 정면에 가까운 정사각, 바깥은 실제 투명 alpha. 광고 렌더처럼 매끈하지 않게.",
+    "paper": "16:9 평면 촬영. 은염 흑백 사진과 콘택트 시트, 거친 검은 종이 위의 은색 CD. 케이스·CD·인물 없이 배경만. 아래 15%는 자막이 읽히게 조용하게."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "unreviewed-asr-draft-not-canonical-lyrics",
+    "musicNote": "모든 스타일은 같은 록 발라드 구간으로 비교. 추천 장르 전용 음원 아님.",
+    "durationSeconds": 18,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 540,
+    "subframes": 1,
+    "sourceClipStartSeconds": 79.76,
+    "sourceMusicSha256": "1f54b234936e97020ef1bbeb79dccfb585b1f8d211b2d1e56c3516b18dac359a"
+  }
+}

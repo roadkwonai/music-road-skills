@@ -1,0 +1,7 @@
+interface:
+  display_name: "Road Music 쇼릴 MV"
+  short_description: "음악 장르에 맞춰 기획·이미지 생성부터 Showreel MV 제작"
+  default_prompt: "$road-music-showreel-mv로 이 음악의 장르와 분위기에 맞는 연출·스토리보드·이미지 생성부터 Showreel 전곡 M/V와 필요한 자막·검수까지 진행해줘."
+
+policy:
+  allow_implicit_invocation: true

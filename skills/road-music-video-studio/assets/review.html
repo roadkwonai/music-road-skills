@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko" data-road-music-ui>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f5f5">
+<title>Road Music 결과 검수</title>
+<link rel="stylesheet" href="/design.css?token=__DESIGN_TOKEN__">
+</head>
+<body>
+<a class="skip-link" href="#main-content">본문으로 건너뛰기</a>
+<main id="main-content" class="review-page" data-rm-guide-tools>
+  <header class="page-heading project-strip">
+    <div><h1>스토리보드와 결과 검수</h1><p>영상·스토리보드·원가사·자막을 비교하고, 수정 의견과 검수 상태를 저장합니다.</p></div>
+    <div class="page-actions"><p id="projectStatus" class="project-status" role="status">준비 중…</p><a class="button secondary" id="reviewGuide" href="#"><svg class="rm-icon" aria-hidden="true" focusable="false"><use href="#rm-icon-book-open"></use></svg>결과 검수 사용 가이드</a><button id="copyPageGuide" class="button secondary" type="button" title="이 화면의 사용 가이드 Markdown 원문을 복사합니다"><svg class="rm-icon" aria-hidden="true" focusable="false"><use href="#rm-icon-document-duplicate"></use></svg>Markdown 복사</button></div>
+  </header>
+  <p id="pageCopyStatus" class="hint" role="status"></p><textarea id="pageCopyFallback" class="copy-fallback" aria-label="복사할 가이드 Markdown 원문" readonly hidden></textarea>
+  <section id="review-media" class="workflow-section">
+    <div class="section-heading"><div><p class="section-kicker">검수 자료</p><h2>영상과 스토리보드</h2><p>등록된 완성 영상과 스토리보드를 비교합니다. 영상이 없으면 제작 완료 후 완성 결과에서 등록 상태를 확인하세요.</p></div><div class="page-actions"><button id="refreshReview" class="button secondary" type="button">새 결과 확인</button><a id="resultsLink" class="text-link" href="#">완성 결과 열기</a></div></div>
+    <p id="refreshReviewResult" class="hint" role="status"></p>
+    <div id="mediaReview" class="review-grid"></div>
+  </section>
+  <section id="lyric-review" class="workflow-section">
+    <div class="section-heading"><div><p class="section-kicker">가사·자막</p><h2>원가사와 자막 대조</h2><p>원가사와 등록된 자막 파일을 각각 확인합니다. 서로 다른 파일을 임의로 한 줄씩 연결하지 않습니다.</p></div></div>
+    <div class="review-columns"><article class="panel"><h3>원가사</h3><div id="lyricsReview"></div></article><article class="panel"><h3>자막 파일</h3><div id="captionsReview"></div></article></div>
+  </section>
+  <section id="feedback-section" class="workflow-section workflow-end">
+    <div class="section-heading"><div><p class="section-kicker">검수 의견</p><h2>수정 요청과 검수 상태</h2><p>수정할 장면·자막·전환·음량을 구체적으로 적고 상태를 저장합니다. 저장 전 원문과 영상 파일은 바뀌지 않습니다.</p></div></div>
+    <form id="feedbackForm" class="panel feedback-panel">
+      <label for="feedback">피드백</label> <span class="rm-help-wrap"><button type="button" class="rm-help" aria-label="피드백 도움말" aria-expanded="false"><svg class="rm-icon" aria-hidden="true" focusable="false"><use href="#rm-icon-question-mark-circle"></use></svg></button><span class="rm-tooltip" role="tooltip">문제 구간과 원하는 수정 내용을 함께 적으면 다음 제작 단계에서 확인하기 쉽습니다.</span></span>
+      <textarea id="feedback" name="feedback" maxlength="12000" autocomplete="off" placeholder="예: 00:32 후렴 자막이 화면 아래에 잘려 보입니다…" aria-describedby="feedbackHelp"></textarea>
+      <small id="feedbackHelp">영상 시간, 문제, 원하는 변경을 함께 적어 주세요.</small>
+      <label for="reviewStatus">검수 상태</label> <span class="rm-help-wrap"><button type="button" class="rm-help" aria-label="검수 상태 도움말" aria-expanded="false"><svg class="rm-icon" aria-hidden="true" focusable="false"><use href="#rm-icon-question-mark-circle"></use></svg></button><span class="rm-tooltip" role="tooltip">초안은 검수 중, 수정 요청은 재작업 필요, 승인은 현재 결과를 납품 가능으로 기록합니다.</span></span>
+      <select id="reviewStatus" name="reviewStatus" autocomplete="off"><option value="draft">초안</option><option value="needs-revision">수정 요청</option><option value="approved">승인</option></select>
+      <div class="actions"><button id="saveFeedback" type="submit">피드백 저장</button><button id="completeReview" class="button secondary hidden" type="button">검수 마치기</button></div>
+      <p id="feedbackResult" class="hint" role="status"></p><div id="completion" class="notice hidden" role="status"></div>
+    </form>
+  </section>
+</main>
+<script id="page-guide-source" type="application/json">__GUIDE_MARKDOWN__</script>
+<script>__STUDIO_BOOTSTRAP__</script>
+<script>
+const boot=window.__STUDIO_BOOTSTRAP__, $=s=>document.querySelector(s);let state,feedback,reviewBusy=false;
+const uiIcon=name=>`<svg class="rm-icon" aria-hidden="true" focusable="false"><use href="#rm-icon-${name}"></use></svg>`;
+document.addEventListener('play',event=>{if(event.target.matches('audio,video'))document.querySelectorAll('audio,video').forEach(media=>{if(media!==event.target)media.pause()})},true);
+function esc(s){return String(s??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]))}
+$('#copyPageGuide').onclick=async()=>{const source=JSON.parse(document.getElementById('page-guide-source').textContent);try{await navigator.clipboard.writeText(source);$('#pageCopyStatus').textContent='가이드 Markdown을 복사했습니다.'}catch{const field=$('#pageCopyFallback');field.hidden=false;field.value=source;field.focus();field.select();$('#pageCopyStatus').textContent='자동 복사를 허용하지 않아 원문을 선택했습니다. 직접 복사해 주세요.'}};
+function pageUrl(path){return path+'?token='+encodeURIComponent(boot.token)}
+function guideUrl(slug){return '/guide/'+slug+'/?token='+encodeURIComponent(boot.token)}
+function sourceLabel(status){return status==='current'?'현재 원음과 일치':status==='different-source'?'다른 원음의 결과':'원음 확인 필요'}
+function fileSize(bytes){if(!Number.isFinite(bytes))return '용량 정보 없음';return new Intl.NumberFormat('ko-KR',{maximumFractionDigits:1}).format(bytes>=1048576?bytes/1048576:Math.ceil(bytes/1024))+(bytes>=1048576?' MB':' KB')}
+async function api(path,options={}){try{const r=await fetch(path+(path.includes('?')?'&':'?')+'token='+encodeURIComponent(boot.token),{signal:AbortSignal.timeout(30000),...options});const data=await r.json();if(!r.ok)throw Error(data.error||'검수 정보를 저장하지 못했습니다');return data}catch(error){if(['AbortError','TimeoutError'].includes(error.name))throw Error('검수 응답 시간이 초과되었습니다. 잠시 후 다시 시도하세요.');if(error.name==='TypeError')throw Error('제작실에 연결할 수 없습니다. 연결을 확인한 뒤 다시 시도하세요.');throw error}}
+function download(item,label){return `<a class="button secondary download-link" href="${esc(item.downloadUrl||item.url+'&download=1')}" download="${esc(item.name)}" aria-label="${esc(label+' 다운로드 · '+item.name)}">${uiIcon('arrow-down-tray')}다운로드</a>`}
+function item(item,type){const media=type==='video'?`<video controls playsinline preload="metadata" aria-label="${esc(item.name)} 재생" src="${esc(item.url)}"></video>`:type==='storyboard'?`<img src="${esc(item.url)}" alt="${esc(item.name)}" width="1280" height="720" loading="lazy">`:['lyrics','caption'].includes(type)&&typeof item.text==='string'?`<pre class="lyrics-text" tabindex="0">${esc(item.text)}</pre>`:type==='caption'&&item.previewError?`<p class="hint">${esc(item.previewError)}. 자막 파일을 내려받아 확인하세요.</p>`:'';return `<article class="review-file"><div><strong>${esc(item.name)}</strong><small>${esc(fileSize(item.size))} · ${esc(sourceLabel(item.sourceStatus))}</small></div>${media}${download(item,type==='lyrics'?'원가사':type==='storyboard'?'스토리보드':type==='caption'?item.name.split('.').pop().toUpperCase():'영상')}</article>`}
+function empty(text,guide){return `<div class="empty-state compact"><p>${esc(text)}</p><a class="text-link" href="${esc(guide)}">가이드에서 다음 단계를 확인하세요</a></div>`}
+function render(draftOverride){const review=state.media.review||{},videos=review.videos||[],storyboard=review.storyboard||[],lyrics=review.lyrics||[],captions=review.captions||[];$('#projectStatus').textContent=state.projectName+' · 검수 자료 '+new Intl.NumberFormat('ko-KR').format(videos.length+storyboard.length+lyrics.length+captions.length)+'개';$('#reviewGuide').href=guideUrl('review');$('#resultsLink').href=pageUrl('/results/');$('#mediaReview').innerHTML=`<article class="panel review-panel"><h3>완성 영상</h3>${videos.map(x=>item(x,'video')).join('')||empty('등록된 완성 영상이 없습니다.',guideUrl('results'))}</article><article class="panel review-panel"><h3>스토리보드</h3>${storyboard.map(x=>item(x,'storyboard')).join('')||empty('등록된 스토리보드가 없습니다.',guideUrl('review'))}</article>`;$('#lyricsReview').innerHTML=lyrics.map(x=>item(x,'lyrics')).join('')||empty('등록된 원가사가 없습니다. 연주곡은 가사가 없어도 됩니다.',guideUrl('results'));$('#captionsReview').innerHTML=captions.map(x=>item(x,'caption')).join('')||empty('등록된 자막 파일이 없습니다. SRT와 LRC는 서로 다른 형식으로 표시합니다.',guideUrl('review'));feedback=draftOverride||restoreFeedback(state.feedback);$('#feedback').value=feedback.note;$('#reviewStatus').value=feedback.status;$('#completeReview').classList.toggle('hidden',!state.reviewSession);bindHelp()}
+function validFeedback(value){return value&&typeof value.note==='string'&&value.note.length<=12000&&['draft','needs-revision','approved'].includes(value.status)}
+function restoreFeedback(saved){const clean={note:saved?.note||'',status:saved?.status||'draft'};try{const cached=JSON.parse(sessionStorage.getItem('road-music-review-draft:'+boot.token));if(validFeedback(cached))return cached}catch{}try{const legacy=JSON.parse(sessionStorage.getItem('road-music-studio-draft:'+boot.token));if(validFeedback(legacy?.feedback))return legacy.feedback}catch{}return clean;}
+function rememberFeedback(){if(!state)return true;const value={note:$('#feedback').value,status:$('#reviewStatus').value};try{sessionStorage.setItem('road-music-review-draft:'+boot.token,JSON.stringify(value));return true}catch{return value.note===(state.feedback?.note||'')&&value.status===(state.feedback?.status||'draft')}}
+$('#feedback').oninput=rememberFeedback;$('#reviewStatus').onchange=rememberFeedback;
+if(window.addEventListener)window.addEventListener('pagehide',rememberFeedback);
+document.addEventListener('click',event=>{const link=event.target.closest('a');if(link&&!link.hasAttribute('download')&&!link.getAttribute('href')?.startsWith('#')&&!rememberFeedback()){event.preventDefault();$('#feedbackResult').textContent='임시 의견을 보관할 수 없습니다. 피드백 저장 후 이동해 주세요.';$('#feedbackResult').classList.add('message-error')}});
+function bindHelp(){document.querySelectorAll('.rm-help').forEach((button,index)=>{const wrap=button.closest('.rm-help-wrap'),tip=wrap?.querySelector('.rm-tooltip');if(!tip)return;tip.id=tip.id||'page-help-'+index;button.setAttribute('aria-describedby',tip.id);const open=()=>{document.querySelectorAll('.rm-help[aria-expanded=true]').forEach(other=>other.setAttribute('aria-expanded','false'));button.setAttribute('aria-expanded','true');const box=button.getBoundingClientRect(),width=Math.min(280,innerWidth-32);tip.style.width=width+'px';tip.style.left=Math.max(16,Math.min(box.left,innerWidth-width-16))+'px';tip.style.top=Math.max(16,Math.min(box.bottom+8,innerHeight-tip.offsetHeight-16))+'px';};button.onclick=open;button.onfocus=open;button.onblur=()=>button.setAttribute('aria-expanded','false');wrap.onpointerenter=event=>{if(event.pointerType==='mouse')open()};wrap.onpointerleave=event=>{if(event.pointerType==='mouse'&&document.activeElement!==button)button.setAttribute('aria-expanded','false')};});}
+document.addEventListener('click',event=>{if(!event.target.closest('.rm-help-wrap'))document.querySelectorAll('.rm-help[aria-expanded=true]').forEach(button=>button.setAttribute('aria-expanded','false'))});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')document.querySelectorAll('.rm-help[aria-expanded=true]').forEach(item=>item.setAttribute('aria-expanded','false'))});
+function feedbackValue(){return {note:$('#feedback').value.trim(),status:$('#reviewStatus').value}}
+function feedbackNeedsSave(value){return !state||value.note!==(state.feedback?.note||'')||value.status!==(state.feedback?.status||'draft')}
+function setReviewBusy(busy){reviewBusy=busy;for(const selector of ['#feedback','#reviewStatus','#saveFeedback','#completeReview','#refreshReview'])$(selector).disabled=busy}
+function feedbackMessage(text,failed=false){$('#feedbackResult').textContent=text;$('#feedbackResult').classList.toggle('message-error',failed)}
+async function saveFeedbackValue(value){await api('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json','X-Studio-Token':boot.token},body:JSON.stringify(value)});state.feedback=value;feedback=value;rememberFeedback()}
+$('#feedbackForm').onsubmit=async event=>{event.preventDefault();if(reviewBusy)return;const value=feedbackValue();setReviewBusy(true);feedbackMessage('피드백 저장 중…');try{await saveFeedbackValue(value);feedbackMessage('피드백을 저장했습니다.')}catch(error){feedbackMessage(error.message,true)}finally{setReviewBusy(false)}};
+$('#completeReview').onclick=async()=>{if(reviewBusy)return;const value=feedbackValue();setReviewBusy(true);$('#completion').classList.add('hidden');try{if(feedbackNeedsSave(value)){feedbackMessage('피드백을 저장한 뒤 검수를 마칩니다.');try{await saveFeedbackValue(value);feedbackMessage('피드백을 저장했습니다.')}catch(error){feedbackMessage('피드백을 저장하지 못해 검수를 마칠 수 없습니다. '+error.message,true);return}}$('#completion').classList.remove('hidden');$('#completion').classList.remove('message-error');$('#completion').textContent='검수를 마치는 중…';await api('/api/complete',{method:'POST',headers:{'Content-Type':'application/json','X-Studio-Token':boot.token},body:'{}'});$('#completion').textContent='검수를 마쳤습니다.'}catch(error){$('#completion').classList.remove('hidden');$('#completion').textContent=error.message;$('#completion').classList.add('message-error')}finally{setReviewBusy(false)}};
+$('#refreshReview').onclick=async()=>{if(reviewBusy)return;const draft={note:$('#feedback').value,status:$('#reviewStatus').value};setReviewBusy(true);const result=$('#refreshReviewResult');result.textContent='새 결과 확인 중…';result.classList.remove('message-error');try{state=await api('/api/state');render(draft);result.textContent='새 결과를 확인했습니다. 작성 중인 피드백은 유지했습니다.'}catch(error){result.textContent='새 결과를 확인하지 못했습니다. '+error.message;result.classList.add('message-error')}finally{setReviewBusy(false)}};
+api('/api/state').then(data=>{state=data;render()}).catch(error=>{$('#projectStatus').textContent=error.message;$('#feedbackResult').textContent='검수 자료를 불러오지 못했습니다. '+error.message;$('#feedbackResult').classList.add('message-error')});
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ko" data-fonts="Paperlogy">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Showreel CD playlist</title>
+<style>
+  :root { --bg:#efe3cc; --ink:#34292d; --light:#fff8eb; --dark:#1e171a; --accent:#be5476; }
+  html,body{margin:0;height:100%;background:#000;overflow:hidden}.cam,.top,.scene{position:absolute;inset:0}.scene{overflow:hidden}#wrap{transform-origin:0 0}#stage{position:relative;overflow:hidden;background:var(--bg);color:var(--ink);font-family:"Paperlogy",sans-serif;font-kerning:normal;-webkit-font-smoothing:antialiased;word-break:keep-all}.player{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;gap:12px;align-items:center;padding:0 12px;background:#111;color:#777;font:12px/1 Paperlogy,sans-serif}.player .scrub{flex:1}
+  .cd-picture{display:block;width:1920px;height:1080px}.cd-lyric{position:absolute;left:100px;right:100px;top:928px;height:104px;display:flex;align-items:center;justify-content:center;white-space:pre;font-family:"Paperlogy",sans-serif;font-size:57px;font-weight:700;line-height:1.6;letter-spacing:-.015em;pointer-events:none}.cd-lyric .line{position:absolute;left:50%;display:flex;align-items:center;transform:translateX(-50%);white-space:pre}.cd-lyric span{display:inline-block;padding:6px 0;will-change:transform}.cd-lyric .space{width:.35em}.caption-mark{position:absolute;left:50%;bottom:17px;pointer-events:none}.caption-mark.underline{width:170px;height:3px;background:var(--accent);transform:translateX(-50%) scaleX(0);transform-origin:left center}.caption-mark.bracket{width:calc(100% + 48px);height:43px;border-left:3px solid var(--accent);border-right:3px solid var(--accent);transform:translateX(-50%);opacity:0}.caption-mark.glow{width:calc(100% + 60px);height:62px;border-radius:40px;background:var(--accent);filter:blur(18px);transform:translateX(-50%);opacity:0}.caption-mark.marker{width:calc(100% + 34px);height:24px;border-radius:4px;background:var(--accent);transform:translateX(-50%) rotate(-.7deg);opacity:0}
+</style>
+<link rel="stylesheet" data-road-music-design href="../../../road-music-video-studio/assets/design/fonts.css">
+<link rel="stylesheet" data-road-music-design href="../../../road-music-video-studio/assets/design/design.css">
+</head>
+<body><div id="wrap"><div id="stage"></div></div>
+<script src="timeline.js"></script>
+<script src="engine.js"></script>
+<script src="fx.js"></script>
+<script src="optics.js"></script>
+<script src="spectrum.js"></script>
+<script src="config.js"></script>
+<script src="cd.js"></script>
+<script src="lyrics.js"></script>
+<script src="playlist-ui.js"></script>
+<script src="scenes.js"></script>
+</body></html>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "JIZURA 음악 스튜디오"
+  short_description: "음악·가사에 맞는 단일·리듬 변주·여러 스타일 조합을 추천하고 영상 제작"
+  default_prompt: "$road-music-jizura-playlist로 음악·가사·비트를 해석해 단일 스타일과 화려한 구간별 스타일 조합을 비교 추천하고, 선택한 구성으로 모션그래픽을 제작해줘."

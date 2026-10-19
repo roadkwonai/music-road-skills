@@ -1,0 +1,1122 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "trot-classic",
+      "name": "정통 트로트",
+      "aliases": [
+        "트로트",
+        "정통트로트",
+        "trot",
+        "트롯"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 솔로 또는 듀오의 친근한 라이브 초상. 나이·성별은 음악과 요청에 맞추며, 연주곡이면 인물 대신 마이크·악보·빈 무대의 흔적을 사용한다.",
+      "sceneDirection": "소극장에서 노래 전 짧게 숨을 고르는 순간, 연습실의 가까운 시선과 마이크 옆 손을 담는다.",
+      "photoDirection": "늦은 오후 소극장 또는 동네 연습실의 35mm 컬러 다큐멘터리, 따뜻한 측광과 자연스러운 표정.",
+      "paperDirection": "크림 프로그램 종이, 손글씨 같은 선과 바랜 티켓 조각, 과도한 금색 장식이나 행사 현수막 없이.",
+      "motionDirection": "focus와 print로 보컬 초상을 또렷하게 잡고 memory에서 사진 두 장을 천천히 교체한 뒤 CD로 정착한다. 지지직과 표시 지연은 쓰지 않는다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 8,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#F3E6CD",
+          "ink": "#392D31",
+          "light": "#FFF9EE",
+          "dark": "#241B1E",
+          "accent": "#B85F52"
+        }
+      }
+    },
+    {
+      "id": "trot-semi",
+      "name": "세미 트로트",
+      "aliases": [
+        "세미트로트",
+        "modern trot"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 보컬 또는 작은 밴드의 밝고 가벼운 공연 전 스냅. 연주곡에는 리듬 악기와 빈 스탠드를 중심으로 둔다.",
+      "sceneDirection": "공연 대기실과 리허설실을 오가며, 웃음 뒤의 준비 동작과 넓은 무대 가장자리를 함께 담는다.",
+      "photoDirection": "소형 라이브 클럽의 플래시 스냅과 창가 인물 사진을 섞은 컬러 필름.",
+      "paperDirection": "살구색 메모지, 체크 패턴, 낡은 공연 패스와 투명 테이프의 가벼운 콜라주.",
+      "motionDirection": "print 카드의 짧은 리듬 컷과 bokeh의 작은 빛 번짐을 사용하고 CD 회전은 안정적으로 유지한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#F6E6D9",
+          "ink": "#36404B",
+          "light": "#FFF9F1",
+          "dark": "#26303A",
+          "accent": "#E66F68"
+        }
+      }
+    },
+    {
+      "id": "trot-dance",
+      "name": "댄스 트로트",
+      "aliases": [
+        "댄스트로트",
+        "trot dance"
+      ],
+      "baseStyle": "neon-afterhours",
+      "artistDirection": "가상 성인 보컬과 댄서 또는 밴드의 활기 있는 리허설 순간. 인물 수와 구성은 곡의 실제 편성에 맞춘다.",
+      "sceneDirection": "연습실 중앙에서 한 동작을 맞추는 순간, 거울 가장자리와 발의 움직임을 비정형 구도로 포착한다.",
+      "photoDirection": "색 필터가 있는 리허설실, 움직임이 약간 남은 플래시 사진과 반사 거울의 질감.",
+      "paperDirection": "코발트와 코랄 색종이, 유광 스티커가 아닌 닳은 라미네이트와 얇은 반사 필름.",
+      "motionDirection": "focus에서 한 번의 펀치인, print에서 리듬 분할, CD 진입 전 짧은 프리즘 빛만 사용한다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "glow"
+        },
+        "palette": {
+          "paper": "#17233B",
+          "ink": "#F5F2E8",
+          "light": "#FFF8E9",
+          "dark": "#0D1426",
+          "accent": "#FF7868"
+        }
+      }
+    },
+    {
+      "id": "ballad",
+      "name": "발라드",
+      "aliases": [
+        "k-ballad",
+        "kballad"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 싱어송라이터 또는 보컬 듀오. 요청 없는 외모·관계 설정을 덧붙이지 않으며, 연주곡이면 빈 피아노와 방의 흔적으로 전환한다.",
+      "sceneDirection": "창가와 작은 녹음실에서 노래가 시작되기 전의 정적, 손과 옆얼굴의 가까운 구도를 사용한다.",
+      "photoDirection": "비 온 뒤 창가, 작은 녹음실, 은은한 역광의 35mm 컬러 사진과 부드러운 초점 이탈.",
+      "paperDirection": "아이보리 편지지, 접힌 사진, 흐린 잉크 자국과 얇은 트레이싱 페이퍼.",
+      "motionDirection": "느린 focus와 print 정지 구간으로 가사를 읽게 하고, memory의 한 번의 사진 교체 뒤 CD로 이어진다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 10,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#EEE5D6",
+          "ink": "#312A31",
+          "light": "#FFF9EF",
+          "dark": "#211C22",
+          "accent": "#A96A7A"
+        }
+      }
+    },
+    {
+      "id": "rock-ballad",
+      "name": "록 발라드",
+      "aliases": [
+        "락발라드",
+        "rockballad"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 보컬과 실제 곡 편성에 맞는 밴드. 연주곡은 기타 앰프, 드럼 스틱, 비어 있는 무대의 연주 후 흔적을 사용한다.",
+      "sceneDirection": "작은 공연장의 사운드체크와 퇴장 직후, 보컬·기타·드럼이 같은 공간에 느슨하게 남는 넓은 구도.",
+      "photoDirection": "황혼의 소규모 공연장, 거친 컬러 필름, 약간의 플래시와 마이크 케이블이 보이는 다큐멘터리 사진.",
+      "paperDirection": "구겨진 크림 포스터 종이, 검은 테이프, 손때 묻은 피크와 소량의 붉은 잉크.",
+      "motionDirection": "focus의 원형 확대와 memory의 사진 전환을 드럼 악센트에 맞추되 얼굴 이중상 없이 CD로 고정한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E9DCC7",
+          "ink": "#2D2930",
+          "light": "#FFF8E9",
+          "dark": "#1B1A20",
+          "accent": "#AE4F57"
+        }
+      }
+    },
+    {
+      "id": "rnb",
+      "name": "R&B",
+      "aliases": [
+        "rnb",
+        "rhythm and blues",
+        "알앤비",
+        "알엔비",
+        "r and b"
+      ],
+      "baseStyle": "neon-afterhours",
+      "artistDirection": "가상 성인 보컬 또는 프로듀서 듀오. 요청 전 국적·성별을 정하지 않고, 연주곡에는 손, 신시사이저, 스튜디오 조명만 남긴다.",
+      "sceneDirection": "심야 골목과 작은 스튜디오를 오가며, 내밀한 표정과 콘솔 위 손을 가까이 담는다.",
+      "photoDirection": "비에 젖은 창, 보라·시안 실내 조명, 중형 포맷 스냅의 자연스러운 피부와 낮은 채도.",
+      "paperDirection": "먹색 벨벳 종이, 투명 아세테이트, 번진 보라 잉크와 유리 반사.",
+      "motionDirection": "bokeh의 부드러운 빛 이동과 한 번의 focus만 쓰며 CD 진입 후에는 저속 회전과 반사를 유지한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 9,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "glow"
+        },
+        "palette": {
+          "paper": "#191629",
+          "ink": "#EEE9FF",
+          "light": "#FFF8FF",
+          "dark": "#0E0B19",
+          "accent": "#B592FF"
+        }
+      }
+    },
+    {
+      "id": "jazz",
+      "name": "재즈",
+      "aliases": [
+        "jazz"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 연주자 또는 보컬리스트의 리허설 기록. 인스트루멘털은 악기와 손, 빈 의자만으로도 완성한다.",
+      "sceneDirection": "작은 리허설실에서 서로의 박자를 듣는 순간, 악기 손잡이·옆얼굴·빈 의자를 교차해 담는다.",
+      "photoDirection": "작은 스튜디오의 은염 흑백 35mm, 느슨한 리허설 자세, 브러시와 악보의 미세한 입자.",
+      "paperDirection": "검은 콘택트 시트, 크림 악보 가장자리, 무광 차콜 보드와 은색 필기선.",
+      "motionDirection": "print의 콘택트 시트를 차분히 넘기고 bokeh를 최소화해 독주 공간을 남긴 다음 CD로 이어진다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#252527",
+          "ink": "#F0ECE2",
+          "light": "#FAF5EA",
+          "dark": "#131316",
+          "accent": "#C6A66C"
+        }
+      }
+    },
+    {
+      "id": "pop",
+      "name": "팝",
+      "aliases": [
+        "pop",
+        "제이팝",
+        "jpop"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 솔로, 듀오 또는 밴드의 선명한 에디토리얼 초상. 실제 팀 구성과 곡의 에너지에 맞추고 정형화된 외모는 강제하지 않는다.",
+      "sceneDirection": "도시 창가와 단순한 배경 앞에서, 카메라를 정면으로 보거나 이동 중 멈춘 한 사람의 자신감 있는 구도.",
+      "photoDirection": "도시 창가와 컬러 배경을 오가는 90년대 잡지 스냅, 깨끗하지만 과하게 보정하지 않은 필름 질감.",
+      "paperDirection": "밝은 색지, 잘린 타이포 조각처럼 보이는 무문자 도형, 반투명 스티커와 접힌 포토 카드.",
+      "motionDirection": "focus와 print를 짧고 명료하게 교대하고, 후렴 전환은 한 번의 프리즘 반사로만 강조한다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#EDE7DD",
+          "ink": "#263649",
+          "light": "#FFF9F0",
+          "dark": "#1D2938",
+          "accent": "#E66F98"
+        }
+      }
+    },
+    {
+      "id": "k-pop",
+      "name": "K-POP",
+      "aliases": [
+        "케이팝",
+        "kpop"
+      ],
+      "baseStyle": "chrome-prism",
+      "artistDirection": "가상 성인 솔로, 듀오, 밴드 또는 앙상블을 실제 보컬·편성에 맞춰 설계한다. 성별·인원·국적은 캐스팅 입력 없이 가정하지 않는다.",
+      "sceneDirection": "깔끔한 현대 패션 스튜디오에서 공연 전 포즈, 연습 사이의 멈춘 동작, 또는 무대 직전의 자신감 있는 시선을 담는다.",
+      "photoDirection": "자연스러운 피부 질감과 정돈된 현대 패션, 선명한 스튜디오 조명을 쓰되 과보정한 무결점 피부나 레트로 인쇄 질감은 피한다.",
+      "paperDirection": "종이 역할명이어도 새 진주 아크릴과 크롬 스튜디오 바탕으로 만들며, 찢김·테이프·노후·빈티지 소품은 넣지 않는다.",
+      "motionDirection": "clean light-sweep, prism reflection, glass reveal로 인트로를 구성하고, 읽는 자막 위에는 지지직·난수·과도한 플래시를 쓰지 않는다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#EDF3FF",
+          "ink": "#17243E",
+          "light": "#FFFFFF",
+          "dark": "#101D39",
+          "accent": "#43BDEE"
+        }
+      }
+    },
+    {
+      "id": "indie-pop",
+      "name": "인디 팝",
+      "aliases": [
+        "인디팝",
+        "indiepop"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 싱어송라이터 또는 소규모 밴드의 생활감 있는 초상. 연주곡에는 악기와 작업대의 흔적을 사용한다.",
+      "sceneDirection": "집 녹음실·옥상·작업대에서 노트와 악기를 정리하는 순간을 친근한 거리로 담는다.",
+      "photoDirection": "집 녹음실과 옥상, 폴라로이드 가장자리와 부드러운 오전광이 있는 스냅.",
+      "paperDirection": "노트북 종이, 색연필 선, 바랜 테이프와 정리되지 않은 사진 모서리.",
+      "motionDirection": "memory에서 사진 스택을 부드럽게 치환하고 CD에서는 거의 정지에 가까운 느린 회전을 쓴다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 11,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#E9E6DB",
+          "ink": "#34444A",
+          "light": "#FFFDF5",
+          "dark": "#253137",
+          "accent": "#6F9C90"
+        }
+      }
+    },
+    {
+      "id": "city-pop",
+      "name": "시티 팝",
+      "aliases": [
+        "시티팝",
+        "citypop"
+      ],
+      "baseStyle": "neon-afterhours",
+      "artistDirection": "가상 성인 보컬 또는 세션 밴드의 야간 이동 장면. 인스트루멘털은 빈 차 안, 키보드, 도심 창문 반사로 표현한다.",
+      "sceneDirection": "밤의 이동 중 차창과 주차 공간, 키보드 앞에 앉은 인물의 옆모습을 넓게 배치한다.",
+      "photoDirection": "주유소와 주차장, 필름 플래시, 청록과 살구빛의 절제된 야간 컬러.",
+      "paperDirection": "남색 카드지, 선셋 그라데이션이 번진 종이, 오래된 영수증 질감과 얇은 투명 필름.",
+      "motionDirection": "bokeh의 도시 불빛만 천천히 이동시키고 CD는 8초 주기로 균일하게 회전한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 8,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "glow"
+        },
+        "palette": {
+          "paper": "#172B3D",
+          "ink": "#F6EBD9",
+          "light": "#FFF5E6",
+          "dark": "#0D1723",
+          "accent": "#FF9A6A"
+        }
+      }
+    },
+    {
+      "id": "synth-pop",
+      "name": "신스 팝",
+      "aliases": [
+        "신스팝",
+        "synthpop"
+      ],
+      "baseStyle": "neon-afterhours",
+      "artistDirection": "가상 성인 보컬 또는 신시사이저 듀오의 실험실 같은 작업 장면. 얼굴보다 장비를 중심에 둘 수 있다.",
+      "sceneDirection": "신시사이저와 케이블이 놓인 작업대에서 버튼을 조절하는 손과 고개를 숙인 옆모습을 담는다.",
+      "photoDirection": "아날로그 신스, CRT 빛, 보랏빛 그림자가 남는 80년대풍 컬러 필름.",
+      "paperDirection": "짙은 자주 종이, 작은 격자, 반사 아세테이트와 바랜 라벨 조각.",
+      "motionDirection": "print 전환을 박자에 맞춰 두 번 이하로 제한하고, 지속적인 화면 노이즈 없이 CD 반사로 마무리한다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "glow"
+        },
+        "palette": {
+          "paper": "#211A34",
+          "ink": "#F3EDFF",
+          "light": "#FFF8FF",
+          "dark": "#110D1D",
+          "accent": "#D675FF"
+        }
+      }
+    },
+    {
+      "id": "dance-pop",
+      "name": "댄스 팝",
+      "aliases": [
+        "댄스팝",
+        "dancepop"
+      ],
+      "baseStyle": "chrome-prism",
+      "artistDirection": "가상 성인 퍼포머 또는 그룹을 실제 보컬·편성에 맞춰 설계한다. 요청에 없는 관계성·성별·국적은 설정하지 않는다.",
+      "sceneDirection": "연습실 바닥선과 거울을 활용해 움직임이 멈추는 한 박, 여러 사람이 넓게 호흡하는 구도를 쓴다.",
+      "photoDirection": "현대 패션 연습실과 거울의 선명한 스튜디오 사진, 자연스러운 피부와 한 프레임 남은 움직임.",
+      "paperDirection": "새 진주 아크릴과 크롬 반사가 있는 깨끗한 스튜디오 바탕. 종이 찢김·테이프·노후 질감은 쓰지 않는다.",
+      "motionDirection": "clean light-sweep과 prism/glass reveal로 진입하고, 가사는 첫 프레임부터 완전하게 읽힌다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#EDF3FF",
+          "ink": "#17243E",
+          "light": "#FFFFFF",
+          "dark": "#101D39",
+          "accent": "#43BDEE"
+        }
+      }
+    },
+    {
+      "id": "hip-hop-rap",
+      "name": "힙합·랩",
+      "aliases": [
+        "힙합",
+        "랩",
+        "hiphop",
+        "hip-hop",
+        "rap"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 래퍼, 프로듀서 또는 크루의 작업 장면. 연주곡에는 샘플러, 노트와 빈 의자를 사용한다.",
+      "sceneDirection": "작업실과 주차 공간에서 가사를 고치거나 비트를 확인하는 손, 낮은 시선의 가까운 구도를 사용한다.",
+      "photoDirection": "주차장·지하 작업실·골목의 16mm 거친 플래시 스냅, 과장된 범죄 이미지 없이.",
+      "paperDirection": "검은 카피지, 찢긴 크라프트 라벨, 무문자 스텐실 도형과 테이프 자국.",
+      "motionDirection": "print 컷을 킥에 맞춰 짧게 배치하되 상시 플리커·지지직은 쓰지 않고 CD는 묵직하게 회전한다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#202125",
+          "ink": "#F0EEE8",
+          "light": "#FFFDF6",
+          "dark": "#111215",
+          "accent": "#D84D50"
+        }
+      }
+    },
+    {
+      "id": "soul",
+      "name": "소울",
+      "aliases": [
+        "soul music",
+        "soul"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 보컬과 세션 연주자의 가까운 리허설. 요청 없이는 종교적 상징을 사용하지 않는다.",
+      "sceneDirection": "마이크와 건반 사이의 가까운 거리에서 숨을 고르고 서로 신호를 주는 손과 표정을 담는다.",
+      "photoDirection": "따뜻한 텅스텐 조명 아래의 흑백 또는 저채도 컬러, 손과 호흡이 보이는 클로즈업.",
+      "paperDirection": "짙은 브라운 보드, 크림 메모지, 빈티지 테이프 릴의 금속 반사.",
+      "motionDirection": "focus를 길게 유지해 발성의 집중을 살리고, bokeh는 작고 따뜻한 점광으로만 쓴다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 11,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#2B2321",
+          "ink": "#F3E9D7",
+          "light": "#FFF8EA",
+          "dark": "#17110F",
+          "accent": "#B9784D"
+        }
+      }
+    },
+    {
+      "id": "funk",
+      "name": "펑크",
+      "aliases": [
+        "funk music",
+        "funk"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 밴드 또는 베이스·드럼 중심의 세션. 연주곡은 손과 악기의 리듬감을 우선한다.",
+      "sceneDirection": "베이스와 드럼이 마주 보는 리허설실에서 손의 리듬과 몸의 작은 움직임을 낮은 구도로 담는다.",
+      "photoDirection": "70년대 컬러 필름처럼 약간 바랜 리허설실, 베이스 앰프와 손의 순간 포착.",
+      "paperDirection": "겨자색과 올리브 종이, 둥근 도형, 얇은 비닐 슬리브와 마른 테이프.",
+      "motionDirection": "print 카드의 미세한 오프셋과 1회 focus를 그루브에 맞추며 CD 회전은 7초 주기로 둔다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#E6DFC5",
+          "ink": "#28362D",
+          "light": "#FFFBEA",
+          "dark": "#1A251E",
+          "accent": "#C68E36"
+        }
+      }
+    },
+    {
+      "id": "disco",
+      "name": "디스코",
+      "aliases": [
+        "disco"
+      ],
+      "baseStyle": "chrome-prism",
+      "artistDirection": "가상 성인 퍼포머 또는 밴드의 밤 리허설. 실제 편성에 맞춰 인물 또는 조명과 악기로 구성한다.",
+      "sceneDirection": "무대 가장자리와 리허설 플로어에서 회전 직전의 몸짓, 관객 없는 넓은 공간을 함께 담는다.",
+      "photoDirection": "미러볼 반사가 피부와 벽에 부드럽게 퍼진 35mm 플래시, 과도한 코스튬화 없이.",
+      "paperDirection": "검은 종이와 은색 반사 포일, 복숭아색 티켓 조각, 접힌 폴라로이드.",
+      "motionDirection": "bokeh를 미러볼 점광처럼 제한적으로 쓰고 CD 표면 반사만 리듬감 있게 변화시킨다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "glow"
+        },
+        "palette": {
+          "paper": "#201C2A",
+          "ink": "#FFF4E5",
+          "light": "#FFF9EE",
+          "dark": "#110F18",
+          "accent": "#F29B70"
+        }
+      }
+    },
+    {
+      "id": "rock",
+      "name": "록",
+      "aliases": [
+        "rock music",
+        "rock"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 밴드 또는 솔로 연주자의 거친 라이브 전후 순간. 연주곡이면 인물 없이 장비와 무대를 쓴다.",
+      "sceneDirection": "사운드체크 중 앰프와 드럼 사이를 걷는 인물, 무대 뒤의 케이블과 빈 의자를 넓게 잡는다.",
+      "photoDirection": "작은 공연장의 35mm 플래시, 케이블·앰프·땀의 현실감, 과도한 포즈 없는 스냅.",
+      "paperDirection": "회색 크라프트지, 찢긴 공연 포스터, 검은 테이프와 벗겨진 잉크.",
+      "motionDirection": "focus와 print를 기타 리프에 맞춰 단호하게 전환하고 CD 단계에서는 흔들림을 줄인다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#DDD7CA",
+          "ink": "#28292C",
+          "light": "#FAF7EE",
+          "dark": "#17191B",
+          "accent": "#B94742"
+        }
+      }
+    },
+    {
+      "id": "hard-rock",
+      "name": "하드 록",
+      "aliases": [
+        "하드록",
+        "hardrock"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 밴드의 사운드체크 또는 인스트루멘털 장비 초상. 특정 하위문화의 외모를 강제하지 않는다.",
+      "sceneDirection": "사운드체크의 긴장된 정적 속에서 기타 헤드·드럼·보컬의 옆모습을 근거리로 교차한다.",
+      "photoDirection": "검은 배경의 고대비 35mm, 앰프 그릴과 드럼 헤드의 질감을 크게 담은 다큐멘터리 사진.",
+      "paperDirection": "무광 검정 보드, 철제 클립, 회색 인화지와 닳은 가퍼테이프.",
+      "motionDirection": "짧은 print 전환 뒤 강한 focus를 한 번 사용하고, CD는 6초 주기로 명확하게 회전한다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#232325",
+          "ink": "#F0EEE8",
+          "light": "#FFFDF5",
+          "dark": "#101012",
+          "accent": "#C94746"
+        }
+      }
+    },
+    {
+      "id": "metal",
+      "name": "메탈",
+      "aliases": [
+        "metal music",
+        "metal"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 밴드 또는 인스트루멘털 프로젝트의 밀도 높은 리허설 기록. 고정된 의상·인종·성별 이미지에 기대지 않는다.",
+      "sceneDirection": "연습실의 밀집된 장비 사이, 연주 직전 손을 맞추거나 박자를 세는 순간을 낮고 가까운 구도로 담는다.",
+      "photoDirection": "텅스텐 역광의 흑백 16mm, 드럼 심벌과 기타 질감이 선명한 거친 그레인.",
+      "paperDirection": "차콜 종이, 산화된 은색 포일, 찢긴 블랙 라벨과 긁힌 투명 케이스.",
+      "motionDirection": "memory 전환을 박자 단위로 절제하고 폭발적인 플래시·상시 노이즈 없이 CD 반사로 무게를 만든다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 6,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#1F2024",
+          "ink": "#EAE9E2",
+          "light": "#F8F7F1",
+          "dark": "#0C0D10",
+          "accent": "#8C96A0"
+        }
+      }
+    },
+    {
+      "id": "punk-rock",
+      "name": "펑크 록",
+      "aliases": [
+        "펑크록",
+        "punkrock",
+        "punk rock"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 밴드 또는 독립 연주자의 거친 DIY 스냅. 외모를 획일화하지 않고 음악의 실제 편성에 맞춘다.",
+      "sceneDirection": "작은 연습실 벽과 바닥에 기대어 장비를 정리하는 순간, 인물과 공간을 비대칭 구도로 배치한다.",
+      "photoDirection": "복사본 같은 고대비 플래시 사진, 작은 연습실과 손상된 벽면, 비정형 프레이밍.",
+      "paperDirection": "흑백 복사 종이, 붉은 테이프, 찢긴 가장자리와 무문자 스탬프 도형.",
+      "motionDirection": "print의 거친 종이 전환을 짧게 쓰되 지속 플리커 대신 안정된 CD 회전으로 끝낸다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#272324",
+          "ink": "#F1EEE7",
+          "light": "#FFFDF5",
+          "dark": "#151519",
+          "accent": "#D94345"
+        }
+      }
+    },
+    {
+      "id": "blues",
+      "name": "블루스",
+      "aliases": [
+        "blues"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 보컬·기타 연주자 또는 인스트루멘털 트리오. 연주가 없는 인물 연출을 강요하지 않는다.",
+      "sceneDirection": "낮은 무대 또는 연습실에서 기타 줄을 고르는 손과 의자에 앉은 옆모습을 여유 있게 담는다.",
+      "photoDirection": "낮은 텅스텐 조명, 기타 넥과 손의 흑백 클로즈업, 넓은 그림자가 있는 필름.",
+      "paperDirection": "남청색 종이, 크림 악보 조각, 얼룩진 잉크와 무광 가죽 같은 질감.",
+      "motionDirection": "focus의 느린 확대, 긴 print 정지, 아주 적은 bokeh 뒤 CD로 이어진다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#202B36",
+          "ink": "#EFE9DD",
+          "light": "#FCF6E9",
+          "dark": "#11171E",
+          "accent": "#7298B8"
+        }
+      }
+    },
+    {
+      "id": "folk-acoustic",
+      "name": "포크·어쿠스틱",
+      "aliases": [
+        "포크",
+        "어쿠스틱",
+        "folk",
+        "acoustic"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 싱어송라이터·듀오 또는 인스트루멘털 기타 프로젝트. 일상적 장소와 연주 흔적을 우선한다.",
+      "sceneDirection": "창가·나무 의자·작업대에서 기타를 내려두고 노트를 넘기는 조용한 순간을 가까이 담는다.",
+      "photoDirection": "창가, 나무 의자, 소형 녹음실의 오전 자연광과 폴라로이드 질감.",
+      "paperDirection": "미색 노트, 연필 자국, 마른 잎·티켓·부드러운 천 조각의 아날로그 콜라주.",
+      "motionDirection": "memory의 느린 사진 스택과 저속 CD 회전으로 여백을 남기며, 전환을 과장하지 않는다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#ECE2CF",
+          "ink": "#384237",
+          "light": "#FFFBEF",
+          "dark": "#20271E",
+          "accent": "#839763"
+        }
+      }
+    },
+    {
+      "id": "country",
+      "name": "컨트리",
+      "aliases": [
+        "country music",
+        "country"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 싱어송라이터 또는 밴드. 지역·의상은 요청이 있을 때만 구체화하고, 기본은 현대적인 라이브 기록으로 둔다.",
+      "sceneDirection": "창고 같은 리허설 공간이나 해 질 무렵 야외에서 악기를 들고 이동하는 인물과 넓은 주변을 함께 담는다.",
+      "photoDirection": "낡은 작업실, 도로변 창고 또는 해 질 녘 야외 리허설의 35mm 컬러 사진.",
+      "paperDirection": "크라프트지, 바랜 지도 조각, 데님 같은 천 질감과 작은 종이 라벨.",
+      "motionDirection": "focus를 안정적으로 유지하고 print의 종이 가장자리 전환 뒤 10초 주기의 CD 회전으로 정착한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 10,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E7D8BB",
+          "ink": "#3B342A",
+          "light": "#FFF8E8",
+          "dark": "#242018",
+          "accent": "#A76B45"
+        }
+      }
+    },
+    {
+      "id": "lofi",
+      "name": "로파이",
+      "aliases": [
+        "lo-fi",
+        "lofi hiphop",
+        "lofi music"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 비트메이커 또는 인스트루멘털 작업대. 보컬이 없으면 얼굴 대신 손·샘플러·노트를 사용한다.",
+      "sceneDirection": "늦은 작업대에서 샘플러를 누르고 노트를 넘기는 손, 비어 있는 의자와 창문을 느슨하게 배치한다.",
+      "photoDirection": "늦은 밤 책상, 작은 램프, 약한 필름 그레인과 살짝 벗어난 초점의 생활 스냅.",
+      "paperDirection": "블루 그리드 노트, 연한 라일락 종이, 메모와 낡은 테이프가 겹친 부드러운 질감.",
+      "motionDirection": "bokeh를 얇게 유지하고 CD를 14초 주기로 느리게 돌리며, 가사는 나타나는 지연 없이 표시한다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 14,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#E3E6E0",
+          "ink": "#344457",
+          "light": "#FFFDF3",
+          "dark": "#232E3A",
+          "accent": "#728DB2"
+        }
+      }
+    },
+    {
+      "id": "ambient",
+      "name": "앰비언트",
+      "aliases": [
+        "ambient music",
+        "ambient"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 사운드 아티스트 또는 무인 공간. 인스트루멘털 기본값은 인물 없는 장비·창문·빛의 기록이다.",
+      "sceneDirection": "비어 있는 스튜디오와 창문, 테이블 위 장비를 넓은 여백으로 두고 인물이 있으면 작게 배치한다.",
+      "photoDirection": "안개 낀 창, 빈 스튜디오, 느린 셔터의 미세한 빛 흔적과 저대비 필름.",
+      "paperDirection": "짙은 회색 종이, 반투명 트레이싱 페이퍼, 번진 연필선과 흐린 인화지.",
+      "motionDirection": "focus를 최소화하고 bokeh의 아주 느린 변화를 사용하며 CD는 14초 주기의 고요한 회전으로 둔다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 14,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#262B30",
+          "ink": "#E8ECE8",
+          "light": "#F8FBF8",
+          "dark": "#121619",
+          "accent": "#8DA9A2"
+        }
+      }
+    },
+    {
+      "id": "electronic-edm",
+      "name": "일렉트로닉·EDM",
+      "aliases": [
+        "일렉트로닉",
+        "edm",
+        "electronic",
+        "하우스",
+        "house",
+        "테크노",
+        "techno",
+        "트랜스",
+        "trance",
+        "dnb",
+        "drum and bass",
+        "dubstep",
+        "드럼앤베이스",
+        "덥스텝",
+        "이디엠"
+      ],
+      "baseStyle": "neon-afterhours",
+      "artistDirection": "가상 성인 DJ·프로듀서 또는 인스트루멘털 셋업. 사람보다 믹서, 케이블, 빛을 중심으로 둘 수 있다.",
+      "sceneDirection": "믹서와 케이블이 놓인 작은 부스에서 노브를 조절하는 손, 뒤쪽의 비어 있는 공간을 함께 담는다.",
+      "photoDirection": "현대적인 LED 스튜디오와 믹서의 선명한 디지털 사진, 자연스러운 피부와 깨끗한 반사를 유지한다.",
+      "paperDirection": "새 진주 아크릴·크롬·투명 유리의 깨끗한 스튜디오 바탕. 닳은 카드·테이프·노후 질감은 쓰지 않는다.",
+      "motionDirection": "드롭에는 clean light-sweep과 prism/glass reveal만 쓰고, 노이즈 효과 없이 CD 회전으로 에너지를 낸다.",
+      "visual": {
+        "motionMode": "drive",
+        "discPeriodSeconds": 7,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#EDF3FF",
+          "ink": "#17243E",
+          "light": "#FFFFFF",
+          "dark": "#101D39",
+          "accent": "#43BDEE"
+        }
+      }
+    },
+    {
+      "id": "latin",
+      "name": "라틴",
+      "aliases": [
+        "latin music",
+        "latin",
+        "레게톤",
+        "reggaeton",
+        "살사",
+        "salsa"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 보컬·밴드 또는 퍼커션 중심 인스트루멘털. 문화권·의상은 사용자가 지역을 지정한 경우에만 구체화한다.",
+      "sceneDirection": "리허설실에서 손 타악기와 보컬이 리듬을 맞추는 순간, 원형으로 마주 선 사람들을 넓게 담는다.",
+      "photoDirection": "따뜻한 실내 리허설, 손 타악기와 창문 그림자가 있는 컬러 필름 다큐멘터리.",
+      "paperDirection": "테라코타와 크림 종이, 얇은 타악기 리듬선, 바랜 사진과 매트한 투명 필름.",
+      "motionDirection": "print 전환을 퍼커션 악센트에 맞추고 CD는 8초 주기로 부드럽게 돌린다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 8,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E8D4B8",
+          "ink": "#3D3029",
+          "light": "#FFF7E8",
+          "dark": "#241A16",
+          "accent": "#D66A45"
+        }
+      }
+    },
+    {
+      "id": "bossa-nova",
+      "name": "보사노바",
+      "aliases": [
+        "bossa nova",
+        "bossanova"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 보컬·기타 듀오 또는 인스트루멘털 앙상블. 편안한 리허설의 친밀감을 우선한다.",
+      "sceneDirection": "작은 스튜디오의 창가에서 기타와 보컬이 서로 듣는 순간, 손과 옆얼굴을 부드러운 거리로 담는다.",
+      "photoDirection": "식물과 창가 그림자가 있는 작은 스튜디오, 저채도 컬러 폴라로이드.",
+      "paperDirection": "연한 민트·크림 종이, 얇은 악보선, 리넨 같은 종이 결와 투명 테이프.",
+      "motionDirection": "focus와 memory를 길게 연결하고, 12초 CD 회전으로 급한 전환 없이 흐르게 한다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E2E5D8",
+          "ink": "#315052",
+          "light": "#FBFFF5",
+          "dark": "#1B3334",
+          "accent": "#78A69B"
+        }
+      }
+    },
+    {
+      "id": "reggae",
+      "name": "레게",
+      "aliases": [
+        "reggae music",
+        "reggae"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 밴드 또는 인스트루멘털 리듬 섹션. 문화·종교 상징과 지역 의상은 명시 요청이 있을 때만 쓴다.",
+      "sceneDirection": "연습실의 베이스와 드럼 사이에서 박자를 맞추는 손, 사람 사이의 여유 있는 간격을 넓게 담는다.",
+      "photoDirection": "햇빛이 낮게 들어오는 연습실, 베이스와 드럼의 따뜻한 컬러 필름 스냅.",
+      "paperDirection": "올리브, 황토, 크림 종이를 느슨하게 겹치고 목재와 바랜 테이프 질감을 더한다.",
+      "motionDirection": "memory의 느린 사진 교체와 11초 CD 회전으로 오프비트의 여유를 유지한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 11,
+        "caption": {
+          "font": "sans",
+          "size": 57,
+          "effect": "marker"
+        },
+        "palette": {
+          "paper": "#E2D9B6",
+          "ink": "#34422A",
+          "light": "#FFF9E7",
+          "dark": "#1B2818",
+          "accent": "#A98E35"
+        }
+      }
+    },
+    {
+      "id": "classical",
+      "name": "클래식",
+      "aliases": [
+        "classical",
+        "실내악",
+        "orchestra",
+        "오케스트라"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 독주자·앙상블 또는 무인 무대. 연주곡일 때 인물보다 악기·악보·공간의 호흡을 우선한다.",
+      "sceneDirection": "리허설 홀의 빈 의자와 악보대, 연주 전 악기를 조율하는 손을 정돈된 넓은 구도로 담는다.",
+      "photoDirection": "리허설 홀의 은염 흑백, 활·건반·악보의 손 디테일, 과한 궁정 연출 없이 현대적인 기록.",
+      "paperDirection": "검은 콘택트 시트, 크림 악보지, 얇은 트레이싱 페이퍼와 무광 은색 클립.",
+      "motionDirection": "긴 focus와 정지에 가까운 print를 사용하고 14초 주기의 CD 회전으로 악장의 여백을 남긴다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 14,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#292827",
+          "ink": "#F1EEE5",
+          "light": "#FFFCF2",
+          "dark": "#151514",
+          "accent": "#B9A577"
+        }
+      }
+    },
+    {
+      "id": "cinematic-ost",
+      "name": "시네마틱·OST",
+      "aliases": [
+        "시네마틱",
+        "ost",
+        "soundtrack",
+        "film score"
+      ],
+      "baseStyle": "noir-contact",
+      "artistDirection": "가상 성인 작곡가·보컬 또는 인물 없는 장면 설계. 서사·인물관계는 음악과 사용자 설명이 있을 때만 추가한다.",
+      "sceneDirection": "빈 복도·작업 테이블·무대 가장자리 같은 서사적 공간에서 인물을 작게 두거나 인물 없이 여백을 강조한다.",
+      "photoDirection": "비어 있는 세트, 프로젝트 노트, 빛이 쏟아지는 복도 같은 영화적이지만 실제 사진 같은 프레임.",
+      "paperDirection": "짙은 청회색 종이, 필름 인화지, 접힌 큐시트 형태의 무문자 종이와 은은한 금속 반사.",
+      "motionDirection": "focus를 장면 도입에만 쓰고 memory에서 한 번 넓게 전환한 뒤 느린 CD로 수렴한다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 13,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "bracket"
+        },
+        "palette": {
+          "paper": "#222B36",
+          "ink": "#F0F0E8",
+          "light": "#FAFAF2",
+          "dark": "#101820",
+          "accent": "#91A6BC"
+        }
+      }
+    },
+    {
+      "id": "korean-traditional",
+      "name": "국악·국악퓨전",
+      "aliases": [
+        "국악",
+        "국악퓨전",
+        "gugak",
+        "korean traditional"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 연주자·보컬 또는 인스트루멘털 앙상블. 전통 의상·지역 상징은 요청에 명시된 경우에만 적용한다.",
+      "sceneDirection": "현대적인 리허설실이나 작은 무대에서 악기를 조율하고 서로 신호를 주는 손과 옆모습을 담는다.",
+      "photoDirection": "현대적인 리허설실 또는 나무 질감의 소규모 무대, 악기 표면과 손을 담은 따뜻한 필름 사진.",
+      "paperDirection": "한지 같은 섬유질 종이, 먹선, 담청·주홍의 절제된 색면과 접힌 인화지.",
+      "motionDirection": "focus와 print를 장단의 큰 경계에만 사용하고, CD는 12초 주기로 차분하게 회전한다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E9E0CB",
+          "ink": "#293A42",
+          "light": "#FFFBEF",
+          "dark": "#18262D",
+          "accent": "#B94F43"
+        }
+      }
+    },
+    {
+      "id": "world-regional",
+      "name": "월드·지역 음악",
+      "aliases": [
+        "월드뮤직",
+        "world music",
+        "regional music"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 연주자·앙상블 또는 인스트루멘털 공간. 특정 문화·국가·의상은 사용자가 지역을 정할 때만 묘사한다.",
+      "sceneDirection": "연습 공간에서 악기·손·빈 의자를 중심으로, 서로 듣는 사람들의 거리와 공간감을 넓게 담는다.",
+      "photoDirection": "여행 엽서가 아닌 실제 리허설의 손, 악기, 공간을 담은 질감 있는 컬러 다큐멘터리.",
+      "paperDirection": "천연 종이 섬유, 바랜 청록과 황토의 종이 조각, 중립적인 지도선 같은 추상 선.",
+      "motionDirection": "memory의 천천한 겹침과 11초 CD 회전으로 질감 변화를 보여주며 문화적 장식을 과도하게 소비하지 않는다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 11,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E1D5B9",
+          "ink": "#304741",
+          "light": "#FFF9E8",
+          "dark": "#1B2C28",
+          "accent": "#A76F43"
+        }
+      }
+    },
+    {
+      "id": "gospel-ccm-worship",
+      "name": "가스펠·CCM·워십",
+      "aliases": [
+        "가스펠",
+        "ccm",
+        "워십",
+        "gospel",
+        "worship"
+      ],
+      "baseStyle": "autumn-archive",
+      "artistDirection": "가상 성인 보컬·밴드 또는 인스트루멘털 피아노. 종교적 상징·문구·장소는 사용자가 신앙 표현을 명시한 경우에만 추가한다.",
+      "sceneDirection": "피아노와 마이크가 놓인 리허설실에서 함께 숨을 맞추는 손과 조용히 기다리는 공간을 담는다.",
+      "photoDirection": "따뜻한 자연광의 리허설실, 피아노와 합창의 준비 순간을 담은 조용한 컬러 필름.",
+      "paperDirection": "크림 종이, 부드러운 청회색 인화지, 악보선과 투명 테이프의 단정한 레이어.",
+      "motionDirection": "가사 가독성을 위한 긴 정지 구간을 우선하고, focus와 CD 회전은 서서히 이어진다.",
+      "visual": {
+        "motionMode": "balanced",
+        "discPeriodSeconds": 12,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E7E4D8",
+          "ink": "#34424E",
+          "light": "#FFFCF4",
+          "dark": "#1B2935",
+          "accent": "#829DB2"
+        }
+      }
+    },
+    {
+      "id": "new-age",
+      "name": "뉴에이지",
+      "aliases": [
+        "new age",
+        "newage"
+      ],
+      "baseStyle": "lofi-notebook",
+      "artistDirection": "가상 성인 피아니스트·작곡가 또는 인물 없는 피아노와 자연광. 연주곡에는 인물을 강요하지 않는다.",
+      "sceneDirection": "창가의 피아노와 노트, 연주 전 건반 위에 멈춘 손을 넓은 여백과 함께 담는다.",
+      "photoDirection": "맑은 창가, 물결 반사, 건반과 노트의 섬세한 저채도 컬러 사진.",
+      "paperDirection": "흰색과 연한 청록의 종이, 반투명 레이어, 연필 스케치와 잔잔한 물결 같은 그림자.",
+      "motionDirection": "bokeh는 아주 옅게만 쓰고 CD를 14초 주기로 돌리며, 전환보다 자막 읽기 시간을 우선한다.",
+      "visual": {
+        "motionMode": "soft",
+        "discPeriodSeconds": 14,
+        "caption": {
+          "font": "serif",
+          "size": 57,
+          "effect": "underline"
+        },
+        "palette": {
+          "paper": "#E5ECE8",
+          "ink": "#31505A",
+          "light": "#FCFFFA",
+          "dark": "#19313A",
+          "accent": "#82B6B0"
+        }
+      }
+    }
+  ]
+}

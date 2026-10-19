@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "autumn-archive",
+  "name": "가을 아카이브",
+  "aliases": [
+    "가을",
+    "빈티지",
+    "가을 공연",
+    "vintage-cd"
+  ],
+  "genres": [
+    "록 발라드",
+    "인디 밴드",
+    "어쿠스틱"
+  ],
+  "description": "빛바랜 공연 사진, 구겨진 종이, 투명 주얼케이스와 회전 CD.",
+  "variant": "archive",
+  "discPeriodSeconds": 6,
+  "caption": {
+    "font": "serif",
+    "size": 57,
+    "effect": "underline"
+  },
+  "palette": {
+    "paper": "#efe5d1",
+    "ink": "#34292d",
+    "light": "#fff8eb",
+    "dark": "#20191c",
+    "accent": "#be5476"
+  },
+  "artDirection": "따뜻한 역광의 작은 야외 무대. 실제 피부와 필름 입자, 자연스러운 주름, 어긋난 사진 가장자리.",
+  "prompts": {
+    "artist": "따뜻한 역광의 작은 야외 무대. 실제 피부와 필름 입자, 자연스러운 주름, 어긋난 사진 가장자리. 음악의 장르·보컬 구성에 맞는 가상 아티스트를 설계. 실존 인물·로고·글자 없음.",
+    "case": "같은 아티스트 사진을 인쇄한 살짝 닳고 어긋난 주얼케이스. 정면에 가까운 정사각, 바깥은 실제 투명 alpha. 광고 렌더처럼 매끈하지 않게.",
+    "paper": "16:9 평면 촬영. 빛바랜 공연 사진, 구겨진 종이, 투명 주얼케이스와 회전 CD. 케이스·CD·인물 없이 배경만. 아래 15%는 자막이 읽히게 조용하게."
+  },
+  "referenceAssets": {
+    "photoA": "photo-a.png",
+    "photoB": "photo-b.png",
+    "photoC": "photo-c.png",
+    "case": "case.png",
+    "paper": "paper.png"
+  },
+  "preview": {
+    "status": "ready",
+    "video": "preview.mp4",
+    "poster": "poster.jpg",
+    "captionStatus": "unreviewed-asr-draft-not-canonical-lyrics",
+    "musicNote": "모든 스타일은 같은 록 발라드 구간으로 비교. 추천 장르 전용 음원 아님.",
+    "durationSeconds": 18,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 540,
+    "subframes": 1,
+    "sourceClipStartSeconds": 79.76,
+    "sourceMusicSha256": "1f54b234936e97020ef1bbeb79dccfb585b1f8d211b2d1e56c3516b18dac359a"
+  }
+}

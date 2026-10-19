@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "name": "music-road-skills",
+  "version": "0.1.0",
+  "repository": "roadkwonai/music-road-skills",
+  "releaseNotes": "release/2026-10-20-version-reset-0-1-0.md",
+  "skills": [
+    {
+      "id": "road-music-showreel-cd",
+      "path": "skills/road-music-showreel-cd",
+      "displayName": "Road Music Showreel CD",
+      "kind": "compat",
+      "guide": "docs/showreel-cd.md"
+    },
+    {
+      "id": "road-music-showreel-mv",
+      "path": "skills/road-music-showreel-mv",
+      "displayName": "Road Music 쇼릴 MV",
+      "kind": "production",
+      "guide": "docs/showreel-mv.md"
+    },
+    {
+      "id": "road-music-jizura-playlist",
+      "path": "skills/road-music-jizura-playlist",
+      "displayName": "JIZURA 음악 스튜디오",
+      "kind": "production",
+      "guide": "docs/jizura-studio.md"
+    },
+    {
+      "id": "road-music-showreel-playlist",
+      "path": "skills/road-music-showreel-playlist",
+      "displayName": "Showreel 음악 모션그래픽",
+      "kind": "production",
+      "guide": "docs/showreel-motion.md"
+    },
+    {
+      "id": "road-music-video-studio",
+      "path": "skills/road-music-video-studio",
+      "displayName": "Road Music 영상 제작실",
+      "kind": "studio",
+      "guide": "docs/html-studio.md"
+    },
+    {
+      "id": "road-music-storage",
+      "path": "skills/road-music-storage",
+      "displayName": "Road Music 저장공간 관리",
+      "kind": "maintenance",
+      "guide": "docs/html-studio.md"
+    },
+    {
+      "id": "road-music-production-records",
+      "path": "skills/road-music-production-records",
+      "displayName": "Road Music 제작 기록",
+      "kind": "maintenance",
+      "guide": "docs/production-records.md"
+    },
+    {
+      "id": "road-music-skills-update",
+      "path": "skills/road-music-skills-update",
+      "displayName": "Road Music 스킬 업데이트",
+      "kind": "maintenance",
+      "guide": "docs/updates.md"
+    }
+  ],
+  "hosts": [
+    "codex",
+    "claude",
+    "antigravity",
+    "antigravity-cli"
+  ]
+}

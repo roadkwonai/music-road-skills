@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="570" viewBox="0 0 600 570" role="img" aria-labelledby="title"><!-- Heroicons Solid: MIT License
+
+Copyright (c) Tailwind Labs, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ --><title id="title">원가사와 자막의 차이</title><rect width="600" height="570" fill="#f2f2f2"/><g font-family="Paperlogy, Apple SD Gothic Neo, sans-serif"><text x="28" y="44" font-size="27" fill="#171717" font-weight="700">원가사와 시간 자막은 별도 파일</text><circle cx="52" cy="103" r="22" fill="#fff" stroke="#171717"/><g transform="translate(41 92) scale(.9167)" fill="#171717" color="#171717"><path xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0 0 16.5 9h-1.875a1.875 1.875 0 0 1-1.875-1.875V5.25A3.75 3.75 0 0 0 9 1.5H5.625ZM7.5 15a.75.75 0 0 1 .75-.75h7.5a.75.75 0 0 1 0 1.5h-7.5A.75.75 0 0 1 7.5 15Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H8.25Z" clip-rule="evenodd" /><path xmlns="http://www.w3.org/2000/svg" d="M12.971 1.816A5.23 5.23 0 0 1 14.25 5.25v1.875c0 .207.168.375.375.375H16.5a5.23 5.23 0 0 1 3.434 1.279 9.768 9.768 0 0 0-6.963-6.963Z" /></g><text x="92" y="101" font-size="24" fill="#171717" font-weight="700">원가사 · TXT</text><text x="28" y="153" font-size="21" fill="#171717" font-weight="400">오늘도 나의 길을 걸어</text><text x="28" y="188" font-size="21" fill="#171717" font-weight="400">빛을 향해 한 걸음 더</text><path d="M28 222L572 222" fill="none" stroke="#737373" stroke-dasharray="4 5"/><circle cx="52" cy="263" r="22" fill="#fff" stroke="#171717"/><g transform="translate(41 252) scale(.9167)" fill="#171717" color="#171717"><path xmlns="http://www.w3.org/2000/svg" d="M7.5 3.375c0-1.036.84-1.875 1.875-1.875h.375a3.75 3.75 0 0 1 3.75 3.75v1.875C13.5 8.161 14.34 9 15.375 9h1.875A3.75 3.75 0 0 1 21 12.75v3.375C21 17.16 20.16 18 19.125 18h-9.75A1.875 1.875 0 0 1 7.5 16.125V3.375Z" /><path xmlns="http://www.w3.org/2000/svg" d="M15 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 17.25 7.5h-1.875A.375.375 0 0 1 15 7.125V5.25ZM4.875 6H6v10.125A3.375 3.375 0 0 0 9.375 19.5H16.5v1.125c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625V7.875C3 6.839 3.84 6 4.875 6Z" /></g><text x="92" y="262" font-size="24" fill="#171717" font-weight="700">시간 자막 · SRT</text><text x="28" y="310" font-size="20" fill="#171717" font-weight="400">1</text><text x="28" y="340" font-size="20" fill="#171717" font-weight="400">00:00:12,000 --&gt; 00:00:14,500</text><text x="28" y="373" font-size="20" fill="#171717" font-weight="400">오늘도 나의 길을 걸어</text><text x="28" y="414" font-size="20" fill="#171717" font-weight="400">2</text><text x="28" y="444" font-size="20" fill="#171717" font-weight="400">00:00:14,500 --&gt; 00:00:17,000</text><text x="28" y="477" font-size="20" fill="#171717" font-weight="400">빛을 향해 한 걸음 더</text><text x="28" y="535" font-size="18" fill="#525252" font-weight="400">문장·시각은 형식 예시이며 실제 싱크가 아닙니다.</text></g></svg>
